@@ -1,0 +1,26 @@
+# Playbook to deploy servers and configure them as domain controllers
+- hosts: domain_controllers
+- name: Create Active Directory servers
+  vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    folder: /SDDC-Datacenter/vm
+    name: haudah-dc01
+    state: poweredon
+    guest_id: windows9Server64Guest
+    template: haudah-windows-server-template
+    disk:
+      - size_gb: 80
+        type: thin
+        datastore: ClusterDatastore
+    hardware:
+      memory_mb: 8192
+      num_cpus: 1
+      num_cpu_cores_per_socket: 1
+      version: 14
+    networks:
+      - name: haudah-192.168.77.0/24
+    wait_for_ip_address: yes
+    wait_for_customization: yes
+    register: deploy_ad
