@@ -1,11 +1,12 @@
 # Playbook to deploy servers and configure them as domain controllers
-- hosts: domain_controllers
 - name: Create Active Directory servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
   vmware_guest:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    folder: /SDDC-Datacenter/vm
+    folder: /SDDC-Datacenter/Workloads/vm
     name: haudah-dc01
     state: poweredon
     guest_id: windows9Server64Guest
@@ -23,4 +24,4 @@
       - name: haudah-192.168.77.0/24
     wait_for_ip_address: yes
     wait_for_customization: yes
-    register: deploy_ad
+  register: deploy_ad
