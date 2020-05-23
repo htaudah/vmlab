@@ -10,6 +10,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
+        datacenter: SDDC-Datacenter
         folder: /SDDC-Datacenter/Workloads/vm
         name: haudah-dc01
         state: poweredon
