@@ -17,9 +17,7 @@
         guest_id: windows9Server64Guest
         template: haudah-windows-server-template
         disk:
-          - size_gb: 80
-            type: thin
-            datastore: WorkloadDatastore
+          - datastore: WorkloadDatastore
         hardware:
           memory_mb: 8192
           num_cpus: 1
