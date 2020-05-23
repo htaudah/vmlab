@@ -4,6 +4,7 @@
   name: Create Active Directory servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
   tasks:
     - name: Create AD virtual machines
       vmware_guest:
@@ -12,7 +13,7 @@
         password: "{{ vcenter_password }}"
         datacenter: SDDC-Datacenter
         folder: /Workloads
-        name: haudah-dc01
+        name: "{{ item.name }}"
         state: poweredon
         guest_id: windows9Server64Guest
         template: haudah-windows-server-template
@@ -21,8 +22,16 @@
           num_cpus: 1
           num_cpu_cores_per_socket: 1
           version: 14
+        customization_spec: "{{ custom_windows_workgroup }}"
         networks:
           - name: haudah-192.168.77.0/24
+            type: static
+            ip: "{{ item.ip }}"
         wait_for_ip_address: yes
         wait_for_customization: yes
       register: deploy_ad
+      loop:
+        - { name: 'haudah-dc01', ip: '192.168.77.50' }
+          #- { name: 'haudah-dc02', ip: '192.168.77.51' }
+
+    #- name: Configure AD servers
