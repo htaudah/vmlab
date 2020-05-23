@@ -16,8 +16,6 @@
         state: poweredon
         guest_id: windows9Server64Guest
         template: haudah-windows-server-template
-        disk:
-          - datastore: WorkloadDatastore
         hardware:
           memory_mb: 8192
           num_cpus: 1
