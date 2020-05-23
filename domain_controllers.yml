@@ -11,7 +11,7 @@
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: SDDC-Datacenter
-        folder: /SDDC-Datacenter/Workloads/vm
+        folder: /Workloads
         name: haudah-dc01
         state: poweredon
         guest_id: windows9Server64Guest
