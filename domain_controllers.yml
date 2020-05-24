@@ -5,6 +5,9 @@
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
+  vars:
+    windows_customization:
+      hostname: "haudahh"
   tasks:
     - name: Create AD virtual machines
       vmware_guest:
@@ -22,9 +25,7 @@
           num_cpus: 1
           num_cpu_cores_per_socket: 1
           version: 14
-        customization:
-          hostname: "{{ haudahh }}"
-        customization_spec: "{{ custom_windows_workgroup }}"
+        customization: "{{ windows_customization }}"
         networks:
           - name: haudah-192.168.77.0/24
             type: static
