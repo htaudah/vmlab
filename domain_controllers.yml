@@ -2,12 +2,12 @@
 - hosts: localhost
   connection: local
   name: Create Active Directory servers
+  vars:
+    computer_name: "haudahh"
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
-  vars:
-    windows_customization:
-      hostname: "haudahh"
+    - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: Create AD virtual machines
       vmware_guest:
@@ -25,12 +25,13 @@
           num_cpus: 1
           num_cpu_cores_per_socket: 1
           version: 14
-        customization: "{{ windows_customization }}"
+        customization: "{{ custom_win_2019_workgroup }}"
         networks:
           - name: haudah-192.168.77.0/24
             type: static
             ip: "{{ item.ip }}"
             netmask: '255.255.255.0'
+            gateway: '192.168.77.1'
         resource_pool: haudah
         wait_for_ip_address: yes
         wait_for_customization: yes
