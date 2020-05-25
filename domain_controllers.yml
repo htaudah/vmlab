@@ -1,25 +1,27 @@
-# Playbook to deploy servers and configure them as domain controllers
+# Playbook to deploy all inventory servers, leaving any configuration to the corresponding
+# server-specific playbook. For now, all servers of a particular OS will have the same hardware
+# specs. TODO: add server-specific specs to the inventory variables.
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: localhost
   connection: local
-  name: Create Active Directory servers
-  vars:
-    computer_name: "haudahh"
+  name: Create Infrastructure Servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Create AD virtual machines
+    - name: Create Windows virtual machines
+      vars:
+        computer_name: "{{ hostvars[item]['computer_name'] }}"
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ item.name }}"
+        name: "{{ item }}"
         state: poweredon
         guest_id: windows9Server64Guest
         template: "{{ template_win_2019 }}"
@@ -32,15 +34,14 @@
         networks:
           - name: "{{ network_name }}"
             type: static
-            ip: "{{ item.ip }}"
+            ip: "192.168.77" + "{{ hostvars[item]['subnet_address'] }}"
             netmask: "{{ network_mask }}"
             gateway: "{{ network_gateway }}"
         resource_pool: "{{ resource_pool }}"
         wait_for_ip_address: yes
         wait_for_customization: yes
       register: deploy_ad
-      loop:
-        - { name: 'haudah-dc01', ip: '192.168.77.50' }
-          #- { name: 'haudah-dc02', ip: '192.168.77.51' }
+      loop: "{{ groups[windows] }}"
 
-    #- name: Configure AD servers
+    - name: Create Linux virtual machines
+      vmware_guest
