@@ -34,7 +34,7 @@
         networks:
           - name: "{{ network_name }}"
             type: static
-            ip: "192.168.77" + "{{ hostvars[item]['subnet_address'] }}"
+            ip: "192.168.77{{ hostvars[item]['subnet_address'] }}"
             netmask: "{{ network_mask }}"
             gateway: "{{ network_gateway }}"
         resource_pool: "{{ resource_pool }}"
