@@ -19,7 +19,7 @@
         name: "{{ item.name }}"
         state: poweredon
         guest_id: windows9Server64Guest
-        template: haudah-windows-server-template
+        template: "{{ template_win_2019 }}"
         hardware:
           memory_mb: 8192
           num_cpus: 1
