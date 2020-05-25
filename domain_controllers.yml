@@ -1,4 +1,7 @@
 # Playbook to deploy servers and configure them as domain controllers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/25/2020
+# -------------------------------------------------------------------------------------------------
 - hosts: localhost
   connection: local
   name: Create Active Directory servers
@@ -14,8 +17,8 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        datacenter: SDDC-Datacenter
-        folder: /Workloads
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
         name: "{{ item.name }}"
         state: poweredon
         guest_id: windows9Server64Guest
@@ -27,12 +30,12 @@
           version: 14
         customization: "{{ custom_win_2019_workgroup }}"
         networks:
-          - name: haudah-192.168.77.0/24
+          - name: "{{ network_name }}"
             type: static
             ip: "{{ item.ip }}"
-            netmask: '255.255.255.0'
-            gateway: '192.168.77.1'
-        resource_pool: haudah
+            netmask: "{{ network_mask }}"
+            gateway: "{{ network_gateway }}"
+        resource_pool: "{{ resource_pool }}"
         wait_for_ip_address: yes
         wait_for_customization: yes
       register: deploy_ad

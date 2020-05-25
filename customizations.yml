@@ -1,7 +1,7 @@
 # These customizations are used in lieu of vCenter customization specifications so that they may
 # be checked into source control and more easily maintained.
 # Written by: Hani Audah <ht.aramco@gmail.com>
-# Last updated on: May/17/2020
+# Created on: May/17/2020
 # -------------------------------------------------------------------------------------------------
 custom_win_2019_workgroup:
   hostname: "{{ computer_name }}"

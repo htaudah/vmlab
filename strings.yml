@@ -1,2 +1,12 @@
-custom_windows_workgroup: 'haudah-windows-server-workgroup'
+# A set of constants that are apt to change frequently over time and between different
+# environments. This file should allow the playbooks to work for any vSphere environment.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/25/2020
+# -------------------------------------------------------------------------------------------------
 template_win_2019: 'haudah-windows-server-template'
+workload_folder: /Workloads/haudah
+datacenter_name: SDDC-Datacenter
+resource_pool: haudah
+network_name: 'haudah-192.168.77.0/24'
+network_gateway: '192.168.77.1'
+network_mask: '255.255.255.0'
