@@ -43,5 +43,5 @@
       register: deploy_ad
       loop: "{{ groups[windows] }}"
 
-    - name: Create Linux virtual machines
-      vmware_guest
+    #- name: Create Linux virtual machines
+      #vmware_guest
