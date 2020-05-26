@@ -8,10 +8,11 @@
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
-  connection: winrm
-  ansible_user: Administrator
-  ansible_password: "{{ win_local_password }}"
-  ansible_winrm_transport: ntlm
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
   tasks:
     - name: Install Active Directory
       win_domain_controller:
