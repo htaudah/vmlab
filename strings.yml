@@ -10,6 +10,11 @@ resource_pool: haudah
 network_name: 'haudah-192.168.77.0/24'
 network_gateway: '192.168.77.1'
 network_mask: '255.255.255.0'
+# To allow for the Active Directory DNS servers initially being unavailable, always fall back
+# to whatever DNS is available
+primary_dns: '192.168.77.50'
+secondary_dns: '192.168.77.51'
+fallback_dns: '10.20.12.12'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.site

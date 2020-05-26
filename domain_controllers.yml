@@ -15,15 +15,28 @@
     ansible_winrm_transport: ntlm
     ansible_port: 5985
   tasks:
-    - name: Install Active Directory
+    - name: Install first domain controller if domain does not exist
+      win_domain:
+        create_dns_delegation: yes
+        dns_domain_name: "{{ domain_name }}"
+        domain_admin_user: "{{ domain_admin_user }}"
+        domain_admin_password: "{{ domain_admin_password }}"
+        safe_mode_password: "{{ domain_recovery_password }}"
+      register: create_domain
+
+    - name: Reboot new domain controller
+      reboot:
+      when: create_domain.reboot_required
+
+    - name: Install domain controller in an existing domain
       win_domain_controller:
         dns_domain_name: "{{ domain_name }}"
         domain_admin_user: "{{ domain_admin_user }}"
         domain_admin_password: "{{ domain_admin_password }}"
         safe_mode_password: "{{ domain_recovery_password }}"
         state: domain_controller
-      register: ad_install
+      register: join_domain
 
-    - name: Reboot Active Directory if required
+    - name: Reboot new domain controller (existing domain)
       reboot:
-      when: ad_install.reboot_required
+      when: join_domain.reboot_required
