@@ -13,6 +13,7 @@
     ansible_user: Administrator
     ansible_password: "{{ win_local_password }}"
     ansible_winrm_transport: ntlm
+    ansible_port: 5985
   tasks:
     - name: Install Active Directory
       win_domain_controller:
