@@ -1,0 +1,27 @@
+# Playbook to configure all Active Directory domain controllers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/26/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: domain_controllers
+  name: Configure Domain Controller Servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  ansible_connection: winrm
+  ansible_user: Administrator
+  ansible_password: "{{ win_local_password }}"
+  ansible_winrm_transport: ntlm
+  tasks:
+    - name: Install Active Directory
+      win_domain_controller:
+        dns_domain_name: "{{ domain_name }}"
+        domain_admin_user: "{{ domain_admin_user }}"
+        domain_admin_password: "{{ domain_admin_password }}"
+        safe_mode_password: "{{ domain_recovery_password }}"
+        state: domain_controller
+      register: ad_install
+
+    - name: Reboot Active Directory if required
+      reboot:
+      when: ad_install.reboot_required

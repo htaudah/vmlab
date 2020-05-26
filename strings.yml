@@ -10,3 +10,7 @@ resource_pool: haudah
 network_name: 'haudah-192.168.77.0/24'
 network_gateway: '192.168.77.1'
 network_mask: '255.255.255.0'
+
+### ACTIVE DIRECTORY ###
+domain_name: haramco.site
+domain_admin_user: dadmin@haramco.site
