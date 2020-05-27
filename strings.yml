@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------------------------------
 template_win_2019: 'haudah-windows-server-template'
 workload_folder: /Workloads/haudah
+workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
 resource_pool: haudah
 network_name: 'haudah-192.168.77.0/24'

@@ -26,6 +26,10 @@
           num_cpus: 2
           num_cpu_cores_per_socket: 1
           version: 14
+        disks:
+          size_gb: 100
+          type: thin
+          datastore: "{{ workload_datastore }}"
         cdrom:
           type: iso
           iso_path: "{{ iso_win_2019 }}"
