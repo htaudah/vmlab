@@ -25,7 +25,7 @@
       register: create_domain
 
     - name: Reboot new domain controller
-      reboot:
+      win_reboot:
       when: create_domain.reboot_required
 
     - name: Install domain controller in an existing domain
@@ -38,5 +38,5 @@
       register: join_domain
 
     - name: Reboot new domain controller (existing domain)
-      reboot:
+      win_reboot:
       when: join_domain.reboot_required
