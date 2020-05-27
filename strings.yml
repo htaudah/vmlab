@@ -22,6 +22,6 @@ domain_name: haramco.site
 domain_admin_user: dadmin@haramco.site
 
 ### CDROM PATHS ###
-iso_sql_server: '[contentLib] /SHARED_LIBRARY/SQLServer2019-x64-ENU-Dev'
-iso_win_2019: '[contentLib] /SHARED_LIBRARY/en_windows_server_2019_enterprise_evaluation'
+iso_sql_server: '[contentLib] /SHARED_LIBRARY/SQLServer2019-x64-ENU-Dev.iso'
+iso_win_2019: '[contentLib] /SHARED_LIBRARY/en_windows_server_2019_enterprise_evaluation.iso'
 iso_centos_8: '[contentLib] /SHARED_LIBRARY/'
