@@ -1,0 +1,45 @@
+# Playbook to create all the needed OS templates. For simplicity, you can oversize hardware
+# requirements to ensure a single template can be used for all applications.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/27/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Create Operating System Templates
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create Windows Server 2019 Template
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ template_win_2019 }}"
+        state: poweredon
+        guest_id: windows9Server64Guest
+        hardware:
+          memory_mb: 8192
+          num_cpus: 2
+          num_cpu_cores_per_socket: 1
+          version: 14
+        cdrom:
+          type: iso
+          iso_path: "{{ iso_win_2019 }}"
+          state: present
+        customization:
+          # Riyadh timezone
+          timezone: 150
+          password: "{{ win_local_password }}"
+          orgname: Haramco
+        networks:
+          - name: "{{ network_name }}"
+            type: dhcp
+        resource_pool: "{{ resource_pool }}"
+      register: create_win_2019_template
+
+    #- name: Create Linux virtual machines
+      #vmware_guest

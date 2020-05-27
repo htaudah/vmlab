@@ -27,14 +27,18 @@
         template: "{{ template_win_2019 }}"
         hardware:
           memory_mb: 8192
-          num_cpus: 1
+          num_cpus: 2
           num_cpu_cores_per_socket: 1
           version: 14
+        cdrom:
+          type: iso
+          iso_path: "{{ hostvars[item]['cdrom'] }}"
+          state: "{{ 'present' if hostvars[item]['cdrom'] else 'absent' }}"
         customization: "{{ custom_win_2019_workgroup }}"
         networks:
           - name: "{{ network_name }}"
             type: static
-            ip: "192.168.77.{{ hostvars[item]['subnet_address'] }}"
+            ip: "{{ hostvars[item]['ansible_host'] }}"
             netmask: "{{ network_mask }}"
             gateway: "{{ network_gateway }}"
         resource_pool: "{{ resource_pool }}"
