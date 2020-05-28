@@ -56,7 +56,7 @@
           - cdrom
           - disk
           - ethernet
-        register: win_boot_order
+      register: win_boot_order
 
     #- name: Create Linux virtual machines
       #vmware_guest
