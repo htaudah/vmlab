@@ -19,7 +19,7 @@
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
         name: "{{ template_win_2019 }}"
-        state: poweredon
+        state: poweredoff
         guest_id: windows9Server64Guest
         hardware:
           memory_mb: 8192
@@ -35,6 +35,8 @@
           controller_type: sata
           controller_number: 0
           unit_number: 0
+          type: iso
+          iso_path: "{{ iso_win_2019 }}"
         customization:
           # Riyadh timezone
           timezone: 150
@@ -46,31 +48,31 @@
         resource_pool: "{{ resource_pool }}"
       register: create_win_2019_template
 
-    - name: Change boot order to cdrom
-      vmware_guest_boot_manager:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        boot_order:
-          - cdrom
-          - disk
-          - ethernet
-      register: win_boot_order
+    #- name: Change boot order to cdrom
+      #vmware_guest_boot_manager:
+        #hostname: "{{ vcenter_hostname }}"
+        #username: "{{ vcenter_username }}"
+        #password: "{{ vcenter_password }}"
+        #name: "{{ template_win_2019 }}"
+        #boot_order:
+          #- cdrom
+          #- disk
+          #- ethernet
+      #register: win_boot_order
 
-    - name: Power on Windows template after boot order change
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        state: poweredon
-        cdrom:
-          controller_type: sata
-          controller_number: 0
-          unit_number: 0
-          type: iso
-          iso_path: "{{ iso_win_2019 }}"
+    #- name: Power on Windows template after boot order change
+      #community.vmware.vmware_guest:
+        #hostname: "{{ vcenter_hostname }}"
+        #username: "{{ vcenter_username }}"
+        #password: "{{ vcenter_password }}"
+        #name: "{{ template_win_2019 }}"
+        #state: poweredon
+        #cdrom:
+          #controller_type: sata
+          #controller_number: 0
+          #unit_number: 0
+          #type: iso
+          #iso_path: "{{ iso_win_2019 }}"
 
     #- name: Create Linux virtual machines
       #vmware_guest
