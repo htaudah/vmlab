@@ -19,7 +19,7 @@
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
         name: "{{ template_win_2019 }}"
-        state: poweredoff
+        state: poweredon
         guest_id: windows9Server64Guest
         hardware:
           memory_mb: 8192
