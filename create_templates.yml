@@ -26,6 +26,7 @@
           num_cpus: 2
           num_cpu_cores_per_socket: 1
           version: 14
+          scsi: lsilogicsas
         disk:
           - size_gb: 100
             type: thin
