@@ -10,13 +10,12 @@
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
-  vars:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
   tasks:
     - name: Create Windows Server 2019 Template
       community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
         name: "{{ template_win_2019 }}"
@@ -51,6 +50,9 @@
 
     - name: Change boot order to cdrom
       vmware_guest_boot_manager:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
         name: "{{ template_win_2019 }}"
         boot_order:
           - cdrom
@@ -60,6 +62,9 @@
 
     - name: Power on Windows template after boot order change
       community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
         name: "{{ template_win_2019 }}"
         state: poweredon
 
