@@ -35,7 +35,7 @@
           type: iso
           iso_path: "{{ iso_win_2019 }}"
           state: present
-          controller: sata
+          controller_type: sata
         customization:
           # Riyadh timezone
           timezone: 150
