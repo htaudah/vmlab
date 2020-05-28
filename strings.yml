@@ -8,7 +8,7 @@ workload_folder: /Workloads/haudah
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
 resource_pool: haudah
-network_name: 'haudah-192.168.77.0/24'
+network_name: 'haudah-192.168.77.0-24'
 network_gateway: '192.168.77.1'
 network_mask: '255.255.255.0'
 # To allow for the Active Directory DNS servers initially being unavailable, always fall back
