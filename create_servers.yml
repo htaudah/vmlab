@@ -62,7 +62,7 @@
             controller_number: 0
             unit_number: 0
             type: iso
-            iso_path: "{{ iso_sql_server }}"
+            iso_path: "{{ iso_paths[hostvars[item]['mount_iso']] }}"
       when: "{{ hostvars[item]['mount_iso'] | length > 0 }}"
       loop: "{{ groups['all'] }}"
 
