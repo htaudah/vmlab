@@ -26,3 +26,4 @@ domain_admin_user: dadmin@haramco.site
 iso_sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
 iso_win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
 iso_centos_8: '[contentLib] /SHARED_LIBRARY/'
+iso_bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'

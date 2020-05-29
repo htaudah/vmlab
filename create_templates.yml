@@ -32,11 +32,16 @@
             type: thin
             datastore: "{{ workload_datastore }}"
         cdrom:
-          controller_type: sata
-          controller_number: 0
-          unit_number: 0
-          type: iso
-          iso_path: "{{ iso_win_2019 }}"
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_win_2019 }}"
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 1
+            type: iso
+            iso_path: "{{ iso_bootstrap }}"
         customization:
           # Riyadh timezone
           timezone: 150
