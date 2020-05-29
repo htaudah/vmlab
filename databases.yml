@@ -16,7 +16,7 @@
     ansible_port: 5985
   tasks:
     - name: Get disk facts
-      win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5} | select DeviceID
+      win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
       register: drive_output
 
     - name: Install SQL Server from mounted ISO
