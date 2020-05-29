@@ -66,6 +66,17 @@
           - ethernet
       register: win_boot_order
 
+    - name: Add USB 3.1 controller
+      vmware_guest_controller:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ template_win_2019 }}"
+        controllers:
+          - state: present
+            type: usb3
+
     - name: Power on Windows template after boot order change
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
