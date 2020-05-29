@@ -30,6 +30,12 @@
           num_cpus: 2
           num_cpu_cores_per_socket: 1
           version: 14
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ hostvars[item]['mount_iso'] }}"
         customization: "{{ custom_win_2019_workgroup }}"
         networks:
           - name: "{{ network_name }}"
@@ -42,6 +48,23 @@
         wait_for_customization: yes
       register: deploy_ad
       loop: "{{ groups['windows'] }}"
+
+    - name: Mount iso files where needed
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ inventory_hostname }}"
+        state: present
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_sql_server }}"
+      when: "{{ hostvars[item]['mount_iso'] | length > 0 }}"
+      loop: "{{ groups['all'] }}"
 
     #- name: Create Linux virtual machines
       #vmware_guest
