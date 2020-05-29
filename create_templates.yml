@@ -47,7 +47,7 @@
           # Riyadh timezone
           timezone: 150
           password: "{{ win_local_password }}"
-          orgname: Haramco
+          orgname: "{{ orgname }}"
         networks:
           - name: "{{ network_name }}"
             type: dhcp
@@ -77,7 +77,7 @@
           - state: present
             type: usb3
 
-    - name: Power on Windows template after boot order change
+    - name: Power on Windows template after configuration complete
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"

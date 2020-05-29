@@ -3,6 +3,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
+orgname: Haramco
 template_win_2019: 'haudah-windows-server-template'
 workload_folder: /Workloads/haudah
 workload_datastore: WorkloadDatastore

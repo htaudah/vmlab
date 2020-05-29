@@ -1,0 +1,31 @@
+# Playbook to configure all SQL Servers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/29/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: databases
+  name: Configure SQL Servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Mount SQL Server installation disc
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ inventory_hostname }}"
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 1
+            type: iso
+            iso_path: "{{ iso_sql_server }}"
+      register: mount_disc
