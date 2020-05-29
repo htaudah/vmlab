@@ -48,8 +48,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        name: "{{ inventory_hostname }}"
+        name: "{{ item }}"
         state: present
         cdrom:
           - controller_type: sata
@@ -57,8 +56,8 @@
             unit_number: 0
             type: iso
             iso_path: "{{ iso_paths[hostvars[item]['mount_iso']] }}"
-      when: "{{ hostvars[item]['mount_iso'] | length > 0 }}"
-      loop: "{{ groups['all'] }}"
+      when: "{{ hostvars[item]['mount_iso'] is defined }}"
+      loop: "{{ groups['windows'] }}"
 
     #- name: Create Linux virtual machines
       #vmware_guest
