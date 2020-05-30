@@ -16,11 +16,9 @@
     ansible_port: 5985
   tasks:
     - name: Install first domain controller if domain does not exist
-      win_domain:
+      ansible.windows.win_domain:
         create_dns_delegation: no
         dns_domain_name: "{{ domain_name }}"
-        domain_admin_user: "{{ domain_admin_user }}"
-        domain_admin_password: "{{ domain_admin_password }}"
         safe_mode_password: "{{ domain_recovery_password }}"
       register: create_domain
 
@@ -29,7 +27,7 @@
       when: create_domain.reboot_required
 
     - name: Install domain controller in an existing domain
-      win_domain_controller:
+      ansible.windows.win_domain_controller:
         dns_domain_name: "{{ domain_name }}"
         domain_admin_user: "{{ domain_admin_user }}"
         domain_admin_password: "{{ domain_admin_password }}"

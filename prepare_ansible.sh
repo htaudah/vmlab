@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------------------------------
 sudo dnf install ansible -y
 pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
-# Needed for ldap_entry module
+# Needed for ldap_entry module (TODO: consider alternatives?)
+dnf install python3-devel openldap-devel gcc -y
 pip install python-ldap
 sed -i -r 's/^#(log_path.*)/\1/' /etc/ansible/ansible.cfg

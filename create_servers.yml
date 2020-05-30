@@ -58,6 +58,3 @@
             iso_path: "{{ iso_paths[hostvars[item]['mount_iso']] }}"
       when: "{{ hostvars[item]['mount_iso'] is defined }}"
       loop: "{{ groups['windows'] }}"
-
-    #- name: Create Linux virtual machines
-      #vmware_guest
