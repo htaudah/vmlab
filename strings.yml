@@ -23,9 +23,9 @@ domain_name: haramco.site
 domain_admin_user: 'Administrator'
 domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=site'
 server_ou: 'ou=Servers,dc=haramco,dc=site'
-account_ou: 'ou=Corporate Accounts,ou=haramco,ou=site'
-user_ou: 'ou=Users,ou=Corporate Accounts,ou=haramco,ou=site'
-group_ou: 'ou=Groups,ou=Corporate Accounts,ou=haramco,ou=site'
+account_ou: 'ou="Corporate Accounts",ou=haramco,ou=site'
+user_ou: 'ou=Users,ou="Corporate Accounts",ou=haramco,ou=site'
+group_ou: 'ou=Groups,ou="Corporate Accounts",ou=haramco,ou=site'
 workstation_ou: 'ou=Workstations,dc=haramco,dc=site'
 
 ### CDROM PATHS ###
