@@ -1,0 +1,18 @@
+# Playbook to configure the needed Active Directory structure
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/30/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Configure domain structure
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create Servers OU
+      ldap_entry:
+        dn: "{{ server_ou }}"
+        objectClass: organizationalUnit
+        bind_dn: "{{ domain_admin_dn }}"
+        bind_pw: "{{ domain_admin_password }}"

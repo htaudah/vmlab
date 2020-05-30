@@ -19,6 +19,16 @@
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
       register: drive_output
 
+    - name: Join server to domain
+      win_domain_membership:
+        dns_domain_name: "{{ domain_name }}"
+        domain_admin_user: "{{ domain_admin_user }}"
+        domain_admin_password: "{{ domain_admin_password }}"
+        domain_ou_path: "{{ 
+
     - name: Install SQL Server from mounted ISO
-      debug:
-        msg: "Item is: {{ drive_output }}"
+      win_shell: |
+        D:\setup.exe /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install"
+        /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
+        /SQLSYSADMINACCOUNTS="Administrator,Haramco\Administrator"
+        /SQLCOLLATION="Latin1_General_CI_AS" /qs
