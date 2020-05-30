@@ -9,24 +9,18 @@
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    organizational_units:
+      - "{{ server_ou }}"
+      - "{{ account_ou }}"
+      - "{{ workstation_ou }}"
+      - "{{ user_ou }}"
+      - "{{ group_ou }}"
   tasks:
-    - name: Create Servers OU
+    - name: Create Domain OUs
       ldap_entry:
-        dn: "{{ server_ou }}"
+        dn: "{{ item }}"
         objectClass: organizationalUnit
         bind_dn: "{{ domain_admin_dn }}"
         bind_pw: "{{ domain_admin_password }}"
-
-    - name: Create Corporate Accounts OU
-      ldap_entry:
-        dn: "{{ server_ou }}"
-        objectClass: organizationalUnit
-        bind_dn: "{{ domain_admin_dn }}"
-        bind_pw: "{{ domain_admin_password }}"
-
-    - name: Create Workstation OU
-      ldap_entry:
-        dn: "{{ workstation_ou }}"
-        objectClass: organizationalUnit
-        bind_dn: "{{ domain_admin_dn }}"
-        bind_pw: "{{ domain_admin_password }}"
+      loop: "{{ organizational_units }}"
