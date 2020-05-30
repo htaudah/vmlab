@@ -26,6 +26,7 @@ server_ou: 'ou=Servers,dc=haramco,dc=site'
 account_ou: 'ou=Corporate Accounts,ou=haramco,ou=site'
 user_ou: 'ou=Users,ou=Corporate Accounts,ou=haramco,ou=site'
 group_ou: 'ou=Groups,ou=Corporate Accounts,ou=haramco,ou=site'
+workstation_ou: 'ou=Workstations,dc=haramco,dc=site'
 
 ### CDROM PATHS ###
 # If iso files are in a content library, look for their corresponding datastore path
