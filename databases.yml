@@ -24,11 +24,11 @@
         dns_domain_name: "{{ domain_name }}"
         domain_admin_user: "{{ domain_admin_user }}"
         domain_admin_password: "{{ domain_admin_password }}"
-        domain_ou_path: "{{ 
+        domain_ou_path: "{{ server_ou }}"
 
-    - name: Install SQL Server from mounted ISO
-      win_shell: |
-        D:\setup.exe /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install"
-        /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
-        /SQLSYSADMINACCOUNTS="Administrator,Haramco\Administrator"
-        /SQLCOLLATION="Latin1_General_CI_AS" /qs
+    #- name: Install SQL Server from mounted ISO
+      #win_shell: |
+        #D:\setup.exe /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install"
+        #/FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
+        #/SQLSYSADMINACCOUNTS="Administrator,Haramco\Administrator"
+        #/SQLCOLLATION="Latin1_General_CI_AS" /qs

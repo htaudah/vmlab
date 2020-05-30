@@ -21,6 +21,7 @@
       ldap_entry:
         dn: "{{ item }}"
         objectClass: organizationalUnit
+        server_uri: "ldap://{{ domain_name }}/"
         bind_dn: "{{ domain_admin_dn }}"
         bind_pw: "{{ domain_admin_password }}"
       loop: "{{ organizational_units }}"
