@@ -25,6 +25,12 @@
         domain_admin_user: "{{ domain_admin_user }}@{{ domain_name }}"
         domain_admin_password: "{{ domain_admin_password }}"
         domain_ou_path: "{{ server_ou }}"
+        state: domain
+      register: join_domain
+
+    - name: Reboot server when joining domain
+      win_reboot:
+      when: join_domain.reboot_required
 
     #- name: Install SQL Server from mounted ISO
       #win_shell: |
