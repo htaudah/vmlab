@@ -32,9 +32,20 @@
       win_reboot:
       when: join_domain.reboot_required
 
-    #- name: Install SQL Server from mounted ISO
-      #win_shell: |
-        #D:\setup.exe /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install"
-        #/FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
-        #/SQLSYSADMINACCOUNTS="Administrator,Haramco\Administrator"
-        #/SQLCOLLATION="Latin1_General_CI_AS" /qs
+    - name: Install SQL Server from mounted ISO
+      win_package:
+        path: D:\setup.exe
+        product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
+        arguments: >
+          /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
+          /SQLSYSADMINACCOUNTS="Haramco\Administrator" /SQLCOLLATION="Latin1_General_CI_AS" /qs
+        state: present
+
+    # The uninstall command is included for your reference only
+    #- name: Uninstall SQL Server from mounted ISO
+      #win_package:
+        #path: D:\setup.exe
+        #product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
+        #arguments: >
+          #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
+        #state: absent
