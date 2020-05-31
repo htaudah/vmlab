@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------------------------------
 orgname: Haramco
 template_win_2019: 'haudah-windows-server-template'
+template_centos_8: 'haudah-centos-8-template'
 workload_folder: /Workloads/haudah
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
