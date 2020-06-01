@@ -1,0 +1,32 @@
+# Playbook to configure a machine for certificate generation and use it to generate all the
+# needed environment SSL certificates. certbot is used for the entire process, with DNS
+# as the validation mechanism. This means that (i) Let's Encrypt is used as the CA and
+# (ii) that DNS validation is used.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/01/2020
+# -------------------------------------------------------------------------------------------------
+- host: haudah-certbot
+  name: Create certbot server, generate necessary certificates, and distribute them
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+    create_certs:
+      - uemc
+      - uds
+      - mail
+  tasks:
+    - name: Install certbot
+      dnf:
+        name: certbot
+        state: present
+
+    - name: Check if certificates are valid
+      openssl_certificate_info:
+        path: "/var/lib/letsencrypt/live/{{ item }}{{ domain_name }}/fullchain.pem"
+      loop: "{{ create_certs }}"
+
+    #- name: Run certificate generation command
