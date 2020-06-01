@@ -29,6 +29,7 @@
         path: "/var/lib/letsencrypt/live/{{ item }}{{ domain_name }}/fullchain.pem"
       loop: "{{ create_certs }}"
       register: cert_status
+      ignore_errors: yes
 
     - name: Run certificate generation command
       debug:
