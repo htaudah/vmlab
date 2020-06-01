@@ -5,7 +5,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/01/2020
 # -------------------------------------------------------------------------------------------------
-- host: haudah-certbot
+- hosts: haudah-certbot
   name: Create certbot server, generate necessary certificates, and distribute them
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
