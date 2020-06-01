@@ -34,4 +34,4 @@
     - name: Run certificate generation command
       debug:
         msg: "hey there {{ item }}"
-      loop: cert_status.results
+      loop: "{{ cert_status.results }}"
