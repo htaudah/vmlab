@@ -49,7 +49,7 @@
     # Certificate renewal is safe, as it will only renew certificates close to expiry
     - name: Run certbot certificate renewal command
       shell: certbot renew
-- hosts: "{{ certificates | map(attribute='destination_host' | list }}"
+- hosts: "{{ certificates | map(attribute='destination_host') | list }}"
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
