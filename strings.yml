@@ -20,7 +20,7 @@ secondary_dns_server: '192.168.77.51'
 fallback_dns_server: '10.20.12.12'
 
 ### ACTIVE DIRECTORY ###
-domain_name: haramco.site
+domain_name: haramco.org
 domain_admin_user: 'Administrator'
 domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=site'
 server_ou: 'ou=Servers,dc=haramco,dc=site'

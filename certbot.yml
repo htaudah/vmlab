@@ -55,7 +55,8 @@
 
     - name: Run certbot command for certificates that were not created
       debug:
-        msg: "Hey there {{ item }}"
+        msg: "Hey there {{ item.item }}"
+      when: not item.stat.exists
       loop: "{{ cert_exists.results }}"
 
     # Certificate renewal can be run as needed, as it will only renew certificates close to expiry
