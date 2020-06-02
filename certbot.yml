@@ -15,9 +15,11 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
     create_certs:
-      - uemc
-      - uds
-      - mail
+      - subject: uemc
+        dest_host: haudah-lb01
+        dest_path
+      - subject: uds
+      - subject: mail
   tasks:
     - name: Install certbot
       dnf:
@@ -59,6 +61,10 @@
       when: not item.stat.exists
       loop: "{{ cert_exists.results }}"
 
-    # Certificate renewal can be run as needed, as it will only renew certificates close to expiry
+    # Certificate renewal is safe, as it will only renew certificates close to expiry
     - name: Run certbot certificate renewal command
       shell: certbot renew
+
+    # The copy module will only copy if the checksum is different from destination
+    - name: Copy all certificates to intended destinations
+      copy:

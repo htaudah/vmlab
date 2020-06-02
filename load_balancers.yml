@@ -1,0 +1,42 @@
+# Playbook to configure HAProxy load balancers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/02/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: haudah-certbot
+  name: Create and configure the HAProxy load balancer
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+        zone: public
+
+    - firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        zone: public
+
+    - firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+        zone: public
+
+    - name: Install HAProxy
+      dnf:
+        name: haproxy
+        state: present
+
+    - name: Start and enable the haproxy service
+      systemd:
+        name: haproxy
+        stated: started
+        enabled: yes
