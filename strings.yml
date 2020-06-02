@@ -39,3 +39,12 @@ iso_paths:
 
 # AWS Access for Route53 (needed for automated certificate creation)
 route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
+
+# Certificates to be generated and deployed
+certificates:
+  - subject: uemc
+    destination_host: haudah-lb01
+    destination_path: /var/lib/haproxy/
+  - subject: uds
+    destination_host: haudah-lb01
+    destination_path: /var/lib/haproxy/

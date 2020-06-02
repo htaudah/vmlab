@@ -14,12 +14,6 @@
   vars:
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
-    create_certs:
-      - subject: uemc
-        dest_host: haudah-lb01
-        dest_path
-      - subject: uds
-      - subject: mail
   tasks:
     - name: Install certbot
       dnf:
@@ -42,18 +36,9 @@
 
     - name: Check if certificate files exist
       stat:
-        path: "/etc/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
-      loop: "{{ create_certs }}"
+        path: "/etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem"
+      loop: "{{ certificates }}"
       register: cert_exists
-
-    #- name: Check if certificates are valid
-      #openssl_certificate_info:
-        #path: "/var/lib/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
-        #valid_at:
-          #next_week: "+1w"
-      #loop: "{{ create_certs }}"
-      #register: cert_status
-      #ignore_errors: yes
 
     - name: Run certbot command for certificates that were not created
       debug:
@@ -64,7 +49,11 @@
     # Certificate renewal is safe, as it will only renew certificates close to expiry
     - name: Run certbot certificate renewal command
       shell: certbot renew
-
-    # The copy module will only copy if the checksum is different from destination
-    - name: Copy all certificates to intended destinations
-      copy:
+- hosts: "{{ certificates.destination_host }}"
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - debug:
+        msg: "hey there"
