@@ -24,6 +24,10 @@
         name: certbot
         state: present
 
+    - name: Install Route 53 python package
+      pip:
+        name: certbot_dns_route53
+
     - name: Ensure AWS config directory exists
       file:
         path: /root/.aws
@@ -34,15 +38,26 @@
         src: configurations/aws_config
         dest: /root/.aws/config
 
-    - name: Check if certificates are valid
-      openssl_certificate_info:
-        path: "/var/lib/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
-        valid_at:
-          next_week: "+1w"
+    - name: Check if certificate files exist
+      stat:
+        path: "/etc/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
       loop: "{{ create_certs }}"
-      register: cert_status
-      ignore_errors: yes
+      register: cert_exists
 
-    #- name: Run certificate generation command
-      #when: (not cert_status.valid_at is defined) or (not cert_status.valid_at.next_week)
-      #loop: "{{ cert_status.results }}"
+    #- name: Check if certificates are valid
+      #openssl_certificate_info:
+        #path: "/var/lib/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
+        #valid_at:
+          #next_week: "+1w"
+      #loop: "{{ create_certs }}"
+      #register: cert_status
+      #ignore_errors: yes
+
+    - name: Run certbot command for certificates that were not created
+      debug:
+        msg: "Hey there {{ item }}"
+      loop: "{{ cert_exists.results }}"
+
+    # Certificate renewal can be run as needed, as it will only renew certificates close to expiry
+    - name: Run certbot certificate renewal command
+      shell: certbot renew
