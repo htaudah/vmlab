@@ -24,17 +24,20 @@
         name: certbot
         state: present
 
+    - name: Transfer AWS access config
+      template:
+        src: configurations/aws_config
+        dest: /root/.aws/config
+
     - name: Check if certificates are valid
       openssl_certificate_info:
-        path: "/var/lib/letsencrypt/live/{{ item }}{{ domain_name }}/fullchain.pem"
+        path: "/var/lib/letsencrypt/live/{{ item }}.{{ domain_name }}/fullchain.pem"
         valid_at:
           next_week: "+1w"
       loop: "{{ create_certs }}"
       register: cert_status
       ignore_errors: yes
 
-    - name: Run certificate generation command
-      debug:
-        msg: "hey there {{ item.name }}"
-      when: not cert_status.valid_at.next_week
-      loop: "{{ cert_status.results }}"
+    #- name: Run certificate generation command
+      #when: (not cert_status.valid_at is defined) or (not cert_status.valid_at.next_week)
+      #loop: "{{ cert_status.results }}"

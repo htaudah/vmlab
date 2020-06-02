@@ -36,3 +36,6 @@ iso_paths:
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   centos_8: '[contentLib] /SHARED_LIBRARY/'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
+
+# AWS Access for Route53 (needed for automated certificate creation)
+route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
