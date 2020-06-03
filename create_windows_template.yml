@@ -1,11 +1,11 @@
-# Playbook to create all the needed OS templates. For simplicity, you can oversize hardware
+# Playbook to create Windows OS template. For simplicity, you can oversize hardware
 # requirements to ensure a single template can be used for all applications.
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/27/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: localhost
   connection: local
-  name: Create Operating System Templates
+  name: Create Windows operating system templates
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -84,6 +84,3 @@
         password: "{{ vcenter_password }}"
         name: "{{ template_win_2019 }}"
         state: poweredon
-
-    #- name: Create Linux virtual machines
-      #vmware_guest

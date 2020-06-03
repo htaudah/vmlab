@@ -1,0 +1,99 @@
+# Playbook to create Linux OS template. For simplicity, you can oversize hardware
+# requirements to ensure a single template can be used for all applications.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/02/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Create Linux operating system templates
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create Centos 8 Template
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ template_win_2019 }}"
+        state: present
+        guest_id: centos8_64Guest
+        hardware:
+          memory_mb: 8192
+          num_cpus: 2
+          num_cpu_cores_per_socket: 1
+          version: 14
+          scsi: lsilogicsas
+          boot_firmware: efi
+        disk:
+          - size_gb: 100
+            type: thin
+            datastore: "{{ workload_datastore }}"
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_paths['centos_8'] }}"
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 1
+            type: iso
+            iso_path: "{{ iso_paths['bootstrap'] }}"
+        customization:
+          timezone: "Asia/Riyadh"
+          password: "{{ linux_local_password }}"
+          orgname: "{{ orgname }}"
+        networks:
+          - name: "{{ network_name }}"
+            type: dhcp
+        resource_pool: "{{ resource_pool }}"
+      register: create_centos_8_template
+
+    - name: Change boot order to cdrom
+      vmware_guest_boot_manager:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_centos_8 }}"
+        boot_order:
+          - cdrom
+          - disk
+          - ethernet
+      register: linux_boot_order
+
+    - name: Add USB 3.1 controller
+      vmware_guest_controller:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ template_centos_8 }}"
+        controllers:
+          - state: present
+            type: usb3
+
+    - name: Power on Linux template after configuration complete
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_centos_8 }}"
+        state: poweredon
+
+- hosts: "{{ template_centos_8 }}"
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - name: Wait for installation to complete
+      wait_for_connection:
+        # Wait 15 minutes for installation to complete
+        timeout: 900
