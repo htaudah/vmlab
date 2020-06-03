@@ -34,7 +34,7 @@ workstation_ou: 'ou=Workstations,dc=haramco,dc=site'
 iso_paths:
   sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
-  centos_8: '[contentLib] /SHARED_LIBRARY/'
+  centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
 
 # AWS Access for Route53 (needed for automated certificate creation)
