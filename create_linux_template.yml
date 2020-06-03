@@ -18,7 +18,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ template_win_2019 }}"
+        name: "{{ template_centos_8 }}"
         state: present
         guest_id: centos8_64Guest
         hardware:
@@ -54,7 +54,7 @@
       register: create_centos_8_template
 
     - name: Change boot order to cdrom
-      vmware_guest_boot_manager:
+      community.vmware.vmware_guest_boot_manager:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
@@ -66,7 +66,7 @@
       register: linux_boot_order
 
     - name: Add USB 3.1 controller
-      vmware_guest_controller:
+      community.vmware.vmware_guest_controller:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
