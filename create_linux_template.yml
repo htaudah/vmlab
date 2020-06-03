@@ -53,18 +53,6 @@
         resource_pool: "{{ resource_pool }}"
       register: create_centos_8_template
 
-    - name: Change boot order to cdrom
-      community.vmware.vmware_guest_boot_manager:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_centos_8 }}"
-        boot_order:
-          - cdrom
-          - disk
-          - ethernet
-      register: linux_boot_order
-
     - name: Add USB 3.1 controller
       community.vmware.vmware_guest_controller:
         hostname: "{{ vcenter_hostname }}"
@@ -83,17 +71,19 @@
         password: "{{ vcenter_password }}"
         name: "{{ template_centos_8 }}"
         state: poweredon
+        wait_for_ip_address: yes
+        # Wait 15 minutes for template to be prepared
+        wait_for_ip_address_timeout: 900
 
-- hosts: "{{ template_centos_8 }}"
-  vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
-    - "{{ playbook_dir }}/strings.yml"
-    - "{{ playbook_dir }}/customizations.yml"
-  vars:
-    ansible_user: root
-    ansible_password: "{{ linux_local_password }}"
-  tasks:
-    - name: Wait for installation to complete
-      wait_for_connection:
-        # Wait 15 minutes for installation to complete
-        timeout: 900
+    - name: Remove second CD drive and unmount installation disc
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_centos_8 }}"
+        state: present
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: client
