@@ -75,6 +75,16 @@
         # Wait 15 minutes for template to be prepared
         wait_for_ip_address_timeout: 900
 
+    - name: Shut down Linux template OS after its prepared
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_centos_8 }}"
+        state: shutdownguest
+        # Wait 2 minutes for shutdown to complete
+        state_change_timeout: 120
+
     - name: Remove second CD drive and unmount installation disc
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
@@ -82,8 +92,13 @@
         password: "{{ vcenter_password }}"
         name: "{{ template_centos_8 }}"
         state: present
+        is_template: yes
         cdrom:
           - controller_type: sata
             controller_number: 0
             unit_number: 0
             type: client
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 1
+            state: absent
