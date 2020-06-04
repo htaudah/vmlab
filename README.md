@@ -12,12 +12,9 @@ two options for including these bootstrap files during installation:
 (ii) Creating a separate ISO with the bootstrap file and mounting it as a second disc
 
 Option (i) allows us to make other useful customizations to the installer ISO that will make the
-installation process even more automation-friendly, and that is the approach assumed in the
-template creation playbooks. Preparing these modified ISOs would be most convenient on a Linux
-machine that has a browser that can upload the ISOs back into the vSphere console. The
-remaster script can be run from the bootstrap directory as follows:
+installation process even more automation-friendly, but the process is tedious and not worth the
+added effort. The playbooks therefore assume a bootstrap.iso file exists in a specified datastore
+and will take care of mounting it before booting the installation ISO. To create the bootstrap.iso
+file, simply run the following command from the repository root directory:
 
-> Windows:
-`mkisofs -l -o /tmp/bootstrap.iso ./bootstrap/`
-> Linux:
 `mkisofs -l -o /tmp/bootstrap.iso ./bootstrap/`
