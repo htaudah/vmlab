@@ -1,8 +1,8 @@
-# Playbook to configure all SQL Servers
+# Playbook to configure all Exchange 2019 mail servers
 # Written by: Hani Audah <ht.aramco@gmail.com>
-# Created on: May/29/2020
+# Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
-- hosts: databases
+- hosts: mail_servers
   name: Configure SQL Servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
@@ -28,24 +28,15 @@
       win_reboot:
       when: join_domain.reboot_required
 
-    - name: Get SQL Server installation disc drive letter
+    - name: Get Exchange 2019 installation disc drive letter
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
       register: drive_output
 
-    - name: Install SQL Server from mounted ISO
+    - name: Install Exchange 2019 from mounted ISO
       win_package:
-        path: D:\setup.exe
+        path: "{{ drive_output }}\setup.exe"
         product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
         arguments: >
           /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
           /SQLSYSADMINACCOUNTS="Haramco\Administrator" /SQLCOLLATION="Latin1_General_CI_AS" /qs
         state: present
-
-    # The uninstall command is included for your reference only
-    #- name: Uninstall SQL Server from mounted ISO
-      #win_package:
-        #path: D:\setup.exe
-        #product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
-        #arguments: >
-          #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
-        #state: absent

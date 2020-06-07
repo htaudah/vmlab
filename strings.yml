@@ -24,6 +24,7 @@ domain_name: haramco.org
 domain_admin_user: 'Administrator'
 domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=site'
 server_ou: 'ou=Servers,dc=haramco,dc=site'
+exchange_ou: 'ou=Exchange,ou=Servers,dc=haramco,dc=site'
 account_ou: 'ou=Corporate Accounts,dc=haramco,dc=site'
 user_ou: 'ou=Users,ou=Corporate Accounts,dc=haramco,dc=site'
 group_ou: 'ou=Groups,ou=Corporate Accounts,dc=haramco,dc=site'
@@ -32,6 +33,7 @@ workstation_ou: 'ou=Workstations,dc=haramco,dc=site'
 ### CDROM PATHS ###
 # If iso files are in a content library, look for their corresponding datastore path
 iso_paths:
+  exchange_2019: '[WorkloadDatastore] /haudah-temp/en_exchange_server_2019.iso'
   sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'

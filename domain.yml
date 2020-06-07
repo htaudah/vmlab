@@ -12,6 +12,7 @@
   vars:
     organizational_units:
       - "{{ server_ou }}"
+      - "{{ exchange_ou }}"
       - "{{ account_ou }}"
       - "{{ workstation_ou }}"
       - "{{ user_ou }}"
