@@ -50,3 +50,6 @@ certificates:
   - subject: uds
     destination_host: haudah-lb01
     destination_path: /var/lib/haproxy/
+  - subject: mail
+    destination_host: haudah-lb01
+    destination_path: /var/lib/haproxy/

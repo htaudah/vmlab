@@ -41,19 +41,33 @@
       register: cert_exists
 
     - name: Run certbot command for certificates that were not created
-      debug:
-        msg: "Hey there {{ item.item }}"
+      shell: certbot certonly --preferred-challenges=dns -d mail.haramco.org --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
       when: not item.stat.exists
       loop: "{{ cert_exists.results }}"
 
     # Certificate renewal is safe, as it will only renew certificates close to expiry
     - name: Run certbot certificate renewal command
       shell: certbot renew
+
+    - name: Copy certificates to control node
+      fetch:
+        src: "{{ item }}"
+        dest: /var/certs/
+      with_fileglob:
+        - /etc/letsencrypt/live/*
+
 - hosts: "{{ certificates | map(attribute='destination_host') | list }}"
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
   tasks:
-    - debug:
-        msg: "hey there"
+    - name: Copy certificates to intended destination
+      copy:
+        src: "/var/certs/{{ item.subject }}.{{ domain_name }}"
+        dest: /var/lib/haproxy
+      when: "{{ inventory_hostname == item.destination_host }}"
+      loop: "{{ certificates }}"

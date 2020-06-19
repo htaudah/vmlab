@@ -1,0 +1,25 @@
+# Playbook to configure the DNS Server with all needed DNS records
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/16/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: "{{ groups['domain_controllers'] | random }}"
+  connection: local
+  name: Configure domain name server
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Workspace ONE Console
+      win_dns_record:
+        name: "uemc"
+        type: "A"
+        value: "{{ hostvars['haudah-uemc01']['ansible_host'] }}"
+      win_dns_record:
+        name: "uds"
+        type: "A"
+        value: "{{ hostvars['haudah-uds01']['ansible_host'] }}"
+      win_dns_record:
+        name: "uds"
+        type: "A"
+        value: "{{ hostvars['haudah-uds01']['ansible_host'] }}"

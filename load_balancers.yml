@@ -35,6 +35,11 @@
         name: haproxy
         state: present
 
+    - name: Transfer HAProxy config
+      template:
+        src: configurations/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
+
     - name: Start and enable the haproxy service
       systemd:
         name: haproxy
