@@ -41,7 +41,9 @@
       register: cert_exists
 
     - name: Run certbot command for certificates that were not created
-      shell: certbot certonly --preferred-challenges=dns -d mail.haramco.org --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
+      #shell: certbot certonly --preferred-challenges=dns -d mail.haramco.org --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
+      debug:
+        msg: "{{ item }}"
       when: not item.stat.exists
       loop: "{{ cert_exists.results }}"
 
