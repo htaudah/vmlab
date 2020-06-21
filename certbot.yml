@@ -45,6 +45,11 @@
       shell: certbot certonly --preferred-challenges=dns -d {{ item.subject }}.{{ domain_name }} --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
       loop: "{{ certificates }}"
 
+    - name: Create control node certificate directory
+      file:
+        path: /var/certs
+        state: directory
+
     - name: Copy certificates to control node
       fetch:
         src: "{{ item }}"
