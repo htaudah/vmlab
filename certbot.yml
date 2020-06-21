@@ -40,16 +40,10 @@
       loop: "{{ certificates }}"
       register: cert_exists
 
+    # Certificate generation command will do nothing if certificate is not up for renewal
     - name: Run certbot command for certificates that were not created
-      #shell: certbot certonly --preferred-challenges=dns -d mail.haramco.org --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
-      debug:
-        msg: "{{ item }}"
-      when: not item.stat.exists
-      loop: "{{ cert_exists.results }}"
-
-    # Certificate renewal is safe, as it will only renew certificates close to expiry
-    - name: Run certbot certificate renewal command
-      shell: certbot renew
+      shell: certbot certonly --preferred-challenges=dns -d {{ item.subject }}.{{ domain_name }} --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
+      loop: "{{ certificates }}"
 
     - name: Copy certificates to control node
       fetch:
