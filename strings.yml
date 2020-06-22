@@ -22,13 +22,13 @@ fallback_dns_server: '10.20.12.12'
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
 domain_admin_user: 'Administrator'
-domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=site'
-server_ou: 'ou=Servers,dc=haramco,dc=site'
-exchange_ou: 'ou=Exchange,ou=Servers,dc=haramco,dc=site'
-account_ou: 'ou=Corporate Accounts,dc=haramco,dc=site'
-user_ou: 'ou=Users,ou=Corporate Accounts,dc=haramco,dc=site'
-group_ou: 'ou=Groups,ou=Corporate Accounts,dc=haramco,dc=site'
-workstation_ou: 'ou=Workstations,dc=haramco,dc=site'
+domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=org'
+server_ou: 'ou=Servers,dc=haramco,dc=org'
+exchange_ou: 'ou=Exchange,ou=Servers,dc=haramco,dc=org'
+account_ou: 'ou=Corporate Accounts,dc=haramco,dc=org'
+user_ou: 'ou=Users,ou=Corporate Accounts,dc=haramco,dc=org'
+group_ou: 'ou=Groups,ou=Corporate Accounts,dc=haramco,dc=org'
+workstation_ou: 'ou=Workstations,dc=haramco,dc=org'
 
 ### CDROM PATHS ###
 # If iso files are in a content library, look for their corresponding datastore path

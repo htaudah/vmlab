@@ -8,7 +8,8 @@
     dns_domain_name: "{{ domain_name }}"
     domain_admin_user: "{{ domain_admin_user }}@{{ domain_name }}"
     domain_admin_password: "{{ domain_admin_password }}"
-    domain_ou_path: "{{ server_ou }}"
+    # machine_ou should be set in the importing playbook
+    domain_ou_path: "{{ machine_ou }}"
     state: domain
     register: join_domain
 

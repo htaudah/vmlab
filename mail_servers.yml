@@ -3,7 +3,7 @@
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: mail_servers
-  name: Configure SQL Servers
+  name: Configure Exchange Servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
