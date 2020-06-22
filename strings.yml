@@ -46,10 +46,10 @@ route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
 certificates:
   - subject: uemc
     destination_host: haudah-lb01
-    destination_path: /var/lib/haproxy/
+    destination_path: /var/lib/haproxy
   - subject: uds
     destination_host: haudah-lb01
-    destination_path: /var/lib/haproxy/
+    destination_path: /var/lib/haproxy
   - subject: mail
     destination_host: haudah-lb01
-    destination_path: /var/lib/haproxy/
+    destination_path: /var/lib/haproxy

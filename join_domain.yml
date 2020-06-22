@@ -1,0 +1,17 @@
+# Tasklist to join a server to the domain. Import this tasklist to a playbook at the point you'd
+# like the server to be joined.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/22/2020
+# -------------------------------------------------------------------------------------------------
+- name: Join server to domain
+  win_domain_membership:
+    dns_domain_name: "{{ domain_name }}"
+    domain_admin_user: "{{ domain_admin_user }}@{{ domain_name }}"
+    domain_admin_password: "{{ domain_admin_password }}"
+    domain_ou_path: "{{ server_ou }}"
+    state: domain
+    register: join_domain
+
+- name: Reboot server when joining domain
+  win_reboot:
+    when: join_domain.reboot_required

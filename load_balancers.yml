@@ -48,6 +48,7 @@
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
         cat ${CERTPATH}/fullchain.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/privkey.pem >> ${CERTPATH}/merged.pem
       when: inventory_hostname == item.destination_host
+      ignore_errors: yes
       loop: "{{ certificates }}"
 
     - name: Start and enable the haproxy service
