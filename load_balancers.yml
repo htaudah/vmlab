@@ -41,13 +41,17 @@
         dest: /etc/haproxy/haproxy.cfg
 
     - name: Create merged certificate private key files
-      debug:
-        msg: "{{ item }}"
-      with_fileglob:
-        - /var/lib/haproxy/*
+      shell: |
+        # Where we expect all the cert files to reside
+        CERTPATH={{ item.destination_path }}/{{ item.subject }}.{{ domain_name }}
+        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/fullchain.pem ] &&
+        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
+        cat ${CERTPATH}/fullchain.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/privkey.pem >> ${CERTPATH}/merged.pem
+      when: inventory_hostname == item.destination_host
+      loop: "{{ certificates }}"
 
     - name: Start and enable the haproxy service
       systemd:
         name: haproxy
-        stated: started
+        state: restarted
         enabled: yes
