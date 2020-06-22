@@ -40,6 +40,12 @@
         src: configurations/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
 
+    - name: Create merged certificate private key files
+      debug:
+        msg: "{{ item }}"
+      with_fileglob:
+        - /var/lib/haproxy/*
+
     - name: Start and enable the haproxy service
       systemd:
         name: haproxy
