@@ -16,6 +16,8 @@
     ansible_port: 5985
   tasks:
     - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ exchange_ou }}"
 
     - name: Install RSAT tools to allow for PrepareAD
       win_feature:
@@ -43,7 +45,7 @@
       args:
         chdir: "{{ drive_output }}"
         executable: cmd
-      when: schema_extended.stdout -eq 'Schema Extended'
+      when: schema_extended.stdout != 'Schema Extended'
 
     #- name: Install Exchange 2019 from mounted ISO
       #win_package:
