@@ -5,6 +5,20 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/01/2020
 # -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Create certificate directories on control node
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create certificate directories
+      file:
+        path: /var/certs/{{ item.subject }}.{{ domain_name }}
+        state: directory
+      loop: "{{ certificates }}"
+
 - hosts: haudah-certbot
   name: Create certbot server, generate necessary certificates, and distribute them
   vars_files:
@@ -34,28 +48,22 @@
         src: configurations/aws_config
         dest: /root/.aws/config
 
-    - name: Check if certificate files exist
-      stat:
-        path: "/etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem"
-      loop: "{{ certificates }}"
-      register: cert_exists
-
     # Certificate generation command will do nothing if certificate is not up for renewal
     - name: Run certbot command for certificates that were not created
       shell: certbot certonly --preferred-challenges=dns -d {{ item.subject }}.{{ domain_name }} --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
       loop: "{{ certificates }}"
 
-    - name: Create control node certificate directory
-      file:
-        path: /var/certs
-        state: directory
-
     - name: Copy certificates to control node
       fetch:
-        src: "{{ item }}"
-        dest: /var/certs/
-      with_fileglob:
-        - /etc/letsencrypt/live/*
+        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem
+        dest: /var/certs/{{ item.subject}}.{{ domain_name }}
+      loop: "{{ certificates }}"
+
+    - name: Copy private keys to control node
+      fetch:
+        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem
+        dest: /var/certs/{{ item.subject}}.{{ domain_name }}
+      loop: "{{ certificates }}"
 
 - hosts: "{{ certificates | map(attribute='destination_host') | list }}"
   vars_files:
@@ -70,5 +78,5 @@
       copy:
         src: "/var/certs/{{ item.subject }}.{{ domain_name }}"
         dest: /var/lib/haproxy
-      when: "{{ inventory_hostname == item.destination_host }}"
+      when: inventory_hostname == item.destination_host
       loop: "{{ certificates }}"
