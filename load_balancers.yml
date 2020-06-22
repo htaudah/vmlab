@@ -2,7 +2,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/02/2020
 # -------------------------------------------------------------------------------------------------
-- hosts: haudah-certbot
+- hosts: haudah-lb01
   name: Create and configure the HAProxy load balancer
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"

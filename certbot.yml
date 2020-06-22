@@ -76,9 +76,14 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    - name: Make sure intended destinations exist
+      file:
+        path: "{{ item.destination_path }}"
+        state: directory
+
     - name: Copy certificates to intended destination
       copy:
         src: "/var/certs/{{ item.subject }}.{{ domain_name }}"
-        dest: /var/lib/haproxy
+        dest: "{{ item.destination_path }}"
       when: inventory_hostname == item.destination_host
       loop: "{{ certificates }}"

@@ -72,7 +72,7 @@
         state: poweredon
         guest_id: centos8_64Guest
         template: "{{ template_centos_8 }}"
-        customization: "{{ custom_win_2019_workgroup }}"
+        customization: "{{ custom_centos_8 }}"
         networks:
           - name: "{{ network_name }}"
             type: static
