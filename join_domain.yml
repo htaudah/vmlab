@@ -11,7 +11,7 @@
     # machine_ou should be set in the importing playbook
     domain_ou_path: "{{ machine_ou }}"
     state: domain
-    register: join_domain
+  register: join_domain
 
 - name: Reboot server when joining domain
   win_reboot:

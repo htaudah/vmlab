@@ -3,7 +3,7 @@
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: mail_servers
-  name: Configure Exchange Servers
+  name: Join Exchange Servers to Domain
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -19,6 +19,19 @@
       vars:
         machine_ou: "{{ exchange_ou }}"
 
+- hosts: mail_servers
+  name: Configure Exchange Servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
     - name: Install RSAT tools to allow for PrepareAD
       win_feature:
         name: RSAT-ADDS-Tools
