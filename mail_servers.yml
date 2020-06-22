@@ -17,9 +17,33 @@
   tasks:
     - include_tasks: join_domain.yml
 
+    - name: Install RSAT tools to allow for PrepareAD
+      win_feature:
+        name: RSAT-ADDS-Tools
+        state: present
+
+    - name: Install RSAT PowerShell module to check if schema was already extended
+      win_feature:
+        name: RSAT-AD-PowerShell
+        state: present
+
     - name: Get Exchange 2019 installation disc drive letter
-      win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
+      win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'EXCHANGESERVER2019-X64' } | % {$_.DeviceID}
       register: drive_output
+
+    - name: Check if Active Directory already prepared
+      win_shell: |
+        $schemaPath = (Get-ADRootDSE).schemaNamingContext
+        $match = Get-ADObject -Filter 'Name -eq "ms-Exch-Schema-Version-Pt"' -SearchBase $schemaPath -Properties lDAPDisplayName
+        if ($match -ne $null) { return "Schema Extended" }
+      register: schema_extended
+
+    - name: Get Exchange 2019 installation disc drive letter
+      win_shell: setup.exe /IAcceptExchangeServerLicenseTerms /PrepareAD /OrganizationName:{{ orgname }}
+      args:
+        chdir: "{{ drive_output }}"
+        executable: cmd
+      when: schema_extended.stdout -eq 'Schema Extended'
 
     #- name: Install Exchange 2019 from mounted ISO
       #win_package:

@@ -15,4 +15,4 @@
 
 - name: Reboot server when joining domain
   win_reboot:
-    when: join_domain.reboot_required
+  when: join_domain.reboot_required
