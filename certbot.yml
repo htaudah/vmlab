@@ -85,6 +85,8 @@
       file:
         path: "{{ item.destination_path }}"
         state: directory
+      when: inventory_hostname == item.destination_host
+      loop: "{{ certificates }}"
 
     - name: Copy certificates to intended destination
       copy:
