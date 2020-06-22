@@ -29,6 +29,11 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    - name: Add EPEL repository
+      dnf:
+        name: epel-release
+        state: present
+
     - name: Install certbot
       dnf:
         name: certbot
