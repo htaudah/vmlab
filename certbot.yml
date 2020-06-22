@@ -56,13 +56,15 @@
     - name: Copy certificates to control node
       fetch:
         src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem
-        dest: /var/certs/{{ item.subject}}.{{ domain_name }}
+        dest: /var/certs/{{ item.subject}}.{{ domain_name }}/
+        flat: yes
       loop: "{{ certificates }}"
 
     - name: Copy private keys to control node
       fetch:
-        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem
-        dest: /var/certs/{{ item.subject}}.{{ domain_name }}
+        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/privkey.pem
+        dest: /var/certs/{{ item.subject}}.{{ domain_name }}/
+        flat: yes
       loop: "{{ certificates }}"
 
 - hosts: "{{ certificates | map(attribute='destination_host') | list }}"
