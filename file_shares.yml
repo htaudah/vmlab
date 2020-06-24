@@ -54,6 +54,10 @@
     ansible_winrm_transport: ntlm
     ansible_port: 5985
   tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
     - name: Install DFS prerequisite features
       win_feature:
         name:
