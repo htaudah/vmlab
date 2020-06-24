@@ -17,10 +17,15 @@
     - include_tasks: join_domain.yml
       vars:
         machine_ou: "{{ server_ou }}"
+    - name: Create directories for file shares
+      file:
+        path: C:\shares\{{ item.path }}
+        state: directory
+      loop: "{{ win_shared_folders }}"
     - win_share:
         name: "{{ item.name }}"
         description: "{{ item.description }}"
         path: C:\shares\{{ item.path }}
         full: "{{ item.full }}"
-      when: item.cluster == 'no'
+      when: item.cluster
       loop: "{{ win_shared_folders }}"

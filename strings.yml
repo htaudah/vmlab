@@ -39,6 +39,7 @@ iso_paths:
   centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
 
+### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)
 route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
 
@@ -54,7 +55,7 @@ certificates:
     destination_host: haudah-lb01
     destination_path: /var/lib/haproxy
 
-# File shares for Windows and Linux
+### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared
 # Set cluster to yes to make the share a part of a DFS namespace
 win_shared_folders:
