@@ -60,6 +60,10 @@
         executable: cmd
       when: schema_extended.stdout != 'Schema Extended'
 
+    - name: Copy prerequisite installers
+      win_copy:
+        src: \\{{ groups['file_shares'] | random }}\
+
     #- name: Install Exchange 2019 from mounted ISO
       #win_package:
         #path: "{{ drive_output }}\setup.exe"
