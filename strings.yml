@@ -53,3 +53,23 @@ certificates:
   - subject: mail
     destination_host: haudah-lb01
     destination_path: /var/lib/haproxy
+
+# File shares for Windows and Linux
+# Set path to the subfolder of C:\shares that will be created and shared
+# Set cluster to yes to make the share a part of a DFS namespace
+win_shared_folders:
+  - name: internal
+    description: File share for administrator use only
+    cluster: no
+    path: internal
+    full: Administrators
+  - name: domain
+    description: File share for all domain users
+    cluster: no
+    path: domain
+    full: Administrators
+  - name: public
+    description: Publicly accessible file share
+    cluster: no
+    path: public
+    full: Administrators

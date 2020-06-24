@@ -3,6 +3,9 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/22/2020
 # -------------------------------------------------------------------------------------------------
+- name: Enable CredSSP before joining the domain
+  win_shell: Enable-WSManCredSSP -Role Server -Force
+
 - name: Join server to domain
   win_domain_membership:
     dns_domain_name: "{{ domain_name }}"

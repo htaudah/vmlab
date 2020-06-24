@@ -1,0 +1,26 @@
+# Playbook to create all CIFS, DFS, and NFS file shares needed in the environment
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/24/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: windows:&file_shares
+  name: Prepare Windows file share servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+    - win_share:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        path: C:\shares\{{ item.path }}
+        full: "{{ item.full }}"
+      when: item.cluster == 'no'
+      loop: "{{ win_shared_folders }}"

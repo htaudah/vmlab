@@ -53,7 +53,7 @@
         if ($match -ne $null) { return "Schema Extended" }
       register: schema_extended
 
-    - name: Get Exchange 2019 installation disc drive letter
+    - name: Run schema extension command
       win_shell: setup.exe /IAcceptExchangeServerLicenseTerms /PrepareAD /OrganizationName:{{ orgname }}
       args:
         chdir: "{{ drive_output }}"
