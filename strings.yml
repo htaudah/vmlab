@@ -60,7 +60,7 @@ certificates:
 # Set cluster to yes to make the share a part of a DFS namespace
 win_shared_folders:
   - name: internal
-    description: File share for administrator use only
+    description: File share for local administrator use only
     cluster: no
     path: internal
     full: Administrators
@@ -68,9 +68,13 @@ win_shared_folders:
     description: File share for all domain users
     cluster: no
     path: domain
-    full: Administrators
-  - name: public
-    description: Publicly accessible file share
-    cluster: no
-    path: public
-    full: Administrators
+    full: Domain Users@{{ domain_name }}
+
+# Provide a list of URLs to have some files automatically populated from the web
+share_downloads:
+  - url: 'https://download.microsoft.com/download/2/C/4/2C47A5C1-A1F3-4843-B9FE-84C0032C61EC/UcmaRuntimeSetup.exe'
+    description: Unified communications runtime needed for Exchange
+    share: domain
+  - url: 'https://www.microsoft.com/en-us/download/confirmation.aspx?id=40784&6B49FDFB-8E5B-4B07-BC31-15695C5A2143=1'
+    description: Visual C++ prerequisite for Exchange
+    share: domain

@@ -18,7 +18,7 @@
       vars:
         machine_ou: "{{ server_ou }}"
     - name: Create directories for file shares
-      file:
+      win_file:
         path: C:\shares\{{ item.path }}
         state: directory
       loop: "{{ win_shared_folders }}"
@@ -27,5 +27,12 @@
         description: "{{ item.description }}"
         path: C:\shares\{{ item.path }}
         full: "{{ item.full }}"
-      when: item.cluster
+      when: not item.cluster
       loop: "{{ win_shared_folders }}"
+    - name: Populate shares with web files
+      win_get_url:
+        url: "{{ item[0].url }}"
+        dest: C:\shares\{{ item[1].path }}
+      when: item[0].share == item[1].name
+      # perform Cartesian product then filter out invalid pairs
+      loop: "{{ share_downloads | product(win_shared_folders) | list }}"
