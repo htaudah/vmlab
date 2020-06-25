@@ -92,6 +92,8 @@
         Ensure: Present
         Type: DomainV2
         Description: AD Domain based DFS namespace for all shares
+        PsDscRunAsCredential_username: "Haramco\Administrator"
+        PsDscRunAsCredential_password: "{{ win_domain_password }}"
 
     - name: Create DFS folders
       win_dsc:
