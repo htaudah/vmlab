@@ -88,19 +88,21 @@
       win_dsc:
         resource_name: DFSNamespaceRoot
         Path: \\{{ domain_name }}\Shares
-        TargetPath: \\{{ inventory_hostname }}\Shares
+        TargetPath: \\{{ inventory_hostname }}.{{ domain_name }}\Shares
         Ensure: Present
         Type: DomainV2
         Description: AD Domain based DFS namespace for all shares
-        PsDscRunAsCredential_username: "Haramco\Administrator"
-        PsDscRunAsCredential_password: "{{ win_domain_password }}"
+        PsDscRunAsCredential_username: "Haramco\\Administrator"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
     - name: Create DFS folders
       win_dsc:
-        resource_name: DFSNamespaceRoot
+        resource_name: DFSNamespaceFolder
         Path: \\{{ domain_name }}\Shares\{{ item[0].name }}
         # Each folder has targets pointing to all file share servers
         TargetPath: \\{{ hostvars[item[1]]['computer_name'] }}\{{ item[0].name }}
         Ensure: Present
-      when: item.cluster
-      loop: "{{ win_shared_folders | product(groups['file_shares'] | list }}"
+        PsDscRunAsCredential_username: "Haramco\\Administrator"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      when: item[0].cluster
+      loop: "{{ win_shared_folders | product(groups['file_shares']) | list }}"

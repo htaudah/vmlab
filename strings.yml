@@ -61,7 +61,7 @@ certificates:
 win_shared_folders:
   - name: internal
     description: File share for local administrator use only
-    cluster: no
+    cluster: yes
     path: internal
     full: Administrators
   - name: domain
