@@ -138,5 +138,7 @@
         GroupName: Shares
         FolderName: "{{ item[0].name }}"
         ComputerName: "{{ hostvars[item[1]]['computer_name'] }}"
-        ContentPath: "C:\\shares\\{{ item[0].path }}"
+        ContentPath: C:\shares\{{ item[0].path }}
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | product(groups['file_shares']) | list }}"
