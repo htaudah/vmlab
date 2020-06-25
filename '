@@ -71,24 +71,10 @@
         name: DFSDsc
         state: present
 
-    - name: Create directory for namespace root
-      win_file:
-        path: C:\DFSRoots\Shares
-        state: directory
-
-    - name: Create share for namespace root
-      win_share:
-        name: Shares
-        description: DFS namespace root for all domain DFS shares
-        path: C:\DFSRoots\Shares
-        full: Administrator
-        read: Domain Users@{{ domain_name }}
-
     - name: Create DFS namespace
       win_dsc:
         resource_name: DFSNamespaceRoot
         Path: \\{{ domain_name }}\Shares
-        TargetPath: \\{{ inventory_hostname }}\Shares
         Ensure: Present
         Type: DomainV2
         Description: AD Domain based DFS namespace for all shares
