@@ -118,8 +118,8 @@
         GroupName: Shares
         Ensure: Present
         Members: "{{ groups['file_shares'] | map('extract', hostvars, 'computer_name') | list }}"
-        Folders: "{{ win_shared_folders | selectattr('cluster', 'true') | map(attribute='name') }}"
-        Toplogy: Fullmesh
+        Folders: "{{ win_shared_folders | selectattr('cluster', 'true') | map(attribute='name') | list }}"
+        Topology: Fullmesh
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
@@ -130,13 +130,13 @@
         FolderName: "{{ item }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      loop: "{{ win_shared_folders | selectattr('cluster', 'true') | map(attribute='name') }}"
+      loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | map(attribute='name') | list }}"
 
     - name: Add member to replication group
       win_dsc:
         resource_name: DFSReplicationGroupMembership
-        GroupName: Public
+        GroupName: Shares
         FolderName: "{{ item[0].name }}"
         ComputerName: "{{ hostvars[item[1]]['computer_name'] }}"
         ContentPath: "C:\\shares\\{{ item[0].path }}"
-      loop: "{{ win_shared_folders | selectattr('cluster', 'true') | product(groups['file_shares']) | list }}"
+      loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | product(groups['file_shares']) | list }}"
