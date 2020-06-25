@@ -20,6 +20,12 @@
       vars:
         machine_ou: "{{ server_ou }}"
 
+    - name: Install DFS replication service
+      win_feature:
+        name:
+          - FS-DFS-Replication
+        state: present
+
     - name: Create directories for file shares
       win_file:
         path: C:\shares\{{ item.path }}
@@ -104,5 +110,33 @@
         Ensure: Present
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      when: item[0].cluster
-      loop: "{{ win_shared_folders | product(groups['file_shares']) | list }}"
+      loop: "{{ win_shared_folders | selectattr('cluster', 'true') | product(groups['file_shares']) | list }}"
+
+    - name: Enable DFS replication on all DFS shares
+      win_dsc:
+        resource_name: DFSReplicationGroup
+        GroupName: Shares
+        Ensure: Present
+        Members: "{{ groups['file_shares'] | map('extract', hostvars, 'computer_name') | list }}"
+        Folders: "{{ win_shared_folders | selectattr('cluster', 'true') | map(attribute='name') }}"
+        Toplogy: Fullmesh
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Add folder to replication group
+      win_dsc:
+        resource_name: DFSReplicationGroupFolder
+        GroupName: Shares
+        FolderName: "{{ item }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ win_shared_folders | selectattr('cluster', 'true') | map(attribute='name') }}"
+
+    - name: Add member to replication group
+      win_dsc:
+        resource_name: DFSReplicationGroupMembership
+        GroupName: Public
+        FolderName: "{{ item[0].name }}"
+        ComputerName: "{{ hostvars[item[1]]['computer_name'] }}"
+        ContentPath: "C:\\shares\\{{ item[0].path }}"
+      loop: "{{ win_shared_folders | selectattr('cluster', 'true') | product(groups['file_shares']) | list }}"

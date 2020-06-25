@@ -61,12 +61,12 @@ certificates:
 win_shared_folders:
   - name: internal
     description: File share for local administrator use only
-    cluster: yes
+    cluster: no
     path: internal
     full: Administrators
   - name: domain
     description: File share for all domain users
-    cluster: no
+    cluster: yes
     path: domain
     full: Domain Users@{{ domain_name }}
 
