@@ -58,6 +58,7 @@ certificates:
 ### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared
 # Set cluster to yes to make the share a part of a DFS namespace
+# NOTE: the 'domain' share has special significance -- it has files that are needed for some of the playbooks
 win_shared_folders:
   - name: internal
     description: File share for local administrator use only
