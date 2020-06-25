@@ -56,28 +56,41 @@
     - name: Run schema extension command
       win_shell: setup.exe /IAcceptExchangeServerLicenseTerms /PrepareAD /OrganizationName:{{ orgname }}
       args:
-        chdir: "{{ drive_output }}"
+        chdir: "{{ drive_output.stdout | trim }}"
         executable: cmd
       when: schema_extended.stdout != 'Schema Extended'
 
     - name: Create folder for prerequisite installers
-      file:
+      win_file:
         path: C:\Installers
         state: directory
 
     - name: Copy prerequisite installers
       win_copy:
-        src: \\{{ domain_name }}\Shares\{{ item }}
-        dest: C:\Installers
+        src: \\{{ domain_name }}\Shares\domain\{{ item }}
+        dest: C:\Installers\{{ item }}
       loop:
         - UcmaRuntimeSetup.exe
         - vcredist_x64.exe
 
-    #- name: Install Exchange 2019 from mounted ISO
-      #win_package:
-        #path: "{{ drive_output }}\setup.exe"
-        #product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
-        #arguments: >
-          #/IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:Mailbox /PrepareAD
-          #/InstallWindowsComponents
-        #state: present
+    - name: Install Unified Communications prerequisite
+      win_package:
+        path: C:\Installers\UcmaRuntimeSetup.exe
+        product_id: '{A41CBE7D-949C-41DD-9869-ABBD99D753DA}'
+        arguments: /quiet /norestart
+        state: present
+
+    - name: Install Visual C++ prerequisite
+      win_package:
+        path: C:\Installers\vcredist_x64.exe
+        product_id: '{929FBD26-9020-399B-9A7A-751D61F0B942}'
+        arguments: /install /quiet /norestart
+        state: present
+
+    - name: Install Exchange 2019 from mounted ISO
+      win_package:
+        path: "{{ drive_output.stdout | trim }}\setup.exe"
+        product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
+        arguments: >
+          /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:Mailbox /InstallWindowsComponents
+        state: present
