@@ -2,7 +2,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
-- hosts: mail_servers
+- hosts: mail_servers:&mail_edge_servers:&mail_witness_servers
   name: Join Exchange Servers to Domain
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
@@ -19,8 +19,8 @@
       vars:
         machine_ou: "{{ exchange_ou }}"
 
-- hosts: mail_servers
-  name: Configure Exchange Servers
+- hosts: mail_servers:&mail_edge_servers
+  name: Deploy Exchange Servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -58,7 +58,7 @@
       args:
         chdir: "{{ drive_output.stdout | trim }}"
         executable: cmd
-      when: schema_extended.stdout != 'Schema Extended'
+      when: 'Schema Extended' in schema_extended.stdout 
 
     - name: Create folder for prerequisite installers
       win_file:
@@ -87,10 +87,48 @@
         arguments: /install /quiet /norestart
         state: present
 
-    - name: Install Exchange 2019 from mounted ISO
+    - name: Install Exchange 2019 Mailbox Server from mounted ISO
       win_package:
         path: "{{ drive_output.stdout | trim }}\setup.exe"
-        product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
-        arguments: >
-          /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:Mailbox /InstallWindowsComponents
+        product_id: 'Microsoft Exchange v15'
+        arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:Mailbox /InstallWindowsComponents
         state: present
+      when: 'mail_edge_servers' not in group_names
+
+    - name: Install Exchange 2019 Edge Transport Server from mounted ISO
+      win_package:
+        path: "{{ drive_output.stdout | trim }}\setup.exe"
+        product_id: 'Microsoft Exchange v15'
+        arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:EdgeTransport /InstallWindowsComponents
+        state: present
+      when: 'mail_edge_servers' in group_names
+
+    - name: Install DSC module for Exchange Powershell management
+      win_psmodule:
+        name: xExchange
+        state: present
+
+- hosts: mail_servers
+  name: Configure Exchange Mailbox servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - name: Create Internet send connector
+      win_dsc:
+        resource_name: xExchSendConnector
+        Name: 'Internet Send Connector'
+        Usage: Internet
+        DnsRoutingEnabled: yes
+        AddressSpaces:
+          - *
+        SourceTransportServers: "{{ groups['mail_servers'] | map('extract', hostvars, 'computer_name') | list }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
