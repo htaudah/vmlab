@@ -176,8 +176,8 @@
         ExternalHostName: mail.{{ domain_name }}
         InternalHostName: mail.{{ domain_name }}
         IISAuthenticationMethods: Ntlm
-        InternalClientAuthenticationMethods: Ntlm
-        ExternalClientAuthenticationMethods: Ntlm
+        InternalClientAuthenticationMethod: Ntlm
+        ExternalClientAuthenticationMethod: Ntlm
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
@@ -217,7 +217,7 @@
         AutoDagVolumesRootFolderPath: C:\ExchangeVolumes
         DatacenterActivationMode: DagOnly
         SkipDagValidation: yes
-        WitnessServer: "{{ groups['mail_witness_servers'] | random }}"
+        WitnessServer: "{{ groups['mail_witness_servers'] | map('extract', hostvars, 'computer_name') | random }}"
         WitnessDirectory: C:\ExchangeWitness
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
