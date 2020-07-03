@@ -109,6 +109,54 @@
         name: xExchange
         state: present
 
+- hosts: mail_witness_servers
+  name: Configure Exchange Witness servers
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - win_firewall_rule:
+        name: WMI ASync-In
+        direction: in
+        protocol: tcp
+        program: %systemroot%\system32\wbem\unsecapp.exe
+        profiles: domain
+    - win_firewall_rule:
+        name: WMI DCOM-In
+        direction: in
+        protocol: tcp
+        localport: 135
+        program: %systemroot%\system32\svchost.exe
+        profiles: domain
+    - win_firewall_rule:
+        name: WMI-In
+        direction: in
+        protocol: tcp
+        program: %systemroot%\system32\svchost.exe
+        service: winmgmt
+        profiles: domain
+    - win_firewall_rule:
+        name: WMI-Out
+        direction: out
+        protocol: tcp
+        program: %systemroot%\system32\svchost.exe
+        service: winmgmt
+        profiles: domain
+
+    - name: Add Exchange Trusted Subsystem to local admin group
+      win_group_membership:
+        name: Administrators
+        members:
+          - Exchange Trusted Subsystem@{{ domain_name }}
+        state: present
+
 - hosts: mail_servers
   name: Configure Exchange Mailbox servers
   vars_files:
@@ -122,6 +170,11 @@
     ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:
+    - name: Install Failover Clustering feature to join DAGs
+      win_feature:
+        name: Failover-Clustering
+        state: present
+
     - name: Create Internet send connector
       win_dsc:
         resource_name: xExchSendConnector
