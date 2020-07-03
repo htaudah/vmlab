@@ -126,27 +126,27 @@
         name: WMI ASync-In
         direction: in
         protocol: tcp
-        program: %systemroot%\system32\wbem\unsecapp.exe
+        program: "%systemroot%\\system32\\wbem\\unsecapp.exe"
         profiles: domain
     - win_firewall_rule:
         name: WMI DCOM-In
         direction: in
         protocol: tcp
         localport: 135
-        program: %systemroot%\system32\svchost.exe
+        program: "%systemroot%\\system32\\svchost.exe"
         profiles: domain
     - win_firewall_rule:
         name: WMI-In
         direction: in
         protocol: tcp
-        program: %systemroot%\system32\svchost.exe
+        program: "%systemroot%\\system32\\svchost.exe"
         service: winmgmt
         profiles: domain
     - win_firewall_rule:
         name: WMI-Out
         direction: out
         protocol: tcp
-        program: %systemroot%\system32\svchost.exe
+        program: "%systemroot%\\system32\\svchost.exe"
         service: winmgmt
         profiles: domain
 
@@ -174,6 +174,11 @@
       win_feature:
         name: Failover-Clustering
         state: present
+      register: cluster_feature
+
+    - name: Reboot after Failover Clustering feature installation
+      win_reboot:
+      when: cluster_feature.reboot_required
 
     - name: Create Internet send connector
       win_dsc:
@@ -270,7 +275,7 @@
         AutoDagVolumesRootFolderPath: C:\ExchangeVolumes
         DatacenterActivationMode: DagOnly
         SkipDagValidation: yes
-        WitnessServer: "{{ groups['mail_witness_servers'] | map('extract', hostvars, 'computer_name') | random }}"
+        WitnessServer: "{{ groups['mail_witness_servers'] | map('extract', hostvars, 'computer_name') | list | random }}"
         WitnessDirectory: C:\ExchangeWitness
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
