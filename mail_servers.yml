@@ -126,6 +126,7 @@
       win_dsc:
         resource_name: xExchSendConnector
         Name: 'Internet Send Connector'
+        Ensure: Present
         Usage: Internet
         DnsRoutingEnabled: yes
         AddressSpaces:
@@ -138,6 +139,7 @@
       win_dsc:
         resource_name: xExchEcpVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\ecp (Default Web Site)"
+        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/ecp
         InternalUrl: https://mail.{{ domain_name }}/ecp
         AllowServiceRestart: yes
@@ -148,8 +150,11 @@
       win_dsc:
         resource_name: xExchMapiVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\mapi (Default Web Site)"
+        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/mapi
         InternalUrl: https://mail.{{ domain_name }}/mapi
+        IISAuthenticationMethods:
+          - 'NTLM'
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
@@ -168,6 +173,7 @@
       win_dsc:
         resource_name: xExchOutlookAnywhere
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\Rpc (Default Web Site)"
+        Ensure: Present
         ExternalClientsRequireSSL: yes
         ExternalHostName: mail.{{ domain_name }}
         InternalHostName: mail.{{ domain_name }}
@@ -180,6 +186,7 @@
       win_dsc:
         resource_name: xExchOwaVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\owa (Default Web Site)"
+        Ensure: Present
         BasicAuthentication: yes
         FormsAuthentication: yes
         WindowsAuthentication: yes
@@ -195,6 +202,7 @@
       win_dsc:
         resource_name: xExchWebServicesVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\EWS (Default Web Site)"
+        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         InternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         AllowServiceRestart: yes
