@@ -139,7 +139,6 @@
       win_dsc:
         resource_name: xExchEcpVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\ecp (Default Web Site)"
-        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/ecp
         InternalUrl: https://mail.{{ domain_name }}/ecp
         AllowServiceRestart: yes
@@ -150,7 +149,6 @@
       win_dsc:
         resource_name: xExchMapiVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\mapi (Default Web Site)"
-        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/mapi
         InternalUrl: https://mail.{{ domain_name }}/mapi
         IISAuthenticationMethods:
@@ -173,11 +171,13 @@
       win_dsc:
         resource_name: xExchOutlookAnywhere
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\Rpc (Default Web Site)"
-        Ensure: Present
         ExternalClientsRequireSSL: yes
+        InternalClientsRequireSSL: yes
         ExternalHostName: mail.{{ domain_name }}
         InternalHostName: mail.{{ domain_name }}
-        DefaultAuthenticationMethod: Ntlm
+        IISAuthenticationMethods: Ntlm
+        InternalClientAuthenticationMethods: Ntlm
+        ExternalClientAuthenticationMethods: Ntlm
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
@@ -186,7 +186,6 @@
       win_dsc:
         resource_name: xExchOwaVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\owa (Default Web Site)"
-        Ensure: Present
         BasicAuthentication: yes
         FormsAuthentication: yes
         WindowsAuthentication: yes
@@ -202,9 +201,39 @@
       win_dsc:
         resource_name: xExchWebServicesVirtualDirectory
         Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\EWS (Default Web Site)"
-        Ensure: Present
         ExternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         InternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Create the DAG
+      win_dsc:
+        resource_name: xExchDatabaseAvailabilityGroup
+        Name: PrimaryDAG
+        AutoDagTotalNumberOfServers: "{{ groups['mail_servers'] | length }}"
+        AutoDagDatabaseCopiesPerVolume: 1
+        AutoDagDatabasesRootFolderPath: C:\ExchangeDatabases
+        AutoDagVolumesRootFolderPath: C:\ExchangeVolumes
+        DatacenterActivationMode: DagOnly
+        SkipDagValidation: yes
+        WitnessServer: "{{ groups['mail_witness_servers'] | random }}"
+        WitnessDirectory: C:\ExchangeWitness
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
+
+    - name: Wait for DAG creation to complete
+      win_dsc:
+        resource_name: xExchWaitForDAG
+        Identity: PrimaryDAG
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Add server to DAG
+      win_dsc:
+        resource_name: xExchDatabaseAvailabilityGroupMember
+        MailboxServer: "{{ hostvars[inventory_hostname]['computer_name'] }}"
+        DAGName: PrimaryDAG
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
