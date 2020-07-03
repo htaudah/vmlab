@@ -23,3 +23,13 @@
         name: "uds"
         type: "A"
         value: "{{ hostvars['haudah-uds01']['ansible_host'] }}"
+    - name: Exchange internal FQDN
+      win_dns_record:
+        name: "mail"
+        type: "A"
+        # TODO: for now just point to our only load balancer; revise later
+        value: "192.168.77.60"
+
+    #- name: Exchange MX record
+      #win_dns_record:
+        #name: 

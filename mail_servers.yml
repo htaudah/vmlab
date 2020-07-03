@@ -2,7 +2,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
-- hosts: mail_servers:&mail_edge_servers:&mail_witness_servers
+- hosts: mail_servers:mail_edge_servers:mail_witness_servers
   name: Join Exchange Servers to Domain
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
@@ -19,7 +19,7 @@
       vars:
         machine_ou: "{{ exchange_ou }}"
 
-- hosts: mail_servers:&mail_edge_servers
+- hosts: mail_servers:mail_edge_servers
   name: Deploy Exchange Servers
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
@@ -58,7 +58,7 @@
       args:
         chdir: "{{ drive_output.stdout | trim }}"
         executable: cmd
-      when: 'Schema Extended' in schema_extended.stdout 
+      when: "'Schema Extended' not in schema_extended.stdout"
 
     - name: Create folder for prerequisite installers
       win_file:
@@ -69,6 +69,7 @@
       win_copy:
         src: \\{{ domain_name }}\Shares\domain\{{ item }}
         dest: C:\Installers\{{ item }}
+        remote_src: yes
       loop:
         - UcmaRuntimeSetup.exe
         - vcredist_x64.exe
@@ -89,19 +90,19 @@
 
     - name: Install Exchange 2019 Mailbox Server from mounted ISO
       win_package:
-        path: "{{ drive_output.stdout | trim }}\setup.exe"
+        path: "{{ drive_output.stdout | trim }}\\setup.exe"
         product_id: 'Microsoft Exchange v15'
         arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:Mailbox /InstallWindowsComponents
         state: present
-      when: 'mail_edge_servers' not in group_names
+      when: "'mail_edge_servers' not in group_names"
 
     - name: Install Exchange 2019 Edge Transport Server from mounted ISO
       win_package:
-        path: "{{ drive_output.stdout | trim }}\setup.exe"
+        path: "{{ drive_output.stdout | trim }}\\setup.exe"
         product_id: 'Microsoft Exchange v15'
         arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:EdgeTransport /InstallWindowsComponents
         state: present
-      when: 'mail_edge_servers' in group_names
+      when: "'mail_edge_servers' in group_names"
 
     - name: Install DSC module for Exchange Powershell management
       win_psmodule:
@@ -128,7 +129,74 @@
         Usage: Internet
         DnsRoutingEnabled: yes
         AddressSpaces:
-          - *
+          - '*'
         SourceTransportServers: "{{ groups['mail_servers'] | map('extract', hostvars, 'computer_name') | list }}"
-        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
-        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure ECP virtual directory
+      win_dsc:
+        resource_name: xExchEcpVirtualDirectory
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\ecp (Default Web Site)"
+        ExternalUrl: https://mail.{{ domain_name }}/ecp
+        InternalUrl: https://mail.{{ domain_name }}/ecp
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure MAPI virtual directory
+      win_dsc:
+        resource_name: xExchMapiVirtualDirectory
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\mapi (Default Web Site)"
+        ExternalUrl: https://mail.{{ domain_name }}/mapi
+        InternalUrl: https://mail.{{ domain_name }}/mapi
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure OAB virtual directory
+      win_dsc:
+        resource_name: xExchOabVirtualDirectory
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\OAB (Default Web Site)"
+        ExternalUrl: https://mail.{{ domain_name }}/oab
+        InternalUrl: https://mail.{{ domain_name }}/oab
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure Outlook Anywhere URL
+      win_dsc:
+        resource_name: xExchOutlookAnywhere
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\Rpc (Default Web Site)"
+        ExternalClientsRequireSSL: yes
+        ExternalHostName: mail.{{ domain_name }}
+        InternalHostName: mail.{{ domain_name }}
+        DefaultAuthenticationMethod: Ntlm
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure OWA virtual directory
+      win_dsc:
+        resource_name: xExchOwaVirtualDirectory
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\owa (Default Web Site)"
+        BasicAuthentication: yes
+        FormsAuthentication: yes
+        WindowsAuthentication: yes
+        ExternalAuthenticationMethods:
+          - 'Fba'
+        ExternalUrl: https://mail.{{ domain_name }}/owa
+        InternalUrl: https://mail.{{ domain_name }}/owa
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+
+    - name: Configure EWS virtual directory
+      win_dsc:
+        resource_name: xExchWebServicesVirtualDirectory
+        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\EWS (Default Web Site)"
+        ExternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
+        InternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
+        AllowServiceRestart: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
