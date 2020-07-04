@@ -26,3 +26,40 @@
         bind_dn: "{{ domain_admin_dn }}"
         bind_pw: "{{ domain_admin_password }}"
       loop: "{{ organizational_units }}"
+
+- hosts: domain_controllers
+  name: Create domain users
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - win_domain_user:
+        name: jdoe
+        firstname: John
+        surname: Doe
+        company: "{{ orgname }}"
+        password: "{{ domain_user_password }}"
+      run_once: yes
+
+    - win_domain_user:
+        name: eblofeld
+        firstname: Ernst
+        surname: Blofeld
+        company: "{{ orgname }}"
+        password: "{{ domain_user_password }}"
+      run_once: yes
+
+    - win_domain_user:
+        name: jdoe
+        firstname: John
+        surname: Doe
+        company: "{{ orgname }}"
+        password: "{{ domain_user_password }}"
+      run_once: yes

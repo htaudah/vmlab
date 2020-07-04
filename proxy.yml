@@ -1,0 +1,18 @@
+# Playbook to configure squid forward proxy
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/02/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: haudah-proxy01
+  name: Install and configure the squid proxy server
+  vars_files:
+    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - name: Install squid
+      dnf:
+        name: squid
+        state: present

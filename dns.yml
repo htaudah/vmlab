@@ -3,7 +3,6 @@
 # Created on: Jun/16/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: "{{ groups['domain_controllers'] | random }}"
-  connection: local
   name: Configure domain name server
   vars_files:
     - "{{ playbook_dir }}/passwords.yml"
