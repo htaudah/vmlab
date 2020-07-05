@@ -57,9 +57,25 @@
       run_once: yes
 
     - win_domain_user:
-        name: jdoe
-        firstname: John
-        surname: Doe
+        name: alectrev
+        firstname: Alec
+        surname: Trevelyan
+        company: "{{ orgname }}"
+        password: "{{ domain_user_password }}"
+      run_once: yes
+
+    - win_domain_user:
+        name: goldfinger
+        firstname: Auric
+        surname: Goldfinger
+        company: "{{ orgname }}"
+        password: "{{ domain_user_password }}"
+      run_once: yes
+
+    - win_domain_user:
+        name: elargo
+        firstname: Emilio
+        surname: Largo
         company: "{{ orgname }}"
         password: "{{ domain_user_password }}"
       run_once: yes
