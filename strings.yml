@@ -3,32 +3,36 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
+userid: james
 orgname: Haramco
-template_win_2019: 'haudah-windows-server-template'
-template_centos_8: 'haudah-centos-8-template'
-workload_folder: /Workloads/haudah
+template_win_2019: "{{ userid }}-windows-server-template"
+template_centos_8: "{{ userid }}-centos-8-template"
+workload_folder: /Workloads/{{ userid }}
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
-resource_pool: haudah
-network_name: 'haudah-192.168.77.0-24'
-network_gateway: '192.168.77.1'
+resource_pool: "{{ userid }}"
+# NOTE: only 255.255.255.0 subnets are supported as of this writing
+network_subnet: "192.168.77"
+network_name: "{{ userid }}-{{ network_subnet }}.0-24"
+network_gateway: '{{ network_subnet }}.1'
 network_mask: '255.255.255.0'
 # To allow for the Active Directory DNS servers initially being unavailable, always fall back
 # to whatever DNS is available
-primary_dns_server: '192.168.77.50'
-secondary_dns_server: '192.168.77.51'
+primary_dns_server: '{{ network_subnet }}.50'
+secondary_dns_server: '{{ network_subnet }}.51'
 fallback_dns_server: '10.20.12.12'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
+base_dn: 'dc={{ domain_name.split(".") | join(",dc=") }}'
 domain_admin_user: 'Administrator'
-domain_admin_dn: 'cn=Administrator,cn=Users,dc=haramco,dc=org'
-server_ou: 'ou=Servers,dc=haramco,dc=org'
-exchange_ou: 'ou=Exchange,ou=Servers,dc=haramco,dc=org'
-account_ou: 'ou=Corporate Accounts,dc=haramco,dc=org'
-user_ou: 'ou=Users,ou=Corporate Accounts,dc=haramco,dc=org'
-group_ou: 'ou=Groups,ou=Corporate Accounts,dc=haramco,dc=org'
-workstation_ou: 'ou=Workstations,dc=haramco,dc=org'
+domain_admin_dn: 'cn=Administrator,cn=Users,{{ base_dn }}'
+server_ou: 'ou=Servers,{{ base_dn }}'
+exchange_ou: 'ou=Exchange,{{ server_ou }}'
+account_ou: 'ou=Corporate Accounts,{{ base_dn }}'
+user_ou: 'ou=Users,{{ account_ou }}'
+group_ou: 'ou=Groups,{{ account_ou }}'
+workstation_ou: 'ou=Workstations,{{ base_dn }}'
 
 ### CDROM PATHS ###
 # If iso files are in a content library, look for their corresponding datastore path
@@ -46,13 +50,13 @@ route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
 # Certificates to be generated and deployed
 certificates:
   - subject: uemc
-    destination_host: haudah-lb01
+    destination_host: lb01
     destination_path: /var/lib/haproxy
   - subject: uds
-    destination_host: haudah-lb01
+    destination_host: lb01
     destination_path: /var/lib/haproxy
   - subject: mail
-    destination_host: haudah-lb01
+    destination_host: lb01
     destination_path: /var/lib/haproxy
 
 ### FILE SHARES ###

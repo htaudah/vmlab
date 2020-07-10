@@ -13,21 +13,21 @@
       win_dns_record:
         name: "uemc"
         type: "A"
-        value: "{{ hostvars['haudah-uemc01']['ansible_host'] }}"
+        value: "{{ hostvars['uemc01']['ansible_host'] }}"
       win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ hostvars['haudah-uds01']['ansible_host'] }}"
+        value: "{{ hostvars['uds01']['ansible_host'] }}"
       win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ hostvars['haudah-uds01']['ansible_host'] }}"
+        value: "{{ hostvars['uds01']['ansible_host'] }}"
     - name: Exchange internal FQDN
       win_dns_record:
         name: "mail"
         type: "A"
         # TODO: for now just point to our only load balancer; revise later
-        value: "192.168.77.60"
+        value: "{{ network_subnet}}.60"
 
     #- name: Exchange MX record
       #win_dns_record:

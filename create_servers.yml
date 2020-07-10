@@ -14,14 +14,14 @@
   tasks:
     - name: Create Windows virtual machines
       vars:
-        computer_name: "{{ hostvars[item]['computer_name'] }}"
+        computer_name: "{{ item }}"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ item }}"
+        name: "{{ userid }}-{{ item }}"
         state: poweredon
         guest_id: windows9Server64Guest
         template: "{{ template_win_2019 }}"
@@ -48,7 +48,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        name: "{{ item }}"
+        name: "{{ userid }}-{{ item }}"
         state: present
         cdrom:
           - controller_type: sata
@@ -61,14 +61,14 @@
 
     - name: Create Linux virtual machines
       vars:
-        computer_name: "{{ hostvars[item]['computer_name'] }}"
+        computer_name: "{{ item }}"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ item }}"
+        name: "{{ userid }}-{{ item }}"
         state: poweredon
         guest_id: centos8_64Guest
         template: "{{ template_centos_8 }}"

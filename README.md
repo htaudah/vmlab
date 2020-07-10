@@ -2,6 +2,10 @@
 A collection of scripts and Ansible playbooks required to provision a VMC lab environment. You
 can find more detailed documentation on this repository [here](http://www.google.com).
 
+## Prepare Lab Environment
+The following naming conventions have been assumed for the lab environment:
+1. The PortGroup used by all machines follow the userid-
+
 ## Create a bootstrap ISO
 Before running the playbooks for Windows and Linux template creation, generate the bootstrap ISO
 from the source by running the following command from the repository root:
