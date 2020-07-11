@@ -4,7 +4,7 @@ can find more detailed documentation on this repository [here](http://www.google
 
 ## Prepare Lab Environment
 The following naming conventions have been assumed for the lab environment:
-1. The PortGroup used by all machines follow the userid-
+1. The PortGroup used by all machines follows the naming convention `john-192.168.70.0-24`.
 
 ## Create a bootstrap ISO
 Before running the playbooks for Windows and Linux template creation, generate the bootstrap ISO

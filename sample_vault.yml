@@ -1,0 +1,13 @@
+vcenter_hostname: 'myvcenter.com'
+vcenter_username: 'user@vcenter.local'
+vcenter_password: 'Password@123'
+# Password for local administrator account on Windows machines
+win_local_password: 'Password@123'
+# Password for local administrator account on Linux machines
+linux_local_password: 'Password@123'
+domain_admin_password: 'Password@123'
+domain_recovery_password: 'Password@123'
+# route53 API access needed for certificate generation
+route53_access_secret: 'asdf1234'
+# Account that will receive notifications for certificate expiry
+dns_email: 'email@gmail.com'
