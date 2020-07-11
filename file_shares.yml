@@ -7,7 +7,7 @@
 - hosts: windows:&file_shares
   name: Prepare Windows file share servers
   vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
   vars:
     ansible_connection: winrm
@@ -51,7 +51,7 @@
 - hosts: windows:&distributed_file_shares
   name: Prepare Windows DFS servers
   vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
   vars:
     ansible_connection: winrm

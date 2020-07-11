@@ -6,7 +6,7 @@
   connection: local
   name: Configure domain structure
   vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   vars:
@@ -30,7 +30,7 @@
 - hosts: domain_controllers
   name: Create domain users
   vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   vars:

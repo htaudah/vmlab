@@ -8,7 +8,7 @@
   connection: local
   name: Create Infrastructure Servers
   vars_files:
-    - "{{ playbook_dir }}/passwords.yml"
+    - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:

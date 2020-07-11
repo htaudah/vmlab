@@ -36,3 +36,11 @@ machine hardware, and converting it into a template.
 > :warning: **When creating a Windows template, the bootable Windows installation disc requires
 a key to be pressed during the boot process in order to boot into the disc. For this reason,
 the Windows template creation will**
+
+## Run a playbook
+To run any of the playbooks included in the project, the command to use will have the following
+format:
+
+`ansible-playbook -i inventory.ini --ask-vault-pass playbook.yml`
+
+You will be prompted for the vault password you chose earlier.
