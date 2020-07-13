@@ -2,9 +2,22 @@
 A collection of scripts and Ansible playbooks required to provision a VMC lab environment. You
 can find more detailed documentation on this repository [here](http://www.google.com).
 
+## Customize strings.yml file
+The `strings.yml` file contains some strings that will be unique to your lab. You should review
+all options to ensure they conform to your requirements. Most importantly, ensure that:
+
+1. userid is the unique value used to identify the user
+2. domain\_name will be the name given to your Active Directory domain, and should be registered
+to you on the Internet if you intend to expose some services externally.
+3. network\_subnet is the subnet under which all your machines will reside.
+
 ## Prepare Lab Environment
-The following naming conventions have been assumed for the lab environment:
+The following assumptions are made regarding the vSphere environment that will be hosting
+this lab.
 1. The PortGroup used by all machines follows the naming convention `john-192.168.70.0-24`.
+2. A resource group with the same name as the userid selected in `strings.yml`.
+3. A workload folder for your virtual machines with the same name as the userid selected in
+`strings.yml`.
 
 ## Create a bootstrap ISO
 Before running the playbooks for Windows and Linux template creation, generate the bootstrap ISO

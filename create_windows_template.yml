@@ -37,12 +37,12 @@
             controller_number: 0
             unit_number: 0
             type: iso
-            iso_path: "{{ iso_win_2019 }}"
+            iso_path: "{{ iso_paths['win_2019'] }}"
           - controller_type: sata
             controller_number: 0
             unit_number: 1
             type: iso
-            iso_path: "{{ iso_bootstrap }}"
+            iso_path: "{{ iso_paths['bootstrap'] }}"
         customization:
           # Riyadh timezone
           timezone: 150
@@ -67,7 +67,7 @@
       register: win_boot_order
 
     - name: Add USB 3.1 controller
-      vmware_guest_controller:
+      community.vmware.vmware_guest_controller:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
@@ -84,3 +84,25 @@
         password: "{{ vcenter_password }}"
         name: "{{ template_win_2019 }}"
         state: poweredon
+        wait_for_ip_address: yes
+        # Wait 15 minutes for template to be prepared
+        wait_for_ip_address_timeout: 900
+
+    - name: Remove second CD drive, unmount installation disc, and mount VMware Tools
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_win_2019 }}"
+        state: present
+        is_template: yes
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_paths['vmware_tools'] }}"
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 1
+            state: absent
