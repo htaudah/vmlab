@@ -48,9 +48,11 @@
           timezone: 150
           password: "{{ win_local_password }}"
           orgname: "{{ orgname }}"
+          hostname: "{{ userid }}-windows-server-template"
         networks:
           - name: "{{ network_name }}"
             type: dhcp
+            device_type: e1000e
         resource_pool: "{{ resource_pool }}"
       register: create_win_2019_template
 

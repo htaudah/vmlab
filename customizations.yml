@@ -11,7 +11,7 @@ custom_win_2019_workgroup:
     - "{{ fallback_dns_server }}"
   timezone: 150 # Riyadh
   password: "{{ win_local_password }}"
-  orgname: Haramco
+  orgname: "{{ orgname }}"
 
 custom_centos_8:
   hostname: "{{ computer_name }}"
@@ -21,4 +21,4 @@ custom_centos_8:
     - "{{ fallback_dns_server }}"
   timezone: "Asia/Riyadh"
   password: "{{ win_local_password }}"
-  orgname: Haramco
+  orgname: "{{ orgname }}"
