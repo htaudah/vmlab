@@ -43,6 +43,11 @@
             unit_number: 1
             type: iso
             iso_path: "{{ iso_paths['bootstrap'] }}"
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 2
+            type: iso
+            iso_path: "{{ iso_paths['vmware_tools'] }}"
         customization:
           # Riyadh timezone
           timezone: 150
@@ -90,7 +95,7 @@
         # Wait 15 minutes for template to be prepared
         wait_for_ip_address_timeout: 900
 
-    - name: Remove second CD drive, unmount installation disc, and mount VMware Tools
+    - name: Remove bootstrap and VMware Tools CD drives, unmount installation disc
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -102,9 +107,12 @@
           - controller_type: sata
             controller_number: 0
             unit_number: 0
-            type: iso
-            iso_path: "{{ iso_paths['vmware_tools'] }}"
+            type: client
           - controller_type: sata
             controller_number: 0
             unit_number: 1
+            state: absent
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 2
             state: absent

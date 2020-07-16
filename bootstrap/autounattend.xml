@@ -70,8 +70,8 @@
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>Baltona31@</Value>
-                    <PlainText>true</PlainText>
+                    <Value>QgBhAGwAdABvAG4AYQAzADEAQABBAGQAbQBpAG4AaQBzAHQAcgBhAHQAbwByAFAAYQBzAHMAdwBvAHIAZAA=</Value>
+                    <PlainText>false</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
             <FirstLogonCommands>
@@ -96,6 +96,14 @@
             <DisableOOBAccelerators>true</DisableOOBAccelerators>
             <Home_Page>about:blank</Home_Page>
         </component>
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <RunSynchronous>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>1</Order>
+                    <Path>powershell.exe -Command &quot;Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq &apos;VMware Tools&apos; } | %{ $_.DeviceID } | %{ . $_\setup64.exe /s /v &apos;/qb REBOOT=R&apos; }&quot;</Path>
+                </RunSynchronousCommand>
+            </RunSynchronous>
+        </component>
     </settings>
-    <cpi:offlineImage cpi:source="wim:c:/users/administrator/desktop/install.wim#Windows Server 2019 SERVERSTANDARD" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+    <cpi:offlineImage cpi:source="catalog:c:/users/hani/desktop/unattend/install_windows server 2019 serverstandard.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>
