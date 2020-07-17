@@ -42,7 +42,7 @@ iso_paths:
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
-  vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.0.6.iso'
+  vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.1.0.iso'
 
 ### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)

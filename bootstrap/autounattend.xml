@@ -68,19 +68,36 @@
     </settings>
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <UserAccounts>
-                <AdministratorPassword>
-                    <Value>QgBhAGwAdABvAG4AYQAzADEAQABBAGQAbQBpAG4AaQBzAHQAcgBhAHQAbwByAFAAYQBzAHMAdwBvAHIAZAA=</Value>
-                    <PlainText>false</PlainText>
-                </AdministratorPassword>
-            </UserAccounts>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>reg add HKLM\SYSTEM\CurrentControlSet\Control\Network\NewNetworkWindowOff /f</CommandLine>
                     <Description>Disable network discovery prompt for all users</Description>
                     <Order>10</Order>
+                    <RequiresUserInput>false</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>11</Order>
+                    <CommandLine>powershell.exe -Command &quot;Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq &apos;VMware Tools&apos; } | %{ $_.DeviceID } | %{ . $_\setup64.exe /s /v &apos;/qb REBOOT=R&apos; }&quot;</CommandLine>
+                    <Description>Install VMware Tools</Description>
+                    <RequiresUserInput>false</RequiresUserInput>
                 </SynchronousCommand>
             </FirstLogonCommands>
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value></Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
+            <AutoLogon>
+                <Password>
+                    <Value></Value>
+                    <PlainText>true</PlainText>
+                </Password>
+                <Domain>.</Domain>
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>Administrator</Username>
+            </AutoLogon>
         </component>
     </settings>
     <settings pass="specialize">
@@ -95,14 +112,6 @@
             <DisableFirstRunWizard>true</DisableFirstRunWizard>
             <DisableOOBAccelerators>true</DisableOOBAccelerators>
             <Home_Page>about:blank</Home_Page>
-        </component>
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Path>powershell.exe -Command &quot;Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq &apos;VMware Tools&apos; } | %{ $_.DeviceID } | %{ . $_\setup64.exe /s /v &apos;/qb REBOOT=R&apos; }&quot;</Path>
-                </RunSynchronousCommand>
-            </RunSynchronous>
         </component>
     </settings>
     <cpi:offlineImage cpi:source="catalog:c:/users/hani/desktop/unattend/install_windows server 2019 serverstandard.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />

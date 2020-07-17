@@ -95,6 +95,16 @@
         # Wait 15 minutes for template to be prepared
         wait_for_ip_address_timeout: 900
 
+    - name: Shut down Windows template after installation complete
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ template_win_2019 }}"
+        state: shutdownguest
+        # Wait 2 minutes for shutdown to complete
+        state_change_timeout: 120
+
     - name: Remove bootstrap and VMware Tools CD drives, unmount installation disc
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
