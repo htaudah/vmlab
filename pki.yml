@@ -1,0 +1,257 @@
+# Playbook to configure a highly-available PKI infrastructure
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/26/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: rootca
+  name: Configure Root Certificate Authority
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Install Active Directory Certificate Services (ADCS)
+      win_feature:
+        name: ADCS-Cert-Authority
+        state: present
+
+    - name: Install DSC module for ADCS
+      win_psmodule:
+        name: ActiveDirectoryCSDsc
+        state: present
+
+    - name: Set up root ADCS
+      win_dsc:
+        resource_name: AdcsCertificationAuthority
+        Ensure: Present
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+        CAType: 'StandaloneRootCA'
+        CACommonName: "{{ rootca_common_name }}"
+        CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
+
+    - name: Configure root ADCS settings
+      win_dsc:
+        resource_name: AdcsCertificationAuthoritySettings
+        Ensure: Present
+        IsSingleInstance: yes
+        CACertPublicationURLs:
+          - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
+          - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
+          - '2:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+        CRLPublicationURLs:
+          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
+          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
+          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+        CRLOverlapUnits: 8
+        CRLOverlapPeriod: Hours
+        CRLPeriodUnits: 1
+        CRLPeriod: Months
+        ValidityPeriodUnits: 10
+        ValidityPeriod: Years
+        DSConfigDN: 'cn=Configuration,{{ base_dn }}'
+        DSDomainDN: "{{ base_dn }}"
+        AuditFilter:
+          - 'StartAndStopADCS'
+          - 'BackupAndRestoreCADatabase'
+          - 'IssueAndManageCertificateRequests'
+          - 'RevokeCertificatesAndPublishCRLs'
+          - 'ChangeCASecuritySettings'
+          - 'StoreAndRetrieveArchivedKeys'
+          - 'ChangeCAConfiguration'
+
+    - name: Restart certificate services
+      win_service:
+        name: CertSvc
+        state: restarted
+
+    - name: Copy root CA certificate to control node
+      fetch:
+        src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}_{{ rootca_common_name }}.crt
+        dest: /var/certs/rootca/
+
+    - name: Copy root CRL to control node
+      fetch:
+        src: C:\Windows\System32\CertSrv\CertEnroll\{{ rootca_common_name }}.crl
+        dest: /var/certs/rootca/
+
+- hosts: issuing_authorities
+  name: Configure Issuing Certificate Authority
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
+    - name: Install Active Directory Certificate Services (ADCS)
+      win_feature:
+        name: ADCS-Cert-Authority
+        state: present
+
+    - name: Install DSC module for ADCS
+      win_psmodule:
+        name: ActiveDirectoryCSDsc
+        state: present
+
+    - name: Copy root CA certificate
+      win_copy:
+        src: /var/certs/rootca/{{ groups['root_authority'] | first }}_{{ rootca_common_name }}.crt
+        dest: C:\Windows\Temp\{{ groups['root_authority'] | first }}_{{ rootca_common_name }}.crt
+      register: crt_copy
+
+    - name: Copy root CRL
+      win_copy:
+        src: /var/certs/rootca/{{ rootca_common_name }}.crl
+        dest: C:\Windows\Temp\
+      register: crl_copy
+
+    - name: Publish root CA certificate to Active Directory
+      win_shell: |
+        $($env:SystemRoot)\System32\certutil.exe -f dspublish {{ crl_copy.dest }} RootCA
+
+    - name: Publish root CA CRL to Active Directory
+      win_shell: >
+        "$($env:SystemRoot)\\System32\\certutil.exe -f dspublish {{ crl_copy.dest }}"
+
+    - name: Import root CA certificate to local root certificate store
+      win_certificate_store:
+        path: C:\Windows\Temp\{{ crt_copy.dest }}
+        state: present
+        password: "{{ pfx_password }}"
+        store_name: Root
+        key_exportable: no
+
+    - name: Import root CA CRL to local root certificate store
+      win_certificate_store:
+        path: C:\Windows\Temp\{{ crl_copy.dest }}
+        state: present
+        password: "{{ pfx_password }}"
+        store_name: Root
+        key_exportable: no
+
+    - name: Set up issuing ADCS
+      win_dsc:
+        resource_name: AdcsCertificationAuthority
+        Ensure: Present
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
+        CAType: 'EnterpriseSubordinateCA'
+        CACommonName: "{{ issuing_common_name }}"
+        CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
+        OverwriteExistingCAinDS: yes
+        OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
+
+    - name: Configure ADCS settings
+      win_dsc:
+        resource_name: AdcsCertificationAuthoritySettings
+        Ensure: Present
+        IsSingleInstance: yes
+        CACertPublicationURLs:
+          - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
+          - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
+          - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
+        CRLPublicationURLs:
+          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
+          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
+          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+        CRLOverlapUnits: 8
+        CRLOverlapPeriod: Hours
+        CRLPeriodUnits: 1
+        CRLPeriod: Weeks
+        ValidityPeriodUnits: 5
+        ValidityPeriod: Years
+        AuditFilter:
+          - 'StartAndStopADCS'
+          - 'BackupAndRestoreCADatabase'
+          - 'IssueAndManageCertificateRequests'
+          - 'RevokeCertificatesAndPublishCRLs'
+          - 'ChangeCASecuritySettings'
+          - 'StoreAndRetrieveArchivedKeys'
+          - 'ChangeCAConfiguration'
+
+    - name: Copy issuing CA request
+      fetch:
+        src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}.req
+        dest: /var/certs/issuing/
+
+- hosts: rootca
+  name: Issue subordinate certificate requests
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Copy subordinate requests
+      win_copy:
+        src: "{{ item }}"
+        dest: C:\Windows\Temp\
+      with_fileglob: /var/certs/issuing/*.req
+
+    - name: Request and issue certificates
+      win_shell: |
+        $request_result = $($env:SystemRoot)\System32\certreq.exe -Config {{ inventory_hostname }}\{{ rootca_common_name }} -Submit C:\Windows\Temp\{{ item | filename }}
+        $request_result -match 'RequestId:\s([0-9]*)'
+        if ($Matches.Count -lt 2)
+        {
+          throw "Error getting Request ID from certificate request"
+        }
+        $request_id = $Matches[1]
+        $submit_result = $(env:SystemRoot)\\System32\\certreq.exe -Resubmit $request_id
+        if ($submit_result -notmatch 'Certificate issued')
+        {
+          throw "Unexpected result when issuing requested certificate"
+        }
+        $retrieve_result = $($env:SystemRoot)\System32\certreq.exe -Config {{ inventory_hostname }}\{{ rootca_common_name }} -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | filename }}.crt
+      with_fileblob: /var/certs/issuing/*.req
+
+    - name: Copy the issued certificates to control node
+      fetch:
+        src: C:\Windows\Temp\{{ item.split('.req') | filename }}.crt
+        dest: /var/certs/issuing/
+      with_fileglob: /var/certs/issuing/*.req
+
+- hosts: issuing_authorities
+  name: Issue subordinate certificate requests
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - name: Copy issued certificates to corresponding issuing CA
+      win_copy:
+        src: /var/certs/issuing/{{ inventory_hostname }}.crt
+        dest: C:\Windows\Temp\
+
+    - name: Install issued certificate
+      win_shell: $($env:SystemRoot)\System32\certutil.exe -installCert $($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt
+
+    - name: Restart certificate services
+      win_service:
+        name: CertSvc
+        state: restarted

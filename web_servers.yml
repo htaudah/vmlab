@@ -1,0 +1,69 @@
+# Playbook to configure Windows and Linux web servers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/28/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: windows:&web_servers
+  name: Deploy Windows IIS servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+    iis_features:
+      - IIS-WebServerRole
+      - IIS-WebServer
+      - IIS-CommonHttpFeatures
+      - IIS-HttpErrors
+      - IIS-HttpRedirect
+      - IIS-ApplicationDevelopment
+      - NetFx4Extended-ASPNET45
+      - IIS-NetFxExtensibility45
+      - IIS-HealthAndDiagnostics
+      - IIS-HttpLogging
+      - IIS-LoggingLibraries
+      - IIS-RequestMonitor
+      - IIS-HttpTracing
+      - IIS-Security
+      - IIS-RequestFiltering
+      - IIS-Performance
+      - IIS-WebServerManagementTools
+      - IIS-IIS6ManagementCompatibility
+      - IIS-Metabase
+      - IIS-ManagementConsole
+      - IIS-BasicAuthentication
+      - IIS-WindowsAuthentication
+      - IIS-StaticContent
+      - IIS-DefaultDocument
+      - IIS-WebSockets
+      - IIS-ApplicationInit
+      - IIS-ISAPIExtensions
+      - IIS-ISAPIFilter
+      - IIS-HttpCompressionStatic
+      - IIS-ASPNET45
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
+    - name: Install IIS features
+      win_feature:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ iis_features }}"
+
+    - name: Create CertEnroll folder for hosting CDP and AIA
+      win_file:
+        path: C:\Inetpub\wwwroot\CertEnroll
+        state: directory
+
+    - name: Share CertEnroll folder
+      win_share:
+        name: CertEnroll
+        description: File share for hosting CA CDP and AIA
+        path: C:\Inetpub\wwwroot\CertEnroll
+        change: Cert Publishers@{{ domain_name }}

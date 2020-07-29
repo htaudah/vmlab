@@ -67,6 +67,7 @@
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         name: "{{ template_win_2019 }}"
+        enter_bios_setup: yes
         boot_order:
           - cdrom
           - disk

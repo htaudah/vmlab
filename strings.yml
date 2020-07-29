@@ -48,6 +48,11 @@ iso_paths:
 # AWS Access for Route53 (needed for automated certificate creation)
 route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
 
+### PUBLIC KEY INFRASTRUCTURE ###
+rootca_common_name: "{{ orgname }} Authority"
+issuing_common_name: "{{ orgname }} Issuing Authority"
+ca_distinguished_suffix: "{{ orgname }} Trust Services"
+
 # Certificates to be generated and deployed
 certificates:
   - subject: uemc

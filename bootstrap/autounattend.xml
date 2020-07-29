@@ -84,13 +84,13 @@
             </FirstLogonCommands>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value></Value>
+                    <Value>Password#123</Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
             <AutoLogon>
                 <Password>
-                    <Value></Value>
+                    <Value>Password#123</Value>
                     <PlainText>true</PlainText>
                 </Password>
                 <Domain>.</Domain>

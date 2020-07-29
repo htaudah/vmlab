@@ -14,11 +14,11 @@
         name: "uemc"
         type: "A"
         value: "{{ hostvars['uemc01']['ansible_host'] }}"
-      win_dns_record:
+    - win_dns_record:
         name: "uds"
         type: "A"
         value: "{{ hostvars['uds01']['ansible_host'] }}"
-      win_dns_record:
+    - win_dns_record:
         name: "uds"
         type: "A"
         value: "{{ hostvars['uds01']['ansible_host'] }}"
@@ -27,7 +27,11 @@
         name: "mail"
         type: "A"
         # TODO: for now just point to our only load balancer; revise later
-        value: "{{ network_subnet}}.60"
+        value: "{{ network_subnet }}.60"
+    - win_dns_record:
+        name: "pki"
+        type: "A"
+        value: "{{ network_subnet }}.60"
 
     #- name: Exchange MX record
       #win_dns_record:
