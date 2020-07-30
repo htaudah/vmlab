@@ -31,11 +31,12 @@
       win_dsc:
         resource_name: AdcsCertificationAuthority
         Ensure: Present
-        Credential_username: "Administrator@{{ domain_name }}"
-        Credential_password: "{{ domain_admin_password }}"
         CAType: 'StandaloneRootCA'
         CACommonName: "{{ rootca_common_name }}"
         CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
+        IsSingleInstance: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
 
     - name: Configure root ADCS settings
       win_dsc:
@@ -66,6 +67,9 @@
           - 'ChangeCASecuritySettings'
           - 'StoreAndRetrieveArchivedKeys'
           - 'ChangeCAConfiguration'
+        IsSingleInstance: yes
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
 
     - name: Restart certificate services
       win_service:
@@ -224,7 +228,7 @@
           throw "Unexpected result when issuing requested certificate"
         }
         $retrieve_result = $($env:SystemRoot)\System32\certreq.exe -Config {{ inventory_hostname }}\{{ rootca_common_name }} -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | filename }}.crt
-      with_fileblob: /var/certs/issuing/*.req
+      with_fileglob: /var/certs/issuing/*.req
 
     - name: Copy the issued certificates to control node
       fetch:

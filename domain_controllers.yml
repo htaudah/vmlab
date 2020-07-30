@@ -1,4 +1,5 @@
-# Playbook to configure all Active Directory domain controllers
+# Playbook to configure all Active Directory domain controllers. Tasks must be run serially
+# (serial=1) to allow the second domain controller to join the domain established by the first.
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/26/2020
 # -------------------------------------------------------------------------------------------------
@@ -6,6 +7,7 @@
 
 - hosts: domain_controllers
   name: Configure Domain Controller Servers
+  serial: 1
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
