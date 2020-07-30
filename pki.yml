@@ -17,6 +17,11 @@
     ansible_winrm_transport: ntlm
     ansible_port: 5985
   tasks:
+    - name: Transfer CA policy file
+      win_copy:
+        src: configurations/root_capolicy.inf
+        dest: C:\Windows\CAPolicy.inf
+
     - name: Install Active Directory Certificate Services (ADCS)
       win_feature:
         name: ADCS-Cert-Authority
@@ -36,13 +41,12 @@
         CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
         IsSingleInstance: yes
         Credential_username: "Administrator@{{ domain_name }}"
-        Credential_password: "{{ domain_admin_password }}"
+        Credential_password: "{{ win_local_password }}"
 
     - name: Configure root ADCS settings
       win_dsc:
         resource_name: AdcsCertificationAuthoritySettings
         Ensure: Present
-        IsSingleInstance: yes
         CACertPublicationURLs:
           - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
@@ -102,6 +106,11 @@
     - include_tasks: join_domain.yml
       vars:
         machine_ou: "{{ server_ou }}"
+
+    - name: Transfer CA policy file
+      win_copy:
+        src: configurations/root_capolicy.inf
+        dest: C:\Windows\CAPolicy.inf
 
     - name: Install Active Directory Certificate Services (ADCS)
       win_feature:
