@@ -39,7 +39,7 @@
         CAType: 'StandaloneRootCA'
         CACommonName: "{{ rootca_common_name }}"
         CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
-        IsSingleInstance: yes
+        IsSingleInstance: 'Yes'
         Credential_username: "Administrator"
         Credential_password: "{{ win_local_password }}"
 
@@ -70,7 +70,7 @@
           - 'ChangeCASecuritySettings'
           - 'StoreAndRetrieveArchivedKeys'
           - 'ChangeCAConfiguration'
-        IsSingleInstance: yes
+        IsSingleInstance: 'Yes'
 
     - name: Restart certificate services
       win_service:
@@ -184,7 +184,7 @@
       win_dsc:
         resource_name: AdcsCertificationAuthoritySettings
         Ensure: Present
-        IsSingleInstance: yes
+        IsSingleInstance: 'Yes'
         CACertPublicationURLs:
           - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
