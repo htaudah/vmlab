@@ -51,7 +51,7 @@ route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
 ### PUBLIC KEY INFRASTRUCTURE ###
 rootca_common_name: "{{ orgname }} Authority"
 issuing_common_name: "{{ orgname }} Issuing Authority"
-ca_distinguished_suffix: "{{ orgname }} Trust Services"
+ca_distinguished_suffix: "o={{ orgname }} Trust Services,{{ base_dn }}"
 
 # Certificates to be generated and deployed
 certificates:

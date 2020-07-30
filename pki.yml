@@ -40,13 +40,12 @@
         CACommonName: "{{ rootca_common_name }}"
         CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
         IsSingleInstance: yes
-        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_username: "Administrator"
         Credential_password: "{{ win_local_password }}"
 
     - name: Configure root ADCS settings
       win_dsc:
         resource_name: AdcsCertificationAuthoritySettings
-        Ensure: Present
         CACertPublicationURLs:
           - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
@@ -72,8 +71,6 @@
           - 'StoreAndRetrieveArchivedKeys'
           - 'ChangeCAConfiguration'
         IsSingleInstance: yes
-        Credential_username: "Administrator@{{ domain_name }}"
-        Credential_password: "{{ domain_admin_password }}"
 
     - name: Restart certificate services
       win_service:
@@ -98,9 +95,9 @@
     - "{{ playbook_dir }}/customizations.yml"
   vars:
     ansible_connection: winrm
-    ansible_user: Administrator@{{ domain_name }}
-    ansible_password: "{{ domain_admin_password }}"
-    ansible_winrm_transport: credssp
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
     ansible_port: 5985
   tasks:
     - include_tasks: join_domain.yml
@@ -134,6 +131,19 @@
         dest: C:\Windows\Temp\
       register: crl_copy
 
+- hosts: issuing_authorities
+  name: Configure Issuing Certificate Authority
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
     - name: Publish root CA certificate to Active Directory
       win_shell: |
         $($env:SystemRoot)\System32\certutil.exe -f dspublish {{ crl_copy.dest }} RootCA
