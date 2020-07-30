@@ -2,6 +2,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: mail_servers:mail_edge_servers:mail_witness_servers
   name: Join Exchange Servers to Domain
   vars_files:

@@ -2,6 +2,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/26/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: domain_controllers
   name: Configure Domain Controller Servers
   vars_files:

@@ -2,6 +2,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/30/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: localhost
   connection: local
   name: Configure domain structure

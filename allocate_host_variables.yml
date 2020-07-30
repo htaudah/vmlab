@@ -13,5 +13,5 @@
     - add_host:
         name: "{{ item }}"
       args:
-        ansible_host: "{{ subnet }}.{{ hostvars[item]['host_address'] }}"
+        ansible_host: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
       loop: "{{ groups['all'] }}"

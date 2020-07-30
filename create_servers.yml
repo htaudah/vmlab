@@ -4,7 +4,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
-- include_playbook: allocate_host_variables.yml
+- import_playbook: allocate_host_variables.yml
 
 - hosts: localhost
   connection: local

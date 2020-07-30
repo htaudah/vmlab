@@ -2,6 +2,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/29/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: databases
   name: Configure SQL Servers
   vars_files:
