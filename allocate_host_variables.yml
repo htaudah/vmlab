@@ -1,0 +1,17 @@
+# Playbook to allocate host variables to all hosts in the inventory. This is currently only
+# needed to build the ansible_host host variables from the configured subnet and host_address.
+# This playbook should be included in all others.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/30/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Allocate host variables
+  vars_files:
+    - "{{ playbook_dir }}/strings.yml"
+  tasks:
+    - add_host:
+        name: "{{ item }}"
+      args:
+        ansible_host: "{{ subnet }}.{{ hostvars[item]['host_address'] }}"
+      loop: "{{ groups['all'] }}"

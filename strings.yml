@@ -9,7 +9,7 @@ template_win_2019: "{{ userid }}-windows-server-template"
 template_centos_8: "{{ userid }}-centos-8-template"
 workload_folder: /Workloads/{{ userid }}
 workload_datastore: WorkloadDatastore
-datacenter_name: SDDC-Datacenter
+datacenter_name: SAND-FRANK-01-DC01
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
 network_subnet: "192.168.77"
