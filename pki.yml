@@ -80,12 +80,14 @@
     - name: Copy root CA certificate to control node
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}_{{ rootca_common_name }}.crt
-        dest: /var/certs/rootca/{{ inventory_hostname }}_{{ rootca_common_name }}.crt
+        dest: /var/certs/rootca/
+        flat: yes
 
     - name: Copy root CRL to control node
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ rootca_common_name }}.crl
-        dest: /var/certs/rootca/{{ rootca_common_name }}.crl
+        dest: /var/certs/rootca/
+        flat: yes
 
 - hosts: issuing_authorities
   name: Configure Issuing Certificate Authority
@@ -212,6 +214,7 @@
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}.req
         dest: /var/certs/issuing/
+        flat: yes
 
 - hosts: rootca
   name: Issue subordinate certificate requests
@@ -253,6 +256,7 @@
       fetch:
         src: C:\Windows\Temp\{{ item.split('.req') | filename }}.crt
         dest: /var/certs/issuing/
+        flat: yes
       with_fileglob: /var/certs/issuing/*.req
 
 - hosts: issuing_authorities
