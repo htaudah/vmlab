@@ -130,7 +130,7 @@
     - name: Copy root CRL
       win_copy:
         src: /var/certs/rootca/{{ rootca_common_name }}.crl
-        dest: C:\Windows\Temp\
+        dest: C:\Windows\Temp\{{ rootca_common_name }}.crl
       register: crl_copy
 
 - hosts: issuing_authorities
@@ -148,25 +148,23 @@
   tasks:
     - name: Publish root CA certificate to Active Directory
       win_shell: |
-        $($env:SystemRoot)\System32\certutil.exe -f dspublish {{ crl_copy.dest }} RootCA
+        . "$($env:SystemRoot)\\System32\\certutil.exe" -dspublish -f "{{ crt_copy.dest }}" RootCA
 
     - name: Publish root CA CRL to Active Directory
       win_shell: >
-        "$($env:SystemRoot)\\System32\\certutil.exe -f dspublish {{ crl_copy.dest }}"
+        . "$($env:SystemRoot)\\System32\\certutil.exe" -dspublish -f "{{ crl_copy.dest }}"
 
     - name: Import root CA certificate to local root certificate store
       win_certificate_store:
-        path: C:\Windows\Temp\{{ crt_copy.dest }}
+        path: "{{ crt_copy.dest }}"
         state: present
-        password: "{{ pfx_password }}"
         store_name: Root
         key_exportable: no
 
     - name: Import root CA CRL to local root certificate store
       win_certificate_store:
-        path: C:\Windows\Temp\{{ crl_copy.dest }}
+        path: "{{ crl_copy.dest }}"
         state: present
-        password: "{{ pfx_password }}"
         store_name: Root
         key_exportable: no
 
