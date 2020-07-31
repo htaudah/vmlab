@@ -161,12 +161,9 @@
         store_name: Root
         key_exportable: no
 
+    # Windows has no .NET mechanism to import CRLs, so use certutil
     - name: Import root CA CRL to local root certificate store
-      win_certificate_store:
-        path: "{{ crl_copy.dest }}"
-        state: present
-        store_name: Root
-        key_exportable: no
+      win_shell: . "$($env:SystemRoot)\\System32\\certutil.exe" -addstore -f root "{{ crl_copy.dest }}"
 
     - name: Set up issuing ADCS
       win_dsc:
