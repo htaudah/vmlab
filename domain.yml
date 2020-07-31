@@ -24,6 +24,11 @@
       - "{{ user_ou }}"
       - "{{ group_ou }}"
   tasks:
+    - name: Install DSC module for Active Directory
+      win_psmodule:
+        name: ActiveDirectoryDsc
+        state: present
+
     - name: Create domain OUs
       win_dsc:
         resource_name: ADOrganizationalUnit
