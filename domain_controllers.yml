@@ -42,3 +42,8 @@
     - name: Reboot new domain controller (existing domain)
       win_reboot:
       when: join_domain.reboot_required
+
+    - name: Install DSC module for Active Directory
+      win_psmodule:
+        name: ActiveDirectoryDsc
+        state: present

@@ -4,31 +4,6 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: localhost
-  connection: local
-  name: Configure domain structure
-  vars_files:
-    - "{{ playbook_dir }}/vault.yml"
-    - "{{ playbook_dir }}/strings.yml"
-    - "{{ playbook_dir }}/customizations.yml"
-  vars:
-    organizational_units:
-      - "{{ server_ou }}"
-      - "{{ exchange_ou }}"
-      - "{{ account_ou }}"
-      - "{{ workstation_ou }}"
-      - "{{ user_ou }}"
-      - "{{ group_ou }}"
-  tasks:
-    - name: Create Domain OUs
-      ldap_entry:
-        dn: "{{ item }}"
-        objectClass: organizationalUnit
-        server_uri: "ldap://{{ domain_name }}/"
-        bind_dn: "{{ domain_admin_dn }}"
-        bind_pw: "{{ domain_admin_password }}"
-      loop: "{{ organizational_units }}"
-
 - hosts: domain_controllers
   name: Create domain users
   vars_files:
@@ -41,7 +16,24 @@
     ansible_password: "{{ win_local_password }}"
     ansible_winrm_transport: ntlm
     ansible_port: 5985
+    organizational_units:
+      - "{{ server_ou }}"
+      - "{{ exchange_ou }}"
+      - "{{ account_ou }}"
+      - "{{ workstation_ou }}"
+      - "{{ user_ou }}"
+      - "{{ group_ou }}"
   tasks:
+    - name: Create domain OUs
+      win_dsc:
+        resource_name: ADOrganizationalUnit
+        Name: "{{ item.split(',') | first }}"
+        Path: '{{ item | regex_replace("^[^,]+?,(.*)", "\\1") }}'
+        ProtectedFromAccidentalDeletion: yes
+        Ensure: Present
+      run_once: yes
+      loop: "{{ organizational_units }}"
+
     - win_domain_user:
         name: jdoe
         firstname: John
