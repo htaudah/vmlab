@@ -80,12 +80,12 @@
     - name: Copy root CA certificate to control node
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}_{{ rootca_common_name }}.crt
-        dest: /var/certs/rootca/
+        dest: /var/certs/rootca/{{ inventory_hostname }}_{{ rootca_common_name }}.crt
 
     - name: Copy root CRL to control node
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ rootca_common_name }}.crl
-        dest: /var/certs/rootca/
+        dest: /var/certs/rootca/{{ rootca_common_name }}.crl
 
 - hosts: issuing_authorities
   name: Configure Issuing Certificate Authority
