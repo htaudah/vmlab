@@ -32,9 +32,9 @@
     - name: Create domain OUs
       win_dsc:
         resource_name: ADOrganizationalUnit
-        Name: "{{ item.split(',') | first }}"
-        Path: '{{ item | regex_replace("^[^,]+?,(.*)", "\\1") }}'
-        ProtectedFromAccidentalDeletion: yes
+        Name: '{{ item | regex_replace("^[^=]+?=([^,]+)", "\1") }}'
+        Path: '{{ item | regex_replace("^[^,]+?,(.*)", "\1") }}'
+        ProtectedFromAccidentalDeletion: no
         Ensure: Present
       run_once: yes
       loop: "{{ organizational_units }}"
