@@ -176,6 +176,7 @@
         CADistinguishedNameSuffix: "{{ ca_distinguished_suffix }}"
         OverwriteExistingCAinDS: yes
         OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
+        IsSingleInstance: 'Yes'
 
     - name: Configure ADCS settings
       win_dsc:
