@@ -178,34 +178,6 @@
         OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
         IsSingleInstance: 'Yes'
 
-    - name: Configure ADCS settings
-      win_dsc:
-        resource_name: AdcsCertificationAuthoritySettings
-        Ensure: Present
-        IsSingleInstance: 'Yes'
-        CACertPublicationURLs:
-          - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
-          - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
-          - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
-        CRLPublicationURLs:
-          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
-          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
-          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
-        CRLOverlapUnits: 8
-        CRLOverlapPeriod: Hours
-        CRLPeriodUnits: 1
-        CRLPeriod: Weeks
-        ValidityPeriodUnits: 5
-        ValidityPeriod: Years
-        AuditFilter:
-          - 'StartAndStopADCS'
-          - 'BackupAndRestoreCADatabase'
-          - 'IssueAndManageCertificateRequests'
-          - 'RevokeCertificatesAndPublishCRLs'
-          - 'ChangeCASecuritySettings'
-          - 'StoreAndRetrieveArchivedKeys'
-          - 'ChangeCAConfiguration'
-
     - name: Copy issuing CA request
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}.req
@@ -275,6 +247,33 @@
 
     - name: Install issued certificate
       win_shell: $($env:SystemRoot)\System32\certutil.exe -installCert $($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt
+
+    - name: Configure ADCS settings
+      win_dsc:
+        resource_name: AdcsCertificationAuthoritySettings
+        IsSingleInstance: 'Yes'
+        CACertPublicationURLs:
+          - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
+          - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
+          - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
+        CRLPublicationURLs:
+          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
+          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
+          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+        CRLOverlapUnits: 8
+        CRLOverlapPeriod: Hours
+        CRLPeriodUnits: 1
+        CRLPeriod: Weeks
+        ValidityPeriodUnits: 5
+        ValidityPeriod: Years
+        AuditFilter:
+          - 'StartAndStopADCS'
+          - 'BackupAndRestoreCADatabase'
+          - 'IssueAndManageCertificateRequests'
+          - 'RevokeCertificatesAndPublishCRLs'
+          - 'ChangeCASecuritySettings'
+          - 'StoreAndRetrieveArchivedKeys'
+          - 'ChangeCAConfiguration'
 
     - name: Restart certificate services
       win_service:
