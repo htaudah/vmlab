@@ -180,7 +180,7 @@
 
     - name: Copy issuing CA request
       fetch:
-        src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}.req
+        src: C:\Windows\Temp\{{ inventory_hostname }}.req
         dest: /var/certs/issuing/
         flat: yes
 
@@ -205,14 +205,14 @@
 
     - name: Request and issue certificates
       win_shell: |
-        $request_result = $($env:SystemRoot)\System32\certreq.exe -Config {{ inventory_hostname }}\{{ rootca_common_name }} -Submit C:\Windows\Temp\{{ item | filename }}
+        $request_result = . "$($env:SystemRoot)\\System32\\certreq.exe" -Config {{ inventory_hostname }}\{{ rootca_common_name }} -Submit C:\Windows\Temp\{{ item | filename }}
         $request_result -match 'RequestId:\s([0-9]*)'
         if ($Matches.Count -lt 2)
         {
           throw "Error getting Request ID from certificate request"
         }
         $request_id = $Matches[1]
-        $submit_result = $(env:SystemRoot)\\System32\\certreq.exe -Resubmit $request_id
+        $submit_result = . "$(env:SystemRoot)\\System32\\certreq.exe" -Resubmit $request_id
         if ($submit_result -notmatch 'Certificate issued')
         {
           throw "Unexpected result when issuing requested certificate"
