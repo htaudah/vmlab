@@ -212,7 +212,7 @@
           throw "Error getting Request ID from certificate request"
         }
         $request_id = $Matches[1]
-        $submit_result = . "$(env:SystemRoot)\\System32\\certreq.exe" -Resubmit $request_id
+        $submit_result = . "$(env:SystemRoot)\\System32\\certutil.exe" -Resubmit $request_id
         if ($submit_result -notmatch 'Certificate issued')
         {
           throw "Unexpected result when issuing requested certificate"
@@ -248,6 +248,18 @@
     - name: Install issued certificate
       win_shell: $($env:SystemRoot)\System32\certutil.exe -installCert $($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt
 
+      # We need to append the shares for the web servers that will be hosting the CDP and AIA
+    - name: Define cert publication URLs
+      set_fact:
+        cert_publication_urls:
+          - '1:C:\Windows\System32\CertSrv\CertEnroll\%1_%3%4.crt'
+          - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
+          - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
+        crl_publication_urls:
+          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
+          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
+          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+
     - name: Configure ADCS settings
       win_dsc:
         resource_name: AdcsCertificationAuthoritySettings
@@ -257,9 +269,7 @@
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
           - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
         CRLPublicationURLs:
-          - '65:C:\Windows\System32\CertSrv\CertEnroll\%3%8%9.crl'
-          - '79:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10'
-          - '6:http://pki.{{ domain_name }}/CertEnroll/%3%8%9.crl'
+          "{{ crl_publication_urls + (groups['web_servers:&windows'] | map('regex_replace', '(.*)', '65:file:\\\\\\1.{{ domain_name }}\\CertEnroll\\%3%8%9.crl')) }}"
         CRLOverlapUnits: 8
         CRLOverlapPeriod: Hours
         CRLPeriodUnits: 1
