@@ -247,9 +247,8 @@
 
     - name: Install issued certificate
       win_shell: |
-        # Get certificate thumbprint to see if it's already installed
         $cert_details = . "$($env:SystemRoot)\System32\certutil.exe" "$($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt"
-        $thumbprint = $cert_details | Select-Where { $_ -match "Cert Hash\(sha1\)" } | Select-Object -First 1
+        $thumbprint = $cert_details | Where-Object { $_ -match "Cert Hash\(sha1\)" } | Select-Object -First 1
         $thumbprint -match ".*?:\s(.*)"
         $thumbprint = $Matches[1]
         $found_certs = Get-ChildItem -Path Cert:\LocalMachine\CA | ?{ $_.Thumbprint -eq $thumbprint }
@@ -283,7 +282,7 @@
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
           - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
         CRLPublicationURLs:
-          "{{ crl_publication_urls + (groups['web_servers:&windows'] | map('regex_replace', '(.*)', '65:file:\\\\\\1.{{ domain_name }}\\CertEnroll\\%3%8%9.crl')) }}"
+          '{{ crl_publication_urls + (groups["web_servers"] | intersect(groups["windows"]) |  map("regex_replace", "(.*)", "65:file:\\\\\1." + domain_name + "\\CertEnroll\\%3%8%9.crl")) }}'
         CRLOverlapUnits: 8
         CRLOverlapPeriod: Hours
         CRLPeriodUnits: 1
