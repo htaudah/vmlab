@@ -207,11 +207,11 @@
       win_shell: |
         $request_result = . "$($env:SystemRoot)\System32\certreq.exe" -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -Submit C:\Windows\Temp\{{ item | basename }}
         $Matches = [Regex]::Match($request_result, 'RequestId:\s([0-9]*)')
-        if ($Matches.Count -lt 2)
+        if ($Matches.Groups.Count -lt 2)
         {
           throw "Error getting Request ID from certificate request"
         }
-        $request_id = $Matches[1]
+        $request_id = $Matches.Groups[1].Value
         $submit_result = . "$(env:SystemRoot)\System32\certutil.exe" -Resubmit $request_id
         if ($submit_result -notmatch 'Certificate issued')
         {
@@ -222,7 +222,7 @@
 
     - name: Copy the issued certificates to control node
       fetch:
-        src: C:\Windows\Temp\{{ item.split('.req') | basename }}.crt
+        src: C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
         dest: /var/certs/issuing/
         flat: yes
       with_fileglob: /var/certs/issuing/*.req
@@ -246,7 +246,21 @@
         dest: C:\Windows\Temp\
 
     - name: Install issued certificate
-      win_shell: $($env:SystemRoot)\System32\certutil.exe -installCert $($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt
+      win_shell: |
+        # Get certificate thumbprint to see if it's already installed
+        $cert_details = . "$($env:SystemRoot)\System32\certutil.exe" "$($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt"
+        $thumbprint = $cert_details | Select-Where { $_ -match "Cert Hash\(sha1\)" } | Select-Object -First 1
+        $thumbprint -match ".*?:\s(.*)"
+        $thumbprint = $Matches[1]
+        $found_certs = Get-ChildItem -Path Cert:\LocalMachine\CA | ?{ $_.Thumbprint -eq $thumbprint }
+        if ($found_certs.Count -gt 0)
+        {
+          Write-Host "Certificate with the same thumbprint already exists"
+          exit 0
+        }
+        . "$($env:SystemRoot)\System32\certutil.exe" -installCert "$($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt"
+      register: install_cert
+      changed_when: 'command completed successfully' in install_cert.stdout
 
       # We need to append the shares for the web servers that will be hosting the CDP and AIA
     - name: Define cert publication URLs
