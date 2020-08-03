@@ -121,6 +121,11 @@
         name: ADCS-Cert-Authority
         state: present
 
+    - name: Install Certificate Authority Management Tools
+      win_feature:
+        name: RSAT-ADCS-Mgmt
+        state: present
+
     - name: Install DSC module for ADCS
       win_psmodule:
         name: ActiveDirectoryCSDsc
