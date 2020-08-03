@@ -27,6 +27,11 @@
         name: ADCS-Cert-Authority
         state: present
 
+    - name: Install Certificate Authority Management Tools
+      win_feature:
+        name: RSAT-ADCS-Mgmt
+        state: present
+
     - name: Install DSC module for ADCS
       win_psmodule:
         name: ActiveDirectoryCSDsc
@@ -264,7 +269,7 @@
         }
         . "$($env:SystemRoot)\System32\certutil.exe" -installCert "$($env:SystemRoot)\Temp\{{ inventory_hostname }}.crt"
       register: install_cert
-      changed_when: 'command completed successfully' in install_cert.stdout
+      changed_when: "'command completed successfully' in install_cert.stdout"
 
       # We need to append the shares for the web servers that will be hosting the CDP and AIA
     - name: Define cert publication URLs
@@ -287,7 +292,7 @@
           - '2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11'
           - '2:http://pki.{{ domain_name }}/CertEnroll/%1_%3%4.crl'
         CRLPublicationURLs:
-          '{{ crl_publication_urls + (groups["web_servers"] | intersect(groups["windows"]) |  map("regex_replace", "(.*)", "65:file:\\\\\1." + domain_name + "\\CertEnroll\\%3%8%9.crl")) }}'
+          '{{ crl_publication_urls + (groups["web_servers"] | intersect(groups["windows"]) |  map("regex_replace", "(.*)", "65:file:\\\\\1." + domain_name + "\\CertEnroll\\%3%8%9.crl") | list) }}'
         CRLOverlapUnits: 8
         CRLOverlapPeriod: Hours
         CRLPeriodUnits: 1
