@@ -178,6 +178,11 @@
         OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
         IsSingleInstance: 'Yes'
 
+    - name: Install Web Enrollment feature
+      win_feature:
+        name: ADCS-Web-Enrollment
+        state: present
+
     - name: Copy issuing CA request
       fetch:
         src: C:\Windows\Temp\{{ inventory_hostname }}.req
