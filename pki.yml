@@ -188,11 +188,6 @@
         OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
         IsSingleInstance: 'Yes'
 
-    - name: Install Web Enrollment feature
-      win_feature:
-        name: ADCS-Web-Enrollment
-        state: present
-
     - name: Copy issuing CA request
       fetch:
         src: C:\Windows\Temp\{{ inventory_hostname }}.req
@@ -227,8 +222,8 @@
           throw "Error getting Request ID from certificate request"
         }
         $request_id = $Matches.Groups[1].Value
-        $submit_result = . "$(env:SystemRoot)\System32\certutil.exe" -Resubmit $request_id
-        if ($submit_result -notmatch 'Certificate issued')
+        $submit_result = . "$($env:SystemRoot)\System32\certutil.exe" -Resubmit $request_id
+        if ($submit_result[0] -notmatch 'Certificate issued')
         {
           throw "Unexpected result when issuing requested certificate"
         }
@@ -317,3 +312,14 @@
       win_service:
         name: CertSvc
         state: restarted
+
+    - name: Install Web Enrollment feature
+      win_feature:
+        name: ADCS-Web-Enrollment
+        state: present
+
+    - name: Configure Web Enrollment feature
+      win_dsc:
+        resource_name: AdcsWebEnrollment
+        Ensure: Present
+        IsSingleInstance: 'Yes'
