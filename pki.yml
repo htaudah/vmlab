@@ -87,6 +87,9 @@
         name: CertSvc
         state: restarted
 
+    - name: Regenerate CRL
+      win_shell: . "$($env:SystemRoot)\\System32\\certutil.exe" -crl
+
     - name: Copy root CA certificate to control node
       fetch:
         src: C:\Windows\System32\CertSrv\CertEnroll\{{ inventory_hostname }}_{{ rootca_common_name }}.crt
