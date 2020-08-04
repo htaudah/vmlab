@@ -96,7 +96,7 @@
       win_dsc:
         resource_name: DFSNamespaceRoot
         Path: \\{{ domain_name }}\Shares
-        TargetPath: \\{{ hostvars[inventory_hostname]['computer_name'] }}.{{ domain_name }}\Shares
+        TargetPath: \\{{ inventory_hostname }}.{{ domain_name }}\Shares
         Ensure: Present
         Type: DomainV2
         Description: AD Domain based DFS namespace for all shares
@@ -108,7 +108,7 @@
         resource_name: DFSNamespaceFolder
         Path: \\{{ domain_name }}\Shares\{{ item[0].name }}
         # Each folder has targets pointing to all file share servers
-        TargetPath: \\{{ hostvars[item[1]]['computer_name'] }}.{{ domain_name }}\{{ item[0].name }}
+        TargetPath: \\{{ item[1] }}.{{ domain_name }}\{{ item[0].name }}
         Ensure: Present
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
@@ -119,7 +119,7 @@
         resource_name: DFSReplicationGroup
         GroupName: Shares
         Ensure: Present
-        Members: "{{ groups['file_shares'] | map('extract', hostvars, 'computer_name') | list }}"
+        Members: "{{ groups['file_shares'] }}"
         Folders: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | map(attribute='name') | list }}"
         Topology: Fullmesh
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
@@ -139,7 +139,7 @@
         resource_name: DFSReplicationGroupMembership
         GroupName: Shares
         FolderName: "{{ item[0].name }}"
-        ComputerName: "{{ hostvars[item[1]]['computer_name'] }}"
+        ComputerName: "{{ item[1] }}"
         ContentPath: C:\shares\{{ item[0].path }}
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
