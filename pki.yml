@@ -323,3 +323,5 @@
         resource_name: AdcsWebEnrollment
         Ensure: Present
         IsSingleInstance: 'Yes'
+        Credential_username: "Administrator@{{ domain_name }}"
+        Credential_password: "{{ domain_admin_password }}"
