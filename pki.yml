@@ -88,7 +88,12 @@
         state: restarted
 
     - name: Regenerate CRL
-      win_shell: . "$($env:SystemRoot)\\System32\\certutil.exe" -crl
+      win_shell: |
+        . "$($env:SystemRoot)\System32\certutil.exe" -crl
+        if ($LASTEXITCODE -eq -2147023545)
+        {
+          exit 0
+        }
 
     - name: Copy root CA certificate to control node
       fetch:
