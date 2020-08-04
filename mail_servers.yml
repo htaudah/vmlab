@@ -61,6 +61,7 @@
         chdir: "{{ drive_output.stdout | trim }}"
         executable: cmd
       when: "'Schema Extended' not in schema_extended.stdout"
+      run_once: yes
 
     - name: Create folder for prerequisite installers
       win_file:
