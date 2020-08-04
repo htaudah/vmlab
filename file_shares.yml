@@ -39,7 +39,6 @@
         description: "{{ item.description }}"
         path: C:\shares\{{ item.path }}
         full: "{{ item.full }}"
-      when: not item.cluster
       loop: "{{ win_shared_folders }}"
 
     - name: Populate shares with web files
