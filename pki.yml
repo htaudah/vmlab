@@ -227,7 +227,7 @@
         {
           throw "Unexpected result when issuing requested certificate"
         }
-        $retrieve_result = . "$($env:SystemRoot)\System32\certreq.exe" -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
+        $retrieve_result = . "$($env:SystemRoot)\System32\certreq.exe" -f -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
       with_fileglob: /var/certs/issuing/*.req
 
     - name: Copy the issued certificates to control node
