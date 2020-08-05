@@ -1,0 +1,37 @@
+# Playbook to destroy all VMs in the inventory.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Aug/03/2020
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: localhost
+  connection: local
+  name: Delete Infrastructure Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Delete Windows inventory machines
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ userid }}-{{ item }}"
+        state: absent
+        resource_pool: "{{ resource_pool }}"
+      loop: "{{ groups['windows'] }}"
+
+    - name: Delete Linux inventory machines
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ userid }}-{{ item }}"
+        state: absent
+        resource_pool: "{{ resource_pool }}"
+      loop: "{{ groups['linux'] }}"
