@@ -20,8 +20,9 @@
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
         name: "{{ userid }}-{{ item }}"
-        state: absent
         resource_pool: "{{ resource_pool }}"
+        state: absent
+        force: yes
       loop: "{{ groups['windows'] }}"
 
     - name: Delete Linux inventory machines
@@ -32,6 +33,7 @@
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
         name: "{{ userid }}-{{ item }}"
-        state: absent
         resource_pool: "{{ resource_pool }}"
+        state: absent
+        force: yes
       loop: "{{ groups['linux'] }}"
