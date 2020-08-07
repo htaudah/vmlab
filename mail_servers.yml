@@ -192,14 +192,14 @@
         DnsRoutingEnabled: yes
         AddressSpaces:
           - '*'
-        SourceTransportServers: "{{ groups['mail_servers'] | map('extract', hostvars, 'computer_name') | list }}"
+        SourceTransportServers: "{{ groups['mail_servers'] }}"
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
 
     - name: Configure ECP virtual directory
       win_dsc:
         resource_name: xExchEcpVirtualDirectory
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\ecp (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\ecp (Default Web Site)"
         ExternalUrl: https://mail.{{ domain_name }}/ecp
         InternalUrl: https://mail.{{ domain_name }}/ecp
         AllowServiceRestart: yes
@@ -209,7 +209,7 @@
     - name: Configure MAPI virtual directory
       win_dsc:
         resource_name: xExchMapiVirtualDirectory
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\mapi (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\mapi (Default Web Site)"
         ExternalUrl: https://mail.{{ domain_name }}/mapi
         InternalUrl: https://mail.{{ domain_name }}/mapi
         IISAuthenticationMethods:
@@ -221,7 +221,7 @@
     - name: Configure OAB virtual directory
       win_dsc:
         resource_name: xExchOabVirtualDirectory
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\OAB (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\OAB (Default Web Site)"
         ExternalUrl: https://mail.{{ domain_name }}/oab
         InternalUrl: https://mail.{{ domain_name }}/oab
         AllowServiceRestart: yes
@@ -231,7 +231,7 @@
     - name: Configure Outlook Anywhere URL
       win_dsc:
         resource_name: xExchOutlookAnywhere
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\Rpc (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\Rpc (Default Web Site)"
         ExternalClientsRequireSSL: yes
         InternalClientsRequireSSL: yes
         ExternalHostName: mail.{{ domain_name }}
@@ -246,7 +246,7 @@
     - name: Configure OWA virtual directory
       win_dsc:
         resource_name: xExchOwaVirtualDirectory
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\owa (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\owa (Default Web Site)"
         BasicAuthentication: yes
         FormsAuthentication: yes
         WindowsAuthentication: yes
@@ -261,7 +261,7 @@
     - name: Configure EWS virtual directory
       win_dsc:
         resource_name: xExchWebServicesVirtualDirectory
-        Identity: "{{ hostvars[inventory_hostname]['computer_name'] }}\\EWS (Default Web Site)"
+        Identity: "{{ inventory_hostname }}\\EWS (Default Web Site)"
         ExternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         InternalUrl: https://mail.{{ domain_name }}/ews/exchange.asmx
         AllowServiceRestart: yes
@@ -278,7 +278,7 @@
         AutoDagVolumesRootFolderPath: C:\ExchangeVolumes
         DatacenterActivationMode: DagOnly
         SkipDagValidation: yes
-        WitnessServer: "{{ groups['mail_witness_servers'] | map('extract', hostvars, 'computer_name') | list | random }}"
+        WitnessServer: "{{ groups['mail_witness_servers'] | random }}"
         WitnessDirectory: C:\ExchangeWitness
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
@@ -294,7 +294,7 @@
     - name: Add server to DAG
       win_dsc:
         resource_name: xExchDatabaseAvailabilityGroupMember
-        MailboxServer: "{{ hostvars[inventory_hostname]['computer_name'] }}"
+        MailboxServer: "{{ inventory_hostname }}"
         DAGName: PrimaryDAG
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"

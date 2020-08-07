@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: localhost
+- hosts: all
   connection: local
   name: Create Infrastructure Servers
   vars_files:
@@ -16,14 +16,14 @@
   tasks:
     - name: Create Windows virtual machines
       vars:
-        computer_name: "{{ item }}"
+        computer_name: "{{ inventory_hostname }}"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         state: poweredon
         guest_id: windows9Server64Guest
         template: "{{ template_win_2019 }}"
@@ -36,41 +36,26 @@
         networks:
           - name: "{{ network_name }}"
             type: static
-            ip: "{{ hostvars[item]['ansible_host'] }}"
+            ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
             netmask: "{{ network_mask }}"
             gateway: "{{ network_gateway }}"
         resource_pool: "{{ resource_pool }}"
         wait_for_ip_address: yes
         wait_for_customization: yes
       register: create_windows_server
-      loop: "{{ groups['windows'] }}"
-
-    - name: Mount iso files where needed
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ userid }}-{{ item }}"
-        state: present
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: iso
-            iso_path: "{{ iso_paths[hostvars[item]['mount_iso']] }}"
-      when: "{{ hostvars[item]['mount_iso'] is defined }}"
-      loop: "{{ groups['windows'] }}"
+      when: "'windows' in group_names"
+      delegate_to: localhost
 
     - name: Create Linux virtual machines
       vars:
-        computer_name: "{{ item }}"
+        computer_name: "{{ inventory_hostname }}"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         state: poweredon
         guest_id: centos8_64Guest
         template: "{{ template_centos_8 }}"
@@ -78,11 +63,28 @@
         networks:
           - name: "{{ network_name }}"
             type: static
-            ip: "{{ hostvars[item]['ansible_host'] }}"
+            ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
             netmask: "{{ network_mask }}"
             gateway: "{{ network_gateway }}"
         resource_pool: "{{ resource_pool }}"
         wait_for_ip_address: yes
         wait_for_customization: yes
       register: create_linux_server
-      loop: "{{ groups['linux'] }}"
+      when: "'linux' in group_names"
+      delegate_to: localhost
+
+    - name: Mount iso files where needed
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        state: present
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_paths[hostvars[inventory_hostname]['mount_iso']] }}"
+      when: "{{ hostvars[inventory_hostname]['mount_iso'] is defined }}"
+      delegate_to: localhost
