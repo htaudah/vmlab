@@ -47,3 +47,10 @@
       win_psmodule:
         name: ActiveDirectoryDsc
         state: present
+
+    - name: Wait for DC initialization
+      win_shell: |
+        do {
+          Start-Sleep -Seconds 5
+          Get-ADComputer $env:COMPUTERNAME | Out-Null
+        } until ($?)
