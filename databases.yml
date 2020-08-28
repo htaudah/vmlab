@@ -17,18 +17,9 @@
     ansible_winrm_transport: ntlm
     ansible_port: 5985
   tasks:
-    - name: Join server to domain
-      win_domain_membership:
-        dns_domain_name: "{{ domain_name }}"
-        domain_admin_user: "{{ domain_admin_user }}@{{ domain_name }}"
-        domain_admin_password: "{{ domain_admin_password }}"
-        domain_ou_path: "{{ server_ou }}"
-        state: domain
-      register: join_domain
-
-    - name: Reboot server when joining domain
-      win_reboot:
-      when: join_domain.reboot_required
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ exchange_ou }}"
 
     - name: Get SQL Server installation disc drive letter
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
@@ -36,11 +27,11 @@
 
     - name: Install SQL Server from mounted ISO
       win_package:
-        path: D:\setup.exe
+        path: "{{ drive_output.stdout | trim }}\\setup.exe"
         product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
         arguments: >
           /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
-          /SQLSYSADMINACCOUNTS="Haramco\Administrator" /SQLCOLLATION="Latin1_General_CI_AS" /qs
+          /SQLSYSADMINACCOUNTS="Administrator@{{ domain_name }}" /SQLCOLLATION="Latin1_General_CI_AS" /UpdatesEnabled=false /qs
         state: present
 
     # The uninstall command is included for your reference only
@@ -51,3 +42,9 @@
         #arguments: >
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
+
+    - name: Enable SQL AlwaysON
+      win_dsc:
+        Ensure: Present
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
