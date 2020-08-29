@@ -19,8 +19,20 @@
   tasks:
     - include_tasks: join_domain.yml
       vars:
-        machine_ou: "{{ exchange_ou }}"
+        machine_ou: "{{ server_ou }}"
 
+- hosts: databases
+  name: Configure SQL Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
     - name: Get SQL Server installation disc drive letter
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
       register: drive_output
@@ -29,9 +41,9 @@
       win_package:
         path: "{{ drive_output.stdout | trim }}\\setup.exe"
         product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
-        arguments: >
+        arguments: >-
           /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
-          /SQLSYSADMINACCOUNTS="Administrator@{{ domain_name }}" /SQLCOLLATION="Latin1_General_CI_AS" /UpdatesEnabled=false /qs
+          /SQLSYSADMINACCOUNTS="Administrator@{{ domain_name }}" /SQLCOLLATION="Latin1_General_CI_AS" /UpdateEnabled=false /QUIET
         state: present
 
     # The uninstall command is included for your reference only
