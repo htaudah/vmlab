@@ -55,8 +55,28 @@
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
 
+    - name: Create folder for SQL Server Management Studio (SSMS) installer
+      win_file:
+        path: C:\Installers
+        state: directory
+
+    - name: Copy SSMS installer
+      win_copy:
+        src: \\{{ domain_name }}\Shares\domain\SSMS-Setup-ENU.exe
+        dest: C:\Installers\SSMS-Setup-ENU.exe
+        remote_src: yes
+
+    - name: Run SSMS installer
+      win_package:
+
+    - name: Install DSC module for SQL Server management
+      win_psmodule:
+        name: SqlServerDsc
+        state: present
+
     - name: Enable SQL AlwaysON
       win_dsc:
+        resource_name: SqlAlwaysOnService
         Ensure: Present
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
