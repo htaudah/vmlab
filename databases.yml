@@ -68,6 +68,10 @@
 
     - name: Run SSMS installer
       win_package:
+        path: "{{ drive_output.stdout | trim }}\\setup.exe"
+        product_id: '{0955149F-98EC-4F44-8B05-7B0C8C503DCC}'
+        arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:EdgeTransport /InstallWindowsComponents
+        state: present
 
     - name: Install DSC module for SQL Server management
       win_psmodule:
