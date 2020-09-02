@@ -89,6 +89,6 @@ share_downloads:
   - url: 'https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe'
     description: Visual C++ prerequisite for Exchange
     share: domain
-  - url: 'https://aka.ms/ssmsfullsetup'
+  - url: 'https://download.microsoft.com/download/d/9/7/d9789173-aaa7-4f5b-91b0-a2a01f4ba3a6/SSMS-Setup-ENU.exe'
     description: SQL Server Management Studio installer
     share: domain
