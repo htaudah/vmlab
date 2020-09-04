@@ -86,6 +86,11 @@
         state: present
       register: cluster_rsat_feature
 
+    - name: Install Failover Clustering PowerShell management tools
+      win_feature:
+        name: RSAT-Clustering-PowerShell
+        state: present
+
     - name: Install DSC module for Windows Cluster management
       win_psmodule:
         name: xFailOverCluster
