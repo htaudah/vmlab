@@ -91,6 +91,16 @@
         name: RSAT-Clustering-PowerShell
         state: present
 
+    - name: Install Failover Clustering command line interface
+      win_feature:
+        name: RSAT-Clustering-CmdInterface
+        state: present
+
+    - name: Install Failover Clustering PowerShell module
+      win_psmodule:
+        name: FailoverClusters
+        state: present
+
     - name: Install DSC module for Windows Cluster management
       win_psmodule:
         name: xFailOverCluster
