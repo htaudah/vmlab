@@ -33,6 +33,7 @@
     ansible_password: "{{ domain_admin_password }}"
     ansible_winrm_transport: credssp
     ansible_port: 5985
+  tasks:
     - name: Get SQL Server installation disc drive letter
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
       register: drive_output
@@ -68,10 +69,56 @@
 
     - name: Run SSMS installer
       win_package:
-        path: "{{ drive_output.stdout | trim }}\\setup.exe"
+        path: C:\Installers\SSMS-Setup-ENU.exe
         product_id: '{0955149F-98EC-4F44-8B05-7B0C8C503DCC}'
-        arguments: /IAcceptExchangeServerLicenseTerms /Mode:Install /Roles:EdgeTransport /InstallWindowsComponents
+        arguments: /Quiet /norestart
         state: present
+
+    - name: Install Failover Clustering feature to form AlwaysOn AG
+      win_feature:
+        name: Failover-Clustering
+        state: present
+      register: cluster_feature
+
+    - name: Install Failover Clustering management tools
+      win_feature:
+        name: RSAT-Clustering
+        state: present
+      register: cluster_rsat_feature
+
+    - name: Install DSC module for Windows Cluster management
+      win_psmodule:
+        name: xFailOverCluster
+        state: present
+
+    - name: Create the server cluster
+      win_dsc:
+        resource_name: xCluster
+        Name: dbcluster
+        StaticIpAddress: "{{ network_subnet }}.{{ dbcluster_address }}/24"
+        DomainAdministratorCredential_username: "Administrator@{{ domain_name }}"
+        DomainAdministratorCredential_password: "Administrator@{{ domain_name }}"
+      run_once: yes
+
+    - name: Wait for cluster creation to complete
+      win_dsc:
+        resource_name: xWaitForCluster
+        Name: dbcluster
+
+    - name: Join additional nodes to cluster
+      win_dsc:
+        resource_name: xCluster
+        Name: dbcluster
+        StaticIpAddress: "{{ network_subnet }}.{{ dbcluster_address }}/24"
+        DomainAdministratorCredential_username: "Administrator@{{ domain_name }}"
+        DomainAdministratorCredential_password: "Administrator@{{ domain_name }}"
+
+    - name: Add file share witness to cluster
+      win_dsc:
+        resource_name: xClusterQuorum
+        IsSingleInstance: yes
+        Type: NodeAndFileShareMajority
+        Resource: \\{{ group['file_shares'] | first }}.{{ domain_name }}\witness
 
     - name: Install DSC module for SQL Server management
       win_psmodule:
@@ -82,5 +129,6 @@
       win_dsc:
         resource_name: SqlAlwaysOnService
         Ensure: Present
+        InstanceName: MSSQLSERVER
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
