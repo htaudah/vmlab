@@ -96,15 +96,14 @@
         name: RSAT-Clustering-CmdInterface
         state: present
 
-    - name: Install Failover Clustering PowerShell module
-      win_psmodule:
-        name: FailoverClusters
-        state: present
-
     - name: Install DSC module for Windows Cluster management
       win_psmodule:
         name: xFailOverCluster
         state: present
+
+    - name: Reboot after installing clustering feature
+      win_reboot:
+      when: cluster_feature.reboot_required
 
     - name: Create the server cluster
       win_dsc:
@@ -112,7 +111,7 @@
         Name: dbcluster
         StaticIpAddress: "{{ network_subnet }}.{{ dbcluster_address }}/24"
         DomainAdministratorCredential_username: "Administrator@{{ domain_name }}"
-        DomainAdministratorCredential_password: "Administrator@{{ domain_name }}"
+        DomainAdministratorCredential_password: "{{ domain_admin_password }}"
       run_once: yes
 
     - name: Wait for cluster creation to complete
@@ -131,9 +130,9 @@
     - name: Add file share witness to cluster
       win_dsc:
         resource_name: xClusterQuorum
-        IsSingleInstance: yes
+        IsSingleInstance: 'Yes'
         Type: NodeAndFileShareMajority
-        Resource: \\{{ group['file_shares'] | first }}.{{ domain_name }}\witness
+        Resource: \\{{ groups['file_shares'] | first }}.{{ domain_name }}\witness
 
     - name: Install DSC module for SQL Server management
       win_psmodule:

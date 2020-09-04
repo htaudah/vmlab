@@ -89,6 +89,7 @@ win_shared_folders:
     description: File share witness for all Windows clusters
     cluster: no
     path: witness
+    full: Administrator@{{ domain_name }}
 
 # Provide a list of URLs to have some files automatically populated from the web
 share_downloads:
