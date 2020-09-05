@@ -125,7 +125,7 @@
         Name: dbcluster
         StaticIpAddress: "{{ network_subnet }}.{{ dbcluster_address }}/24"
         DomainAdministratorCredential_username: "Administrator@{{ domain_name }}"
-        DomainAdministratorCredential_password: "Administrator@{{ domain_name }}"
+        DomainAdministratorCredential_password: "{{ domain_admin_password }}"
 
     - name: Add file share witness to cluster
       win_dsc:
@@ -133,6 +133,8 @@
         IsSingleInstance: 'Yes'
         Type: NodeAndFileShareMajority
         Resource: \\{{ groups['file_shares'] | first }}.{{ domain_name }}\witness
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
     - name: Install DSC module for SQL Server management
       win_psmodule:
@@ -143,6 +145,50 @@
       win_dsc:
         resource_name: SqlAlwaysOnService
         Ensure: Present
-        InstanceName: MSSQLSERVER
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Add permissions to NT Service account
+      win_dsc:
+        resource_name: SqlPermission
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Principal: "NT Service\\MSSQL${{ db_instance }}"
+        Permission:
+          - AlterAnyAvailabilityGroup
+          - ViewServerState
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Create AlwaysOn endpoint
+      win_dsc:
+        resouce_name: SqlEndpoint
+        EndpointName: HADR
+        EndpointType: DatabaseMirroring
+        Port: 5022
+        ServerName: "{{ inventory_hostname }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Create AlwaysOn availability group
+      win_dsc:
+        resource_name: SqlAG
+        Ensure: Present
+        Name: MainAG
+        InstanceName: "{{ db_instance }}"
+        ServerName: "{{ inventory_hostname }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Create database on primary node
+      win_dsc:
+        resource_name: SqlDatabase
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Name: "{{ item.name }}"
+        RecoveryModel: Full
+      loop: "{{ databases }}"
