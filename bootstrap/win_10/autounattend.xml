@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ImageInstall>
+                <DataImage wcm:action="add">
+                    <InstallFrom>
+                        <MetaData wcm:action="add">
+                            <Key>/IMAGE/NAME</Key>
+                            <Value>Windows 10 Enterprise Evaluation</Value>
+                        </MetaData>
+                    </InstallFrom>
+                    <Order>1</Order>
+                </DataImage>
+                <OSImage>
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>3</PartitionID>
+                    </InstallTo>
+                </OSImage>
+            </ImageInstall>
+            <UserData>
+                <AcceptEula>true</AcceptEula>
+            </UserData>
+            <DiskConfiguration>
+                <Disk wcm:action="add">
+                    <ModifyPartitions>
+                        <ModifyPartition wcm:action="add">
+                            <Format>FAT32</Format>
+                            <Label>System</Label>
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="add">
+                            <Order>2</Order>
+                            <Extend>true</Extend>
+                            <Format>NTFS</Format>
+                            <Label>OS</Label>
+                            <Letter>C</Letter>
+                            <PartitionID>3</PartitionID>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                    <CreatePartitions>
+                        <CreatePartition wcm:action="add">
+                            <Order>1</Order>
+                            <Size>500</Size>
+                            <Type>EFI</Type>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>2</Order>
+                            <Type>MSR</Type>
+                            <Size>16</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>3</Order>
+                            <Size>20000</Size>
+                            <Type>Primary</Type>
+                        </CreatePartition>
+                    </CreatePartitions>
+                </Disk>
+            </DiskConfiguration>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>Password#123</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
+            <AutoLogon>
+                <Password>
+                    <Value>Password#123</Value>
+                    <PlainText>true</PlainText>
+                </Password>
+                <Domain>.</Domain>
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>Administrator</Username>
+            </AutoLogon>
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <SkipMachineOOBE>true</SkipMachineOOBE>
+                <SkipUserOOBE>true</SkipUserOOBE>
+                <ProtectYourPC>1</ProtectYourPC>
+            </OOBE>
+            <FirstLogonCommands>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>reg ADD HKLM\SYSTEM\CurrentControlSet\Control\Network\NewNetworkWindowOff /f</CommandLine>
+                    <Description>Disable network discovery prompt for all users</Description>
+                    <Order>10</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>11</Order>
+                    <CommandLine>powershell.exe -Command &quot;Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq &apos;VMware Tools&apos; } | %{ $_.DeviceID } | %{ . $_\setup64.exe /s /v &apos;/qb REBOOT=R&apos; }&quot;</CommandLine>
+                    <Description>Install VMware Tools</Description>
+                    <RequiresUserInput>false</RequiresUserInput>
+                </SynchronousCommand>
+            </FirstLogonCommands>
+        </component>
+    </settings>
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-TerminalServices-LocalSessionManager" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <fDenyTSConnections>false</fDenyTSConnections>
+        </component>
+        <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <FirewallGroups>
+                <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
+                    <Active>true</Active>
+                    <Group>Remote Desktop</Group>
+                    <Profile>all</Profile>
+                </FirewallGroup>
+            </FirewallGroups>
+        </component>
+        <component name="Microsoft-Windows-TerminalServices-RDP-WinStationExtensions" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SecurityLayer>1</SecurityLayer>
+            <UserAuthentication>0</UserAuthentication>
+        </component>
+        <component name="Microsoft-Windows-IE-InternetExplorer" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DisableFirstRunWizard>true</DisableFirstRunWizard>
+            <Home_Page>about:blank</Home_Page>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="wim:c:/users/administrator/desktop/win1909/install.wim#Windows 10 Enterprise Evaluation" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>

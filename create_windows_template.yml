@@ -1,138 +1,131 @@
 # Playbook to create Windows OS template. For simplicity, you can oversize hardware
-# requirements to ensure a single template can be used for all applications.
+# requirements to ensure a single template can be used for all applications. This playbook has
+# references to variables that must be defined in an including playbook (create_windows_templates).
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/27/2020
 # -------------------------------------------------------------------------------------------------
-- hosts: localhost
-  connection: local
-  name: Create Windows operating system templates
-  vars_files:
-    - "{{ playbook_dir }}/vault.yml"
-    - "{{ playbook_dir }}/strings.yml"
-    - "{{ playbook_dir }}/customizations.yml"
-  tasks:
-    - name: Create Windows Server 2019 Template
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        folder: "{{ workload_folder }}"
-        name: "{{ template_win_2019 }}"
-        state: present
-        guest_id: windows9Server64Guest
-        hardware:
-          memory_mb: 8192
-          num_cpus: 2
-          num_cpu_cores_per_socket: 1
-          version: 14
-          scsi: lsilogicsas
-          boot_firmware: efi
-        disk:
-          - size_gb: 100
-            type: thin
-            datastore: "{{ workload_datastore }}"
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: iso
-            iso_path: "{{ iso_paths['win_2019'] }}"
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 1
-            type: iso
-            iso_path: "{{ iso_paths['bootstrap'] }}"
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 2
-            type: iso
-            iso_path: "{{ iso_paths['vmware_tools'] }}"
-        customization:
-          # Riyadh timezone
-          timezone: 150
-          password: "{{ win_local_password }}"
-          orgname: "{{ orgname }}"
-          hostname: "{{ userid }}-windows-server-template"
-        networks:
-          - name: "{{ network_name }}"
-            type: dhcp
-            device_type: e1000e
-        resource_pool: "{{ resource_pool }}"
-      register: create_win_2019_template
+- name: Create {{ template_friendly_name }} Template
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ datacenter_name }}"
+    folder: "{{ workload_folder }}"
+    name: "{{ template_name }}"
+    state: present
+    guest_id: "{{ template_guest_id }}"
+    hardware:
+      memory_mb: 8192
+      num_cpus: 2
+      num_cpu_cores_per_socket: 1
+      version: 14
+      scsi: lsilogicsas
+      boot_firmware: efi
+    disk:
+      - size_gb: 100
+        type: thin
+        datastore: "{{ workload_datastore }}"
+    cdrom:
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 0
+        type: iso
+        iso_path: "{{ template_iso_path }}"
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 1
+        type: iso
+        iso_path: "{{ bootstrap_path }}"
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 2
+        type: iso
+        iso_path: "{{ iso_paths['vmware_tools'] }}"
+    customization:
+      # Riyadh timezone
+      timezone: 150
+      password: "{{ win_local_password }}"
+      orgname: "{{ orgname }}"
+      hostname: "{{ template_hostname }}"
+    networks:
+      - name: "{{ network_name }}"
+        type: dhcp
+        device_type: e1000e
+    resource_pool: "{{ resource_pool }}"
+  register: create_win_2019_template
 
-    - name: Change video memory to 8 mb
-      vmware_guest_video:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        name: "{{ template_win_2019 }}"
-        video_memory_mb: 8.0
+- name: Change video memory to 8 mb
+  vmware_guest_video:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ datacenter_name }}"
+    name: "{{ template_name }}"
+    video_memory_mb: 8.0
 
-    - name: Change boot order to cdrom
-      vmware_guest_boot_manager:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        enter_bios_setup: yes
-        boot_order:
-          - cdrom
-          - disk
-          - ethernet
-      register: win_boot_order
+- name: Change boot order to cdrom
+  vmware_guest_boot_manager:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ template_name }}"
+    enter_bios_setup: yes
+    boot_order:
+      - cdrom
+      - disk
+      - ethernet
+  register: win_boot_order
 
-    - name: Add USB 3.1 controller
-      community.vmware.vmware_guest_controller:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        name: "{{ template_win_2019 }}"
-        controllers:
-          - state: present
-            type: usb3
+- name: Add USB 3.1 controller
+  community.vmware.vmware_guest_controller:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ datacenter_name }}"
+    name: "{{ template_name }}"
+    controllers:
+      - state: present
+        type: usb3
 
-    - name: Power on Windows template after configuration complete
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        state: poweredon
-        wait_for_ip_address: yes
-        # Wait 15 minutes for template to be prepared
-        wait_for_ip_address_timeout: 900
+- name: Power on Windows template after configuration complete
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ template_name }}"
+    state: poweredon
+    wait_for_ip_address: yes
+    # Wait 15 minutes for template to be prepared
+    wait_for_ip_address_timeout: 900
 
-    - name: Shut down Windows template after installation complete
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        state: shutdownguest
-        # Wait 2 minutes for shutdown to complete
-        state_change_timeout: 120
+- name: Shut down Windows template after installation complete
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ template_name }}"
+    state: shutdownguest
+    # Wait 2 minutes for shutdown to complete
+    state_change_timeout: 120
 
-    - name: Remove bootstrap and VMware Tools CD drives, unmount installation disc
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ template_win_2019 }}"
-        state: present
-        is_template: yes
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: client
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 1
-            state: absent
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 2
-            state: absent
+- name: Remove bootstrap and VMware Tools CD drives, unmount installation disc
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ template_name }}"
+    state: present
+    is_template: yes
+    cdrom:
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 0
+        type: client
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 1
+        state: absent
+      - controller_type: sata
+        controller_number: 0
+        unit_number: 2
+        state: absent

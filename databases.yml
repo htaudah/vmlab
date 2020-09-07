@@ -43,8 +43,9 @@
         path: "{{ drive_output.stdout | trim }}\\setup.exe"
         product_id: '{0FB552DD-543E-48E7-A6F4-2F8D82723C6A}'
         arguments: >-
-          /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB"
+          /IACCEPTSQLSERVERLICENSETERMS /ACTION="Install" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="{{ db_instance }}"
           /SQLSYSADMINACCOUNTS="Administrator@{{ domain_name }}" /SQLCOLLATION="Latin1_General_CI_AS" /UpdateEnabled=false /QUIET
+          /SECURITYMODE="SQL" /SAPWD="{{ database_password }}"
         state: present
 
     # The uninstall command is included for your reference only
@@ -56,12 +57,23 @@
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
 
-    - name: Enable TCP/IP protocol on standard SQL port
+    - name: Set TCP/IP to use standard port
       win_dsc:
         resource_name: SqlProtocolTcpIP
+        ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         IpAddressGroup: IPAll
         TcpPort: '1433'
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Enable TCP/IP protocol
+      win_dsc:
+        resource_name: SqlProtocolTcpIP
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        ProtocolName: TcpIp
+        Enabled: yes
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
@@ -194,23 +206,6 @@
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       run_once: yes
 
-    - name: Create database owner accounts
-      win_dsc:
-        resource_name: SqlLogin
-        Ensure: Present
-        ServerName: "{{ inventory_hostname }}"
-        InstanceName: "{{ db_instance }}"
-        Name: "{{ item.owner_username }}"
-        LoginCredential_username: "{{ item.owner_username }}"
-        LoginCredential_password: "{{ item.database_password }}"
-        LoginMustChangePassword: no
-        LoginPasswordExpirationEnabled: no
-        LoginPasswordPolicyEnforced: no
-        DefaultDatabase: "{{ item.name }}"
-      loop: "{{ databases }}"
-      loop_control:
-        label: "{{ item.owner_username }}"
-
     - name: Create database on primary node
       win_dsc:
         resource_name: SqlDatabase
@@ -224,6 +219,38 @@
         label: "{{ item.name }}"
       run_once: yes
 
+    - name: Create database owner accounts
+      win_dsc:
+        resource_name: SqlLogin
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        LoginType: SqlLogin
+        Name: "{{ item.owner_username }}"
+        LoginCredential_username: "{{ item.owner_username }}"
+        LoginCredential_password: "{{ database_password }}"
+        LoginMustChangePassword: no
+        LoginPasswordExpirationEnabled: no
+        LoginPasswordPolicyEnforced: no
+        DefaultDatabase: "{{ item.name }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.owner_username }}"
+      run_once: yes
+
+    - name: Set database accounts as dbowners
+      win_dsc:
+        resource_name: SqlDatabaseOwner
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        DatabaseName: "{{ item.name }}"
+        Name: "{{ item.owner_username }}"
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.owner_username }}"
+
     - name: Add databases to availability group
       win_dsc:
         resource_name: SqlAgDatabase
@@ -235,3 +262,6 @@
         DatabaseName: "{{ item.name }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.owner_username }}"

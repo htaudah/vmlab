@@ -1,0 +1,22 @@
+# Playbook to create Windows OS template. For simplicity, you can oversize hardware
+# requirements to ensure a single template can be used for all applications. This playbook has
+# references to variables that must be defined in an including playbook (create_windows_templates).
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/27/2020
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Create Windows operating system templates
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+  - include_tasks: create_windows_template.yml
+    vars:
+      template_name: "{{ template_win_2019 }}"
+      template_friendly_name: "Windows Server 2019"
+      template_guest_id: windows9Server64Guest
+      installer_path: "{{ iso_paths['win_2019'] }}"
+      bootstrap_path: "{{ iso_paths['bootstrap'] }}"
+      template_hostname: "{{ userid }}-windows-server-template"
