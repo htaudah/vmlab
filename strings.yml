@@ -56,6 +56,7 @@ iso_paths:
   exchange_2019: '[WorkloadDatastore] /haudah-temp/en_exchange_server_2019.iso'
   sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
+  win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_1909_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
