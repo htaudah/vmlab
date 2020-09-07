@@ -20,3 +20,11 @@
       installer_path: "{{ iso_paths['win_2019'] }}"
       bootstrap_path: "{{ iso_paths['bootstrap'] }}"
       template_hostname: "{{ userid }}-windows-server-template"
+  - include_tasks: create_windows_template.yml
+    vars:
+      template_name: "{{ template_win_10 }}"
+      template_friendly_name: "Windows Server 2019"
+      template_guest_id: windows9Server64Guest
+      installer_path: "{{ iso_paths['win_10'] }}"
+      bootstrap_path: "{{ iso_paths['bootstrap_win_10'] }}"
+      template_hostname: "{{ userid }}-windows-server-template"

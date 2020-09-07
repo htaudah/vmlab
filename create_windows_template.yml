@@ -30,7 +30,7 @@
         controller_number: 0
         unit_number: 0
         type: iso
-        iso_path: "{{ template_iso_path }}"
+        iso_path: "{{ installer_path }}"
       - controller_type: sata
         controller_number: 0
         unit_number: 1
