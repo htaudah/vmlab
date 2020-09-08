@@ -69,7 +69,7 @@
 
     - name: Enable TCP/IP protocol
       win_dsc:
-        resource_name: SqlProtocolTcpIP
+        resource_name: SqlProtocol
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         ProtocolName: TcpIp
@@ -250,6 +250,7 @@
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.owner_username }}"
+      run_once: yes
 
     - name: Add databases to availability group
       win_dsc:
@@ -265,3 +266,4 @@
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.owner_username }}"
+      run_once: yes

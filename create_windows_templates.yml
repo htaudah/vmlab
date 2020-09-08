@@ -1,8 +1,7 @@
-# Playbook to create Windows OS template. For simplicity, you can oversize hardware
-# requirements to ensure a single template can be used for all applications. This playbook has
-# references to variables that must be defined in an including playbook (create_windows_templates).
+# Includes the create_windows_template tasks to create templates for both Windows Server 2019
+# and Windows 10 without duplicate work.
 # Written by: Hani Audah <ht.aramco@gmail.com>
-# Created on: May/27/2020
+# Created on: Sep/08/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: localhost
   connection: local

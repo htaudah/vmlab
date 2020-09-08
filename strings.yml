@@ -107,6 +107,7 @@ win_shared_folders:
   - name: backups
     description: File share for SQL AG backups
     cluster: yes
+    path: backups
     full: Administrator@{{ domain_name }}
 
 # Provide a list of URLs to have some files automatically populated from the web
