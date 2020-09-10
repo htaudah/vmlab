@@ -69,6 +69,16 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
+    - name: Create login for database service account
+      win_dsc:
+        resource_name: SqlLogin
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Name: "dbsvc@{{ domain_name }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
     - name: Set TCP/IP to use standard port
       win_dsc:
         resource_name: SqlProtocolTcpIP
