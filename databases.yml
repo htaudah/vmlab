@@ -56,6 +56,15 @@
         #arguments: >
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
+    
+    - name: Run database using SQL service account
+      win_dsc:
+        resource_name: SqlServiceAccount
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        ServiceType: DatabaseEngine
+        ServiceAccount_username: "dbsvc@{{ domain_name }}"
+        ServiceAccount_password: "{{ domain_user_password }}"
 
     - name: Set TCP/IP to use standard port
       win_dsc:

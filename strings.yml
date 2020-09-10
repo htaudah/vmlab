@@ -39,6 +39,7 @@ account_ou: 'ou=Corporate Accounts,{{ base_dn }}'
 user_ou: 'ou=Users,{{ account_ou }}'
 group_ou: 'ou=Groups,{{ account_ou }}'
 workstation_ou: 'ou=Workstations,{{ base_dn }}'
+service_ou: 'ou=Service Accounts,{{ base_dn }}'
 
 ### DATABASES ###
 db_instance: 'HARAMCODB'
@@ -108,7 +109,7 @@ win_shared_folders:
     description: File share for SQL AG backups
     cluster: yes
     path: backups
-    full: Administrator@{{ domain_name }}
+    full: Administrator@{{ domain_name }},dbsvc@{{ domain_name }}
 
 # Provide a list of URLs to have some files automatically populated from the web
 share_downloads:

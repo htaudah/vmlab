@@ -23,6 +23,7 @@
       - "{{ workstation_ou }}"
       - "{{ user_ou }}"
       - "{{ group_ou }}"
+      - "{{ service_ou }}"
   tasks:
     - name: Install DSC module for Active Directory
       win_psmodule:
@@ -77,4 +78,10 @@
         surname: Largo
         company: "{{ orgname }}"
         password: "{{ domain_user_password }}"
+      run_once: yes
+
+    - win_domain_user:
+        name: dbsvc
+        password: "{{ domain_user_password }}"
+        path: "{{ service_ou }}"
       run_once: yes
