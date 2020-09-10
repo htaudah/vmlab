@@ -57,14 +57,17 @@
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
     
+    # NOTE: this module doesn't seem to understand that domain\user and user@domain are identical
     - name: Run database using SQL service account
       win_dsc:
         resource_name: SqlServiceAccount
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         ServiceType: DatabaseEngine
-        ServiceAccount_username: "dbsvc@{{ domain_name }}"
+        ServiceAccount_username: '{{ domain_name.split(".") | first }}\dbsvc'
         ServiceAccount_password: "{{ domain_user_password }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
     - name: Set TCP/IP to use standard port
       win_dsc:
@@ -186,7 +189,7 @@
         Ensure: Present
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
-        Principal: "NT Service\\MSSQL${{ db_instance }}"
+        Principal: "dbsvc@{{ domain_name }}"
         Permission:
           - AlterAnyAvailabilityGroup
           - ViewServerState
@@ -276,3 +279,14 @@
       loop_control:
         label: "{{ item.owner_username }}"
       run_once: yes
+
+    - name: Add replicas to availability group
+      win_dsc:
+        resource_name: SqlAGReplica
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Name: "{{ inventory_hostname }}"
+        AvailabilityGroupName: MainAG
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      when: inventory_hostname != {{ groups[databases] | first }}
