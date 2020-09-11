@@ -33,6 +33,7 @@
     ansible_password: "{{ domain_admin_password }}"
     ansible_winrm_transport: credssp
     ansible_port: 5985
+  any_errors_fatal: yes
   tasks:
     - name: Get SQL Server installation disc drive letter
       win_shell: Get-CimInstance Win32_LogicalDisk | ?{ $_.DriveType -eq 5 -and $_.VolumeName -eq 'SqlSetup_x64_ENU' } | % {$_.DeviceID}
@@ -248,7 +249,7 @@
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       run_once: yes
 
-    - name: Create database on primary node
+    - name: Create database on both nodes
       win_dsc:
         resource_name: SqlDatabase
         Ensure: Present
@@ -317,6 +318,8 @@
         InstanceName: "{{ db_instance }}"
         Name: "{{ inventory_hostname }}\\{{ db_instance }}"
         AvailabilityGroupName: MainAG
+        FailoverMode: Automatic
+        AvailabilityMode: SynchronousCommit
         PrimaryReplicaServerName: "{{ groups['databases'] | first }}"
         PrimaryReplicaInstanceName: "{{ db_instance }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
