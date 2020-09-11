@@ -315,7 +315,7 @@
         resource_name: SqlAGReplica
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
-        Name: "{{ inventory_hostname }}"
+        Name: "{{ inventory_hostname }}\\{{ db_instance }}"
         AvailabilityGroupName: MainAG
         PrimaryReplicaServerName: "{{ groups['databases'] | first }}"
         PrimaryReplicaInstanceName: "{{ db_instance }}"
