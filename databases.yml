@@ -75,7 +75,7 @@
         Ensure: Present
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
-        Name: "dbsvc@{{ domain_name }}"
+        Name: '{{ domain_name.split(".") | first }}\dbsvc'
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
@@ -199,7 +199,7 @@
         Ensure: Present
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
-        Principal: '{{ domain_name.split(".") | first }}\dbsvc'
+        Principal: 'NT Service\ClusSvc'
         Permission:
           - AlterAnyAvailabilityGroup
           - ViewServerState
@@ -297,6 +297,8 @@
         InstanceName: "{{ db_instance }}"
         Name: "{{ inventory_hostname }}"
         AvailabilityGroupName: MainAG
+        PrimaryReplicaServerName: "{{ groups['databases'] | first }}"
+        PrimaryReplicaInstanceName: "{{ db_instance }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      when: inventory_hostname != {{ groups[databases] | first }}
+          #when: inventory_hostname != groups['databases'] | first
