@@ -73,8 +73,21 @@
         name: SQL Server Database Engine
         direction: in
         protocol: tcp
-        port: 1433
+        localport: 1433
         profiles: domain
+
+    - win_firewall_rule:
+        name: SQL Server Browser
+        direction: in
+        protocol: udp
+        localport: 1434
+        profiles: domain
+
+    - name: Enable and start the SQL Server Browser service
+      win_service:
+        name: SQLBrowser
+        state: started
+        start_mode: auto
 
     - name: Create login for database service account
       win_dsc:
