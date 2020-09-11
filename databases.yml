@@ -69,6 +69,13 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
+    - win_firewall_rule:
+        name: SQL Server Database Engine
+        direction: in
+        protocol: tcp
+        port: 1433
+        profiles: domain
+
     - name: Create login for database service account
       win_dsc:
         resource_name: SqlLogin
@@ -199,7 +206,7 @@
         Ensure: Present
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
-        Principal: 'NT Service\ClusSvc'
+        Principal: '{{ domain_name.split(".") | first }}\dbsvc'
         Permission:
           - AlterAnyAvailabilityGroup
           - ViewServerState
