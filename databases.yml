@@ -56,6 +56,11 @@
         #arguments: >
           #/IACCEPTSQLSERVERLICENSETERMS /ACTION="Uninstall" /FEATURES=SQLEngine,Replication,Conn /INSTANCENAME="HARAMCODB" /qs
         #state: absent
+
+    - name: Install DSC module for SQL Server management
+      win_psmodule:
+        name: SqlServerDsc
+        state: present
     
     # NOTE: this module doesn't seem to understand that domain\user and user@domain are identical
     - name: Run database using SQL service account
@@ -198,11 +203,6 @@
         Resource: \\{{ groups['file_shares'] | first }}.{{ domain_name }}\witness
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-
-    - name: Install DSC module for SQL Server management
-      win_psmodule:
-        name: SqlServerDsc
-        state: present
 
     - name: Enable SQL AlwaysON
       win_dsc:
