@@ -290,19 +290,7 @@
         RetryCount: 30
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      when: inventory_hostname != {{ groups[databases] | first }}
-
-    - name: Create database on primary and secondary nodes
-      win_dsc:
-        resource_name: SqlDatabase
-        Ensure: Present
-        ServerName: "{{ inventory_hostname }}"
-        InstanceName: "{{ db_instance }}"
-        Name: "{{ item.name }}"
-        RecoveryModel: Full
-      loop: "{{ databases }}"
-      loop_control:
-        label: "{{ item.name }}"
+      when: inventory_hostname != groups[databases] | first
 
     - name: Create database owner accounts
       win_dsc:
@@ -350,6 +338,19 @@
         Port: 5301
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Create database on primary and secondary nodes
+      win_dsc:
+        resource_name: SqlDatabase
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Name: "{{ item.name }}"
+        RecoveryModel: Full
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.name }}"
+      run_once: yes
 
     - name: Add databases to availability group
       win_dsc:
