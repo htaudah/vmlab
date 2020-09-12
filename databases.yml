@@ -214,7 +214,7 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
-    - name: Add permissions to NT Service account
+    - name: Add permissions to database service account
       win_dsc:
         resource_name: SqlPermission
         Ensure: Present
@@ -227,14 +227,47 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
+    - name: Add cluster service logon
+      win_dsc:
+        resource_name: SqlLogin
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        LoginType: WindowsUser
+        Name: "NT SERVICE\\ClusSvc"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Grant cluster service needed permissions
+      win_dsc:
+        resource_name: SqlPermission
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Principal: "NT SERVICE\\ClusSvc"
+        Permission:
+          - AlterAnyAvailabilityGroup
+          - ViewServerState
+
     - name: Create AlwaysOn endpoint
       win_dsc:
         resource_name: SqlEndpoint
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
         EndpointName: HADR
         EndpointType: DatabaseMirroring
         Port: 5022
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Give database service account CONNECT permission to endpoint
+      win_dsc:
+        resource_name: SqlEndpointPermission
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
+        Name: HADR
+        Principal: '{{ domain_name.split(".") | first }}\dbsvc'
+        Permission: CONNECT
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
@@ -242,14 +275,24 @@
       win_dsc:
         resource_name: SqlAG
         Ensure: Present
-        Name: MainAG
         InstanceName: "{{ db_instance }}"
         ServerName: "{{ inventory_hostname }}"
+        Name: MainAG
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       run_once: yes
 
-    - name: Create database on both nodes
+    - name: Wait for availability group creation
+      win_dsc:
+        resource_name: SqlWaitForAG
+        Name: MainAG
+        RetryIntervalSec: 20
+        RetryCount: 30
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      when: inventory_hostname != {{ groups[databases] | first }}
+
+    - name: Create database on primary and secondary nodes
       win_dsc:
         resource_name: SqlDatabase
         Ensure: Present
@@ -260,7 +303,6 @@
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.name }}"
-      run_once: yes
 
     - name: Create database owner accounts
       win_dsc:
@@ -275,7 +317,49 @@
         LoginMustChangePassword: no
         LoginPasswordExpirationEnabled: no
         LoginPasswordPolicyEnforced: no
-        DefaultDatabase: "{{ item.name }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.owner_username }}"
+
+    - name: Add replicas to availability group
+      win_dsc:
+        resource_name: SqlAGReplica
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Name: "{{ inventory_hostname }}\\{{ db_instance }}"
+        AvailabilityGroupName: MainAG
+        FailoverMode: Automatic
+        AvailabilityMode: SynchronousCommit
+        PrimaryReplicaServerName: "{{ groups['databases'] | first }}"
+        PrimaryReplicaInstanceName: "{{ db_instance }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+          #when: inventory_hostname != groups['databases'] | first
+
+    - name: Add availability group listener
+      win_dsc:
+        resource_name: SqlAGListener
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        Ensure: Present
+        AvailablityGroup: MainAG
+        Name: MainAG
+        IPAddress: "{{ network_subnet }}.{{ db_listener_address }}/24"
+        Port: 5301
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+
+    - name: Add databases to availability group
+      win_dsc:
+        resource_name: SqlAgDatabase
+        Ensure: Present
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        AvailabilityGroupName: MainAG
+        BackupPath: \\{{ domain_name }}\shares\backups
+        DatabaseName: "{{ item.name }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       loop: "{{ databases }}"
@@ -294,34 +378,3 @@
       loop_control:
         label: "{{ item.owner_username }}"
       run_once: yes
-
-    - name: Add databases to availability group
-      win_dsc:
-        resource_name: SqlAgDatabase
-        Ensure: Present
-        ServerName: "{{ inventory_hostname }}"
-        InstanceName: "{{ db_instance }}"
-        AvailabilityGroupName: MainAG
-        BackupPath: \\{{ domain_name }}\shares\backups
-        DatabaseName: "{{ item.name }}"
-        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
-        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      loop: "{{ databases }}"
-      loop_control:
-        label: "{{ item.owner_username }}"
-      run_once: yes
-
-    - name: Add replicas to availability group
-      win_dsc:
-        resource_name: SqlAGReplica
-        ServerName: "{{ inventory_hostname }}"
-        InstanceName: "{{ db_instance }}"
-        Name: "{{ inventory_hostname }}\\{{ db_instance }}"
-        AvailabilityGroupName: MainAG
-        FailoverMode: Automatic
-        AvailabilityMode: SynchronousCommit
-        PrimaryReplicaServerName: "{{ groups['databases'] | first }}"
-        PrimaryReplicaInstanceName: "{{ db_instance }}"
-        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
-        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-          #when: inventory_hostname != groups['databases'] | first

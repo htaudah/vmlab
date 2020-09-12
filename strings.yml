@@ -27,6 +27,7 @@ fallback_dns_server: '10.20.12.12'
 # These are addresses that don't correspond to any of the hosts listed in the inventory (e.g. cluster
 # addresses)
 dbcluster_address: '150'
+db_listener_address: '151'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
