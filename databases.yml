@@ -339,7 +339,7 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
-    - name: Create database on primary and secondary nodes
+    - name: Create database on primary node
       win_dsc:
         resource_name: SqlDatabase
         Ensure: Present

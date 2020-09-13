@@ -124,15 +124,6 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
-    - name: Add folder to replication group
-      win_dsc:
-        resource_name: DFSReplicationGroupFolder
-        GroupName: Shares
-        FolderName: "{{ item }}"
-        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
-        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | map(attribute='name') | list }}"
-
     - name: Add member to replication group
       win_dsc:
         resource_name: DFSReplicationGroupMembership
@@ -140,6 +131,7 @@
         FolderName: "{{ item[0].name }}"
         ComputerName: "{{ item[1] }}"
         ContentPath: C:\shares\{{ item[0].path }}
+        PrimaryMember: "{{ ansible_loop.first }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | product(groups['file_shares']) | list }}"
