@@ -131,7 +131,7 @@
         FolderName: "{{ item[0].name }}"
         ComputerName: "{{ item[1] }}"
         ContentPath: C:\shares\{{ item[0].path }}
-        PrimaryMember: "{{ inventory_hostname }} == {{ groups['file_shares'] | first }}"
+        PrimaryMember: "{{ item[1] == groups['file_shares'] | first }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       loop: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | product(groups['file_shares']) | list }}"
