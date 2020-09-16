@@ -22,11 +22,11 @@
     - name: Set DNS addresses to all other domain controller IPs
       win_dns_client:
         adapter_names: '*'
-        ipv4_addresses: "{{ groups['domain_controllers'] \
+        ipv4_addresses: "{{ (groups['domain_controllers'] \
                         | map('extract', hostvars, 'host_address') \
-                        | reject('==', hostvars['host_address']) \
+                        | reject('eq', hostvars[inventory_hostname]['host_address']) \
                         | map('regex_replace', '(.*)', network_subnet + '.\\1') \
-                        | list }}"
+                        | list) + [fallback_dns_server] }}"
     
     # This comment fixes syntax highlighting on VIM"
 
