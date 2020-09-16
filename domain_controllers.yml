@@ -22,12 +22,13 @@
     - name: Set DNS addresses to all other domain controller IPs
       win_dns_client:
         adapter_names: '*'
-        ipv4_addresses: >
-          "{{ groups['domain_controllers']"
-          "| map('extract', hostvars, 'host_address')"
-          "| reject('==', hostvars['host_address'])"
-          "| map('regex_replace', '(.*)', network_subnet + '.\\1')"
-          "| list }}"
+        ipv4_addresses: "{{ groups['domain_controllers'] \
+                        | map('extract', hostvars, 'host_address') \
+                        | reject('==', hostvars['host_address']) \
+                        | map('regex_replace', '(.*)', network_subnet + '.\\1') \
+                        | list }}"
+    
+    # This comment fixes syntax highlighting on VIM"
 
     - name: Install first domain controller if domain does not exist
       ansible.windows.win_domain:
