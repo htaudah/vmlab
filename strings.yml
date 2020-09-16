@@ -19,8 +19,8 @@ network_gateway: '{{ network_subnet }}.1'
 network_mask: '255.255.255.0'
 # To allow for the Active Directory DNS servers initially being unavailable, always fall back
 # to whatever DNS is available
-primary_dns_server: '{{ network_subnet }}.50'
-secondary_dns_server: '{{ network_subnet }}.51'
+#primary_dns_server: '{{ network_subnet }}.50'
+#secondary_dns_server: '{{ network_subnet }}.51'
 fallback_dns_server: '10.20.12.12'
 
 ### SPECIAL IP ADDRESSES ###

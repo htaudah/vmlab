@@ -5,10 +5,11 @@
 # -------------------------------------------------------------------------------------------------
 custom_win_2019_workgroup:
   hostname: "{{ computer_name }}"
-  dns_servers: # Check strings.yml for clarification on DNS servers
-    - "{{ primary_dns_server }}"
-    - "{{ secondary_dns_server }}"
-    - "{{ fallback_dns_server }}"
+  # DNS servers consist of list of Active Directory domain controllers
+  dns_servers: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(.*)', network_subnet + '.\\1') | list }}"
+    #- "{{ primary_dns_server }}"
+    #- "{{ secondary_dns_server }}"
+    #- "{{ fallback_dns_server }}"
   timezone: 150 # Riyadh
   password: "{{ win_local_password }}"
   orgname: "{{ orgname }}"
@@ -16,9 +17,9 @@ custom_win_2019_workgroup:
 custom_centos_8:
   hostname: "{{ computer_name }}"
   dns_servers: # Check strings.yml for clarification on DNS servers
-    - "{{ primary_dns_server }}"
-    - "{{ secondary_dns_server }}"
-    - "{{ fallback_dns_server }}"
+    #- "{{ primary_dns_server }}"
+    #- "{{ secondary_dns_server }}"
+    #- "{{ fallback_dns_server }}"
   timezone: "Asia/Riyadh"
   password: "{{ win_local_password }}"
   orgname: "{{ orgname }}"
