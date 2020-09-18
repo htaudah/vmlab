@@ -62,6 +62,7 @@ iso_paths:
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
   vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.1.0.iso'
+  uem_2005: '[WorkloadDatastore] /haudah-temp/UEM_20.5.0.5_Full_Install.iso'
 
 ### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)

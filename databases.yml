@@ -290,7 +290,7 @@
         RetryCount: 30
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      when: inventory_hostname != groups[databases] | first
+      when: inventory_hostname != (groups['databases'] | first)
 
     - name: Create database owner accounts
       win_dsc:
@@ -332,12 +332,13 @@
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         Ensure: Present
-        AvailablityGroup: MainAG
+        AvailabilityGroup: MainAG
         Name: MainAG
-        IPAddress: "{{ network_subnet }}.{{ db_listener_address }}/24"
+        IPAddress: "{{ network_subnet }}.{{ db_listener_address }}/255.255.255.0"
         Port: 5301
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Create database on primary node
       win_dsc:
