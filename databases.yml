@@ -89,6 +89,13 @@
         localport: 1434
         profiles: domain
 
+    - win_firewall_rule:
+        name: SQL Server Mirroring Endpoint
+        direction: in
+        protocol: tcp
+        localport: 5022
+        profiles: domain
+
     - name: Enable and start the SQL Server Browser service
       win_service:
         name: SQLBrowser
@@ -360,7 +367,7 @@
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         AvailabilityGroupName: MainAG
-        BackupPath: \\{{ domain_name }}\shares\backups
+        BackupPath: \\{{ groups['file_shares'] | first }}.{{ domain_name }}\backups
         DatabaseName: "{{ item.name }}"
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
