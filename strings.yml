@@ -122,3 +122,7 @@ share_downloads:
   - url: 'https://download.microsoft.com/download/d/9/7/d9789173-aaa7-4f5b-91b0-a2a01f4ba3a6/SSMS-Setup-ENU.exe'
     description: SQL Server Management Studio installer
     share: domain
+  - url: 'https://download.microsoft.com/download/B/E/D/BED73AAC-3C8A-43F5-AF4F-EB4FEA6C8F3A/ENU/x64/sqlncli.msi'
+    description: SQL Server 2012 Native Client
+    share: domain
+    subfolder: UEM

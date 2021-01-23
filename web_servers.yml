@@ -46,7 +46,20 @@
       - IIS-ISAPIExtensions
       - IIS-ISAPIFilter
       - IIS-HttpCompressionStatic
+      - IIS-HttpCompressionDynamic
       - IIS-ASPNET45
+      - IIS-IPSecurity
+      - IIS-ASP
+      - IIS-ServerSideIncludes
+      - WCF-HTTP-Activation
+      - MSMQ
+      - MSMQ-Services
+      - MSMQ-Server
+      - MSMQ-ADIntegration
+      - MSMQ-HTTP
+      - MSMQ-Triggers
+      - MSMQ-Mutlicast
+      - MSMQ-RoutingServer
   tasks:
     - include_tasks: join_domain.yml
       vars:
