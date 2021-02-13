@@ -11,6 +11,8 @@ pip3 install python-ldap
 # Needed for CredSSP authentication to Windows hosts
 pip3 install ntlm-auth --upgrade
 pip3 install pywinrm[credssp]
+# Needed to interact with AWS
+pip3 install boto3
 sudo sed -i -r 's/^#(log_path.*)/\1/' /etc/ansible/ansible.cfg
 # These collections provide additional functionality not yet available in base
-# TODO: switching to AWS; no longer need vmware collections
+ansible-galaxy collection install amazon.aws
