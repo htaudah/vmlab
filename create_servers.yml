@@ -15,7 +15,7 @@
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: Create Windows virtual machines
-      amazon.aws.ec2:
+      amazon.aws.ec2_instance:
         key_name: ws1-lab
         instance_type: t3.xlarge
         image: "{{ windows_ami }}"
@@ -38,7 +38,7 @@
     - name: Create Linux virtual machines
       vars:
         computer_name: "{{ inventory_hostname }}"
-      amazon.aws.ec2:
+      amazon.aws.ec2_instance:
         key_name: ws1-lab
         instance_type: t3.large
         image: "{{ linux_ami }}"
