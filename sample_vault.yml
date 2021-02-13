@@ -1,6 +1,5 @@
-vcenter_hostname: 'myvcenter.com'
-vcenter_username: 'user@vcenter.local'
-vcenter_password: 'Password@123'
+aws_access_key: 'Access_Key'
+aws_secret_key: 'Secret_Key'
 # Password for local administrator account on Windows machines
 win_local_password: 'Password@123'
 # Password for local administrator account on Linux machines
