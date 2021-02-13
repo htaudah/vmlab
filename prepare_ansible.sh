@@ -15,4 +15,4 @@ pip3 install pywinrm[credssp]
 pip3 install boto3
 sudo sed -i -r 's/^#(log_path.*)/\1/' /etc/ansible/ansible.cfg
 # These collections provide additional functionality not yet available in base
-ansible-galaxy collection install amazon.aws
+ansible-galaxy collection install community.aws
