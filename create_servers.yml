@@ -15,33 +15,22 @@
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: Create Windows virtual machines
-      vars:
-        computer_name: "{{ inventory_hostname }}"
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        state: poweredon
-        guest_id: windows9Server64Guest
-        template: "{{ template_win_2019 }}"
-        hardware:
-          memory_mb: 8192
-          num_cpus: 2
-          num_cpu_cores_per_socket: 1
-          version: 14
-        customization: "{{ custom_win_2019_workgroup }}"
-        networks:
-          - name: "{{ network_name }}"
-            type: static
-            ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
-            netmask: "{{ network_mask }}"
-            gateway: "{{ network_gateway }}"
-        resource_pool: "{{ resource_pool }}"
-        wait_for_ip_address: yes
-        wait_for_customization: yes
+      amazon.aws.ec2:
+        key_name: ws1-lab
+        instance_type: t3.xlarge
+        image: "{{ windows_ami }}"
+        wait: yes
+        exact_count: 1
+        count_tag:
+          name: "{{ userid }}-{{ inventory_hostname }}"
+        instance_tags:
+          name: "{{ userid }}-{{ inventory_hostname }}"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 100
+            volume_type: gp3
+            delete_on_termination: yes
+        region: "{{ aws_region }}"
       register: create_windows_server
       when: "'windows' in group_names"
       delegate_to: localhost
@@ -49,42 +38,38 @@
     - name: Create Linux virtual machines
       vars:
         computer_name: "{{ inventory_hostname }}"
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        state: poweredon
-        guest_id: centos8_64Guest
-        template: "{{ template_centos_8 }}"
-        customization: "{{ custom_centos_8 }}"
-        networks:
-          - name: "{{ network_name }}"
-            type: static
-            ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
-            netmask: "{{ network_mask }}"
-            gateway: "{{ network_gateway }}"
-        resource_pool: "{{ resource_pool }}"
-        wait_for_ip_address: yes
-        wait_for_customization: yes
+      amazon.aws.ec2:
+        key_name: ws1-lab
+        instance_type: t3.large
+        image: "{{ linux_ami }}"
+        wait: yes
+        exact_count: 1
+        count_tag:
+          name: "{{ userid }}-{{ inventory_hostname }}"
+        instance_tags:
+          name: "{{ userid }}-{{ inventory_hostname }}"
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 100
+            volume_type: gp3
+            delete_on_termination: yes
+        region: "{{ aws_region }}"
       register: create_linux_server
       when: "'linux' in group_names"
       delegate_to: localhost
 
-    - name: Mount iso files where needed
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        state: present
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: iso
-            iso_path: "{{ iso_paths[hostvars[inventory_hostname]['mount_iso']] }}"
-      when: "{{ hostvars[inventory_hostname]['mount_iso'] is defined }}"
-      delegate_to: localhost
+    #- name: Mount iso files where needed
+      #community.vmware.vmware_guest:
+        #hostname: "{{ vcenter_hostname }}"
+        #username: "{{ vcenter_username }}"
+        #password: "{{ vcenter_password }}"
+        #name: "{{ userid }}-{{ inventory_hostname }}"
+        #state: present
+        #cdrom:
+          #- controller_type: sata
+            #controller_number: 0
+            #unit_number: 0
+            #type: iso
+            #iso_path: "{{ iso_paths[hostvars[inventory_hostname]['mount_iso']] }}"
+      #when: "{{ hostvars[inventory_hostname]['mount_iso'] is defined }}"
+      #delegate_to: localhost

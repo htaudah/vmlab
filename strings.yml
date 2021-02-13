@@ -126,3 +126,9 @@ share_downloads:
     description: SQL Server 2012 Native Client
     share: domain
     subfolder: UEM
+
+### AWS INFORMATION ###
+availability_zone: me-south-1
+windows_ami: ami-07ccb0c390cd8f9de
+linux_ami: ami-0b41a37a62a4296fc
+aws_region: me-south-1

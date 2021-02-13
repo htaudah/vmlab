@@ -12,28 +12,10 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Delete Windows inventory machines
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
-        resource_pool: "{{ resource_pool }}"
+    - name: Delete Windows and Linux machines
+      amazon.aws.ec2:
+        exact_count: 0
+        count_tag:
+          name: "{{ userid }}-{{ inventory_hostname }}"
         state: absent
-        force: yes
-      loop: "{{ groups['windows'] }}"
-
-    - name: Delete Linux inventory machines
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        datacenter: "{{ datacenter_name }}"
-        folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
-        resource_pool: "{{ resource_pool }}"
-        state: absent
-        force: yes
-      loop: "{{ groups['linux'] }}"
+      loop: "{{ groups['windows:&linux'] }}"
