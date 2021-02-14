@@ -15,16 +15,12 @@
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: Create Windows virtual machines
-      amazon.aws.ec2_instance:
+      community.aws.ec2_instance:
         key_name: ws1-lab
         instance_type: t3.xlarge
         image: "{{ windows_ami }}"
         wait: yes
-        exact_count: 1
-        count_tag:
-          name: "{{ userid }}-{{ inventory_hostname }}"
-        instance_tags:
-          name: "{{ userid }}-{{ inventory_hostname }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
           - device_name: /dev/sda1
             volume_size: 100
@@ -38,16 +34,12 @@
     - name: Create Linux virtual machines
       vars:
         computer_name: "{{ inventory_hostname }}"
-      amazon.aws.ec2_instance:
+      community.aws.ec2_instance:
         key_name: ws1-lab
         instance_type: t3.large
         image: "{{ linux_ami }}"
         wait: yes
-        exact_count: 1
-        count_tag:
-          name: "{{ userid }}-{{ inventory_hostname }}"
-        instance_tags:
-          name: "{{ userid }}-{{ inventory_hostname }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
           - device_name: /dev/sda1
             volume_size: 100
