@@ -25,9 +25,10 @@
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
           - device_name: /dev/sda1
-            volume_size: 100
-            volume_type: gp3
-            delete_on_termination: yes
+            ebs:
+              volume_size: 100
+              volume_type: gp3
+              delete_on_termination: yes
         region: "{{ aws_region }}"
       register: create_windows_server
       when: "'windows' in group_names"
@@ -46,9 +47,10 @@
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
           - device_name: /dev/sda1
-            volume_size: 100
-            volume_type: gp3
-            delete_on_termination: yes
+            ebs:
+              volume_size: 100
+              volume_type: gp3
+              delete_on_termination: yes
         region: "{{ aws_region }}"
       register: create_linux_server
       when: "'linux' in group_names"
