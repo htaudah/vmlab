@@ -16,17 +16,17 @@
       amazon.aws.ec2_vpc_net:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        name: "{{ user_id }}-network"
+        name: "{{ userid }}-network"
         cidr_block: "{{ network_subnet_cidr }}"
         region: "{{ aws_region }}"
-        wait: yes
       register: create_vpc
+      throttle: 1
 
     - name: Create VPC Subnet
       amazon.aws.ec2_vpc_subnet:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        vpc_id: "{{ create_vpc.id }}"
+        vpc_id: "{{ create_vpc.vpc.id }}"
         region: "{{ aws_region }}"
         cidr: "{{ network_subnet_internal_cidr }}"
         map_public: no
@@ -38,7 +38,7 @@
       community.aws.ec2_vpc_igw:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        vpc_id: "{{ create_vpc.id }}"
+        vpc_id: "{{ create_vpc.vpc.id }}"
         region: "{{ aws_region }}"
         tags:
           Name: 'Internet Gateway'
@@ -48,7 +48,7 @@
       community.aws.ec2_vpc_route_table:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        vpc_id: "{{ create_vpc.id }}"
+        vpc_id: "{{ create_vpc.vpc.id }}"
         region: "{{ aws_region }}"
         subnets:
           - "{{ create_subnet.subnet.id }}"

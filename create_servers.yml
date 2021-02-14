@@ -38,19 +38,3 @@
       register: create_server
       when: "'windows' in group_names or 'linux' in group_names"
       delegate_to: localhost
-
-    #- name: Mount iso files where needed
-      #community.vmware.vmware_guest:
-        #hostname: "{{ vcenter_hostname }}"
-        #username: "{{ vcenter_username }}"
-        #password: "{{ vcenter_password }}"
-        #name: "{{ userid }}-{{ inventory_hostname }}"
-        #state: present
-        #cdrom:
-          #- controller_type: sata
-            #controller_number: 0
-            #unit_number: 0
-            #type: iso
-            #iso_path: "{{ iso_paths[hostvars[inventory_hostname]['mount_iso']] }}"
-      #when: "{{ hostvars[inventory_hostname]['mount_iso'] is defined }}"
-      #delegate_to: localhost
