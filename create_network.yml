@@ -1,0 +1,59 @@
+# Playbook to deploy all AWC VPCs and subnets
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Feb/14/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: all
+  connection: local
+  name: Create Infrastructure Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create VPC
+      amazon.aws.ec2_vpc_net:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        name: "{{ user_id }}-network"
+        cidr_block: "{{ network_subnet_cidr }}"
+        region: "{{ aws_region }}"
+        wait: yes
+      register: create_vpc
+
+    - name: Create VPC Subnet
+      amazon.aws.ec2_vpc_subnet:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        vpc_id: "{{ create_vpc.id }}"
+        region: "{{ aws_region }}"
+        cidr: "{{ network_subnet_internal_cidr }}"
+        map_public: no
+        tags:
+          Name: "{{ network_name }}"
+        register: create_subnet
+
+    - name: Create Internet Gateway
+      amazon.aws.ec2_vpc_igw:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        vpc_id: "{{ create_vpc.id }}"
+        region: "{{ aws_region }}"
+        tags:
+          Name: 'Internet Gateway'
+        register: create_igw
+
+    - name: Route Internet Gateway
+      amazon.aws.ec2_vpc_route_table:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        vpc_id: "{{ create_vpc.id }}"
+        region: "{{ aws_region }}"
+        subnets:
+          - "{{ create_subnet.subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ create_igw.gateway_id }}"
+        tags:
+          Name: "{{ route_name }}"

@@ -5,6 +5,7 @@
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
+- import_playbook: create_network.yml
 
 - hosts: all
   connection: local
@@ -14,13 +15,13 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Create Windows virtual machines
+    - name: Create all virtual machines
       community.aws.ec2_instance:
         key_name: ws1-lab
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        instance_type: t3.xlarge
-        image_id: "{{ windows_ami }}"
+        instance_type: "{{ ('windows' in group_names') | ternary('t3.xlarge', 't3.large') }}"
+        image_id: "{{ ('windows' in group_names') | ternary(windows_ami, linux_ami) }}"
         wait: yes
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
@@ -29,31 +30,13 @@
               volume_size: 100
               volume_type: gp3
               delete_on_termination: yes
+        network:
+          assign_public_ip: no
+          delete_on_termination: yes
+          private_ip_address: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
         region: "{{ aws_region }}"
-      register: create_windows_server
-      when: "'windows' in group_names"
-      delegate_to: localhost
-
-    - name: Create Linux virtual machines
-      vars:
-        computer_name: "{{ inventory_hostname }}"
-      community.aws.ec2_instance:
-        key_name: ws1-lab
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        instance_type: t3.large
-        image_id: "{{ linux_ami }}"
-        wait: yes
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        volumes:
-          - device_name: /dev/sda1
-            ebs:
-              volume_size: 100
-              volume_type: gp3
-              delete_on_termination: yes
-        region: "{{ aws_region }}"
-      register: create_linux_server
-      when: "'linux' in group_names"
+      register: create_server
+      when: "'windows' in group_names or 'linux' in group_names"
       delegate_to: localhost
 
     #- name: Mount iso files where needed

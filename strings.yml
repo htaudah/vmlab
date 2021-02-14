@@ -13,10 +13,13 @@ workload_datastore: WorkloadDatastore
 datacenter_name: SAND-FRANK-01-DC01
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
-network_subnet: "192.168.78"
+network_subnet: "10.22.0.0"
+subnet_mask: '255.255.0.0'
+subnet_mask_internal: '255.255.255.0'
+network_subnet_cidr: "{{ network_subnet }}/16"
+network_subnet_internal_cidr: "{{ network_subnet }}/24"
 network_name: "{{ userid }}-{{ network_subnet }}.0-24"
 network_gateway: '{{ network_subnet }}.1'
-network_mask: '255.255.255.0'
 # To allow for the Active Directory DNS servers initially being unavailable, always fall back
 # to whatever DNS is available
 fallback_dns_server: '10.20.12.12'
