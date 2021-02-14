@@ -17,8 +17,10 @@
     - name: Create Windows virtual machines
       community.aws.ec2_instance:
         key_name: ws1-lab
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
         instance_type: t3.xlarge
-        image: "{{ windows_ami }}"
+        image_id: "{{ windows_ami }}"
         wait: yes
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
@@ -36,8 +38,10 @@
         computer_name: "{{ inventory_hostname }}"
       community.aws.ec2_instance:
         key_name: ws1-lab
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
         instance_type: t3.large
-        image: "{{ linux_ami }}"
+        image_id: "{{ linux_ami }}"
         wait: yes
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
