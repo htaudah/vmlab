@@ -32,7 +32,7 @@
         map_public: no
         tags:
           Name: "{{ network_name }}"
-        register: create_subnet
+      register: create_subnet
 
     - name: Create Internet Gateway
       community.aws.ec2_vpc_igw:
@@ -42,7 +42,7 @@
         region: "{{ aws_region }}"
         tags:
           Name: 'Internet Gateway'
-        register: create_igw
+      register: create_igw
 
     - name: Route Internet Gateway
       community.aws.ec2_vpc_route_table:
@@ -57,3 +57,4 @@
             gateway_id: "{{ create_igw.gateway_id }}"
         tags:
           Name: "{{ route_name }}"
+      register: create_vpc_igw

@@ -16,4 +16,4 @@
         # For now assuming all IPs are in the internal subnet
         ansible_host: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
       no_log: True
-      loop: "{{ groups['windows':'linux'] }}"
+      loop: "{{ groups['windows'] | union(groups['linux']) }}"
