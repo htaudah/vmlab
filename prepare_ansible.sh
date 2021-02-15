@@ -13,6 +13,9 @@ pip3 install ntlm-auth --upgrade
 pip3 install pywinrm[credssp]
 # Needed to interact with AWS
 pip3 install boto3
+# Needed for ipmath
+pip3 install netaddr
 sudo sed -i -r 's/^#(log_path.*)/\1/' /etc/ansible/ansible.cfg
 # These collections provide additional functionality not yet available in base
 ansible-galaxy collection install community.aws
+ansible-galaxy collection install ansible.netcommon

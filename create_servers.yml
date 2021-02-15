@@ -34,6 +34,7 @@
           assign_public_ip: no
           delete_on_termination: yes
           private_ip_address: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+          subnet_id: "{{ create_subnet.subnet.id }}"
         region: "{{ aws_region }}"
       register: create_server
       when: "'windows' in group_names or 'linux' in group_names"
