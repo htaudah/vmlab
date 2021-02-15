@@ -20,8 +20,8 @@
         key_name: ws1-lab
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        instance_type: "{{ ('windows' in group_names') | ternary('t3.xlarge', 't3.large') }}"
-        image_id: "{{ ('windows' in group_names') | ternary(windows_ami, linux_ami) }}"
+        instance_type: "{{ ('windows' in group_names) | ternary('t3.xlarge', 't3.large') }}"
+        image_id: "{{ ('windows' in group_names) | ternary(windows_ami, linux_ami) }}"
         wait: yes
         name: "{{ userid }}-{{ inventory_hostname }}"
         volumes:
