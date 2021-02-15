@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: all
+- hosts: localhost
   connection: local
   name: Create Infrastructure Servers
   vars_files:
@@ -20,7 +20,6 @@
         cidr_block: "{{ network_subnet_cidr }}"
         region: "{{ aws_region }}"
       register: create_vpc
-      throttle: 1
 
     - name: Create VPC Subnet
       amazon.aws.ec2_vpc_subnet:
@@ -56,5 +55,5 @@
           - dest: 0.0.0.0/0
             gateway_id: "{{ create_igw.gateway_id }}"
         tags:
-          Name: "{{ route_name }}"
+          Name: 'IGW Route'
       register: create_vpc_igw
