@@ -17,9 +17,10 @@
   tasks:
     - name: Create all virtual machines
       community.aws.ec2_instance:
-        key_name: ws1-lab
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+        key_name: ws1-lab
         instance_type: "{{ ('windows' in group_names) | ternary('t3.xlarge', 't3.large') }}"
         image_id: "{{ ('windows' in group_names) | ternary(windows_ami, linux_ami) }}"
         wait: yes
@@ -30,12 +31,20 @@
               volume_size: 100
               volume_type: gp3
               delete_on_termination: yes
+        vpc_subnet_id: "{{ hostvars['localhost']['create_subnet'].subnet.id }}"
         network:
           assign_public_ip: no
           delete_on_termination: yes
           private_ip_address: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
-          subnet_id: "{{ create_subnet.subnet.id }}"
-        region: "{{ aws_region }}"
       register: create_server
       when: "'windows' in group_names or 'linux' in group_names"
       delegate_to: localhost
+
+    - name: Get all administrator passwords into memory
+      community.aws.ec2_win_password:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+        key_file: "~/aws-creds/ws1-lab.pem"
+        wait: yes
+      register: win_local_password

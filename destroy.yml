@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: localhost
+- hosts: all
   connection: local
   name: Delete Infrastructure Servers
   vars_files:
@@ -13,9 +13,11 @@
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: Delete Windows and Linux machines
-      amazon.aws.ec2:
-        exact_count: 0
-        count_tag:
-          name: "{{ userid }}-{{ inventory_hostname }}"
+      community.aws.ec2_instance:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         state: absent
-      loop: "{{ groups['windows:&linux'] }}"
+      when: "'windows' in group_names or 'linux' in group_names"
+      delegate_to: localhost

@@ -1,7 +1,8 @@
 aws_access_key: 'Access_Key'
 aws_secret_key: 'Secret_Key'
 # Password for local administrator account on Windows machines
-win_local_password: 'Password@123'
+# TODO: this is no longer valid for AWS machines
+#win_local_password: 'Password@123'
 # Password for local administrator account on Linux machines
 linux_local_password: 'Password@123'
 domain_admin_password: 'Password@123'
