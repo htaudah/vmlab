@@ -20,3 +20,4 @@ ansible-galaxy collection install community.vmware
 ansible-galaxy collection install ansible.windows
 rm -rf ~/.ansible/collections/ansible_collections/community/vmware/
 git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_collections/community/vmware
+pip3 install pyvmomi
