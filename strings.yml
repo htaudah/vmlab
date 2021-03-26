@@ -3,7 +3,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
-userid: james
+userid: haudah
 orgname: Haramco
 template_win_2019: "{{ userid }}-windows-server-template"
 template_win_10: "{{ userid }}-windows-client-template"
@@ -56,13 +56,13 @@ iso_paths:
   exchange_2019: '[WorkloadDatastore] /haudah-temp/en_exchange_server_2019.iso'
   sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
-  win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_1909_enterprise_evaluation.iso'
+  win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_20H2_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
-  vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.1.0.iso'
-  uem_2005: '[WorkloadDatastore] /haudah-temp/UEM_20.5.0.5_Full_Install.iso'
+  vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.2.5.iso'
+  uem_2011: '[WorkloadDatastore] /haudah-temp/20.11.0.5_Full_Install.zip'
 
 ### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)

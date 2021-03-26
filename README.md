@@ -11,6 +11,15 @@ all options to ensure they conform to your requirements. Most importantly, ensur
 to you on the Internet if you intend to expose some services externally.
 3. network\_subnet is the subnet under which all your machines will reside.
 
+## Create the ansible vault
+The ansible vault file contains all the sensitive data that should not be left unencrypted
+on the control node. There is a sample_vault.yml file that contains all the values
+expected to exist by the playbooks in this project. Modify it with the correct values
+for your environment then encrypt it and rename it to vault.yml:
+
+`mv sample-vault.yml vault.yml
+ansible-vault encrypt sample_vault.yml`
+
 ## Prepare Lab Environment
 The following assumptions are made regarding the vSphere environment that will be hosting
 this lab.
@@ -37,8 +46,7 @@ two options for including these bootstrap files during installation:
 Option (i) allows us to make other useful customizations to the installer ISO that will make the
 installation process even more automation-friendly, but the process is tedious and not worth the
 added effort. The playbooks therefore assume a bootstrap.iso file exists in a specified datastore
-and will take care of mounting it before booting the installation ISO. To create the bootstrap.iso
-file, simply run the following command from the repository root directory:
+and will take care of mounting it before booting the installation ISO. 
 
 ## Create the OS templates
 To create the OS templates, run the create\_[OS]\_template.yml playbook corresponding to the OS
