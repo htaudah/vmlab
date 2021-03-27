@@ -5,6 +5,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/01/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: localhost
   connection: local
   name: Create certificate directories on control node
@@ -19,7 +21,7 @@
         state: directory
       loop: "{{ certificates }}"
 
-- hosts: haudah-certbot
+- hosts: certbot
   name: Create certbot server, generate necessary certificates, and distribute them
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
