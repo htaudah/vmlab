@@ -8,12 +8,12 @@ orgname: Haramco
 template_win_2019: "{{ userid }}-windows-server-template"
 template_win_10: "{{ userid }}-windows-client-template"
 template_centos_8: "{{ userid }}-centos-8-template"
-workload_folder: /Workloads/{{ userid }}
+workload_folder: /Workloads/PROD-LOND-01-USERS/{{ userid }}
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
-network_subnet: "192.168.78"
+network_subnet: "172.28.10"
 network_name: "{{ userid }}-{{ network_subnet }}.0-24"
 network_gateway: '{{ network_subnet }}.1'
 network_mask: '255.255.255.0'
@@ -57,7 +57,7 @@ iso_paths:
   sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_20H2_enterprise_evaluation.iso'
-  centos_8: '[WorkloadDatastore] /haudah-temp/centos-8.1.1911.iso'
+  centos_8: '[WorkloadDatastore] /haudah-temp/CentOS-8.3.2011-x86_64-dvd1.iso'
   bootstrap: '[WorkloadDatastore] /haudah-temp/bootstrap.iso'
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
