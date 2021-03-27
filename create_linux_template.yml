@@ -50,6 +50,7 @@
         networks:
           - name: "{{ network_name }}"
             type: dhcp
+            device_type: e1000e
         resource_pool: "{{ resource_pool }}"
       register: create_centos_8_template
 
