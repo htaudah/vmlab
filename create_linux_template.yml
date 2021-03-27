@@ -42,7 +42,7 @@
             controller_number: 0
             unit_number: 1
             type: iso
-            iso_path: "{{ iso_paths['bootstrap'] }}"
+            iso_path: "{{ iso_paths['bootstrap_centos'] }}"
         customization:
           timezone: "Asia/Riyadh"
           password: "{{ linux_local_password }}"

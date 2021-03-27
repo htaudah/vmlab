@@ -29,10 +29,13 @@ this lab.
 `strings.yml`.
 
 ## Create a bootstrap ISO
-Before running the playbooks for Windows and Linux template creation, generate the bootstrap ISO
-from the source by running the following command from the repository root:
+Before running the playbooks for Windows and Linux template creation, generate the bootstrap ISOs
+from the source by running the following commands from the repository root, which will generate
+a bootstrap ISO for CentOS, Windows 10, and Windows Server 2019:
 
-`mkisofs -l -relaxed-filenames -V OEMDRV -o /tmp/bootstrap.iso ./bootstrap/`
+`mkisofs -l -relaxed-filenames -V OEMDRV -o /tmp/bootstrap_centos.iso ./bootstrap/centos
+mkisofs -l -relaxed-filenames -V OEMDRV -o /tmp/bootstrap_win_10.iso ./bootstrap/win_10
+mkisofs -l -relaxed-filenames -V OEMDRV -o /tmp/bootstrap_win_2019.iso ./bootstrap/win_2019`
 
 For creating both Windows and Linux templates, a response file is needed to provide answers to all
 installation parameters that would normally be specified during a manual install. For Windows, that
@@ -45,8 +48,10 @@ two options for including these bootstrap files during installation:
 
 Option (i) allows us to make other useful customizations to the installer ISO that will make the
 installation process even more automation-friendly, but the process is tedious and not worth the
-added effort. The playbooks therefore assume a bootstrap.iso file exists in a specified datastore
-and will take care of mounting it before booting the installation ISO. 
+added effort. The playbooks therefore assume a bootstrap ISO file exists in a specified datastore
+and will take care of mounting it before booting the installation ISO.
+
+Once the bootstrap ISOs are created in /tmp, be sure to upload all of them to VSphere.
 
 ## Create the OS templates
 To create the OS templates, run the create\_[OS]\_template.yml playbook corresponding to the OS
