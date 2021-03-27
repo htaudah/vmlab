@@ -61,7 +61,8 @@ machine hardware, and converting it into a template.
 
 > :warning: **When creating a Windows template, the bootable Windows installation disc requires
 a key to be pressed during the boot process in order to boot into the disc. For this reason,
-the Windows template creation will**
+the Windows template creation will display the boot disk selection screen to give you enough
+time to press a key to boot from disc.**
 
 ## Run a playbook
 To run any of the playbooks included in the project, the command to use will have the following
