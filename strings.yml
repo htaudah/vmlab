@@ -54,7 +54,7 @@ databases:
 # If iso files are in a content library, look for their corresponding datastore path
 iso_paths:
   exchange_2019: '[WorkloadDatastore] /haudah-temp/en_exchange_server_2019.iso'
-  sql_server: '[WorkloadDatastore] /haudah-temp/en_sql_server_2019_dev.iso'
+  sql_server: '[WorkloadDatastore] /haudah-temp/SQLServer2019-x64-ENU-Dev.iso'
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_20H2_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/CentOS-8.3.2011-x86_64-dvd1.iso'
