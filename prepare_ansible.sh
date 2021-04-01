@@ -15,6 +15,8 @@ pip3 install python-ldap
 pip3 install ntlm-auth --upgrade
 pip3 install pywinrm[credssp]
 sed -i -r 's/^#(log_path.*)/\1/' /etc/ansible/ansible.cfg
+# Uncomment line to skip host key checking
+sed -i -r 's/^#(host_key_checking.*)/\1/' /etc/ansible/ansible.cfg
 # These collections provide additional functionality not yet available in base
 ansible-galaxy collection install community.vmware
 ansible-galaxy collection install ansible.windows

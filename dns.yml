@@ -1,4 +1,6 @@
-# Playbook to configure the DNS Server with all needed DNS records
+# Playbook to configure the DNS Server with all needed DNS records. DNS records that correspond to
+# domain-joined Windows hosts need not be created here, since they are automatically created by
+# Active Directory when the hosts are joined.
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/16/2020
 # -------------------------------------------------------------------------------------------------
