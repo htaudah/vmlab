@@ -58,6 +58,8 @@
         nodes:
           - lb01.haramco.org
           - lb02.haramco.org
+        pcs_user: hacluster
+        pcs_password: "{{ linux_local_password }}"
 
     - name: Install HAProxy
       dnf:
