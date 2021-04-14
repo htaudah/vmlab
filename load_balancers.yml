@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: haudah-lb01
+- hosts: load_balancers
   name: Create and configure the HAProxy load balancer
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
