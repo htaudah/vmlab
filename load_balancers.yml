@@ -43,12 +43,12 @@
       systemd:
         name: pcsd
         state: started
-        enable: yes
+        enabled: yes
 
     - name: Set the cluster user password on all nodes
       user:
         name: hacluster
-        password: "{{ linux_local_password }}"
+        password: "{{ linux_local_password | password_hash('sha512') }}"
         update_password: always
 
     - name: Create the pacemaker cluster

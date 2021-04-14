@@ -23,3 +23,5 @@ ansible-galaxy collection install ansible.windows
 rm -rf ~/.ansible/collections/ansible_collections/community/vmware/
 git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_collections/community/vmware
 pip3 install pyvmomi
+# Needed for hashing and setting passwords for local Linux users
+pip3 install passlib
