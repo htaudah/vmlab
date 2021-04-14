@@ -60,6 +60,7 @@
           - lb02.haramco.org
         pcs_user: hacluster
         pcs_password: "{{ linux_local_password }}"
+      run_once: yes
 
     - name: Install HAProxy
       dnf:
