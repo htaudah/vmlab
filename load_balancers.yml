@@ -27,10 +27,37 @@
         zone: public
 
     - firewalld:
-        service: https
+        service: high-availability
         permanent: yes
         state: enabled
         zone: public
+
+    - name: Install pacemaker tools
+      dnf:
+        name:
+          - pcs
+          - pacemaker
+          - fence-agents-all
+
+    - name: Start up PCS services
+      systemd:
+        name: pcsd
+        state: started
+        enable: yes
+
+    - name: Set the cluster user password on all nodes
+      user:
+        name: hacluster
+        password: "{{ linux_local_password }}"
+        update_password: always
+
+    - name: Create the pacemaker cluster
+      community.general.pacemaker_cluster:
+        name: lbcluster
+        state: online
+        nodes:
+          - lb01.haramco.org
+          - lb02.haramco.org
 
     - name: Install HAProxy
       dnf:
