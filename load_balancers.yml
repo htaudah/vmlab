@@ -62,6 +62,13 @@
         pcs_password: "{{ linux_local_password }}"
       run_once: yes
 
+    - name: Create the virtual IP resource
+      community.general.pacemaker_resource:
+        type: ocf:heartbeat:IPaddr2
+        attributes:
+          ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
+          cidr_netmask: "24"
+
     - name: Install HAProxy
       dnf:
         name: haproxy

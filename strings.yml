@@ -26,6 +26,9 @@ fallback_dns_server: '10.20.12.12'
 # addresses)
 dbcluster_address: '150'
 db_listener_address: '151'
+virtual_ips:
+  uem_console: '200'
+  uem_ds: '201'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
