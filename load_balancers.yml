@@ -64,6 +64,7 @@
 
     - name: Create the virtual IP resource
       community.general.pacemaker_resource:
+        name: VirtualIP
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
