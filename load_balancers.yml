@@ -69,6 +69,7 @@
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
           cidr_netmask: "24"
+      run_once: yes
 
     - name: Install HAProxy
       dnf:
