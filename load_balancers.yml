@@ -71,6 +71,17 @@
           cidr_netmask: "24"
       run_once: yes
 
+    - name: Configure the stonith device
+      community.general.pacemaker_stonith_device:
+        name: vmfence
+        type: fence_vmware_rest
+        pcmk_host_map: "lb01.haramco.org:haudah-lb01;lb02.haramco.org:haudah-lb02"
+        ssl: 1
+        ssl_insecure: 1
+        ipaddr: "{{ vcenter_hostname }}"
+        login: "{{ vcenter_username }}"
+        passwd: "{{ vcenter_password }}"
+
     - name: Install HAProxy
       dnf:
         name: haproxy
