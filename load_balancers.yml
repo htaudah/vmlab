@@ -76,12 +76,13 @@
         name: vmfence
         type: fence_vmware_rest
         fencing_options:
-          pcmk_host_map: "lb01.haramco.org:haudah-lb01;lb02.haramco.org:haudah-lb02"
+          pcmk_host_map: "{{ (groups['load_balancers'] | map('regex_replace', '(.*)', '\\1.' + domain_name + ':' + userid + '-\\1') | join(';')) }}"
           ssl: 1
           ssl_insecure: 1
           ipaddr: "{{ vcenter_hostname }}"
           login: "{{ vcenter_username }}"
           passwd: "{{ vcenter_password }}"
+      run_once: yes
 
     - name: Install HAProxy
       dnf:
