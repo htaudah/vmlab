@@ -29,6 +29,14 @@ db_listener_address: '151'
 virtual_ips:
   uem_console: '200'
   uem_ds: '201'
+  uagr: '202'
+  uage: '203'
+
+### PUBLIC IP ADDRESSES ###
+# This environment will require three public IP addresses to be provided
+public_ip_uagr: ''
+public_ip_seg: ''
+public_ip_2: ''
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
@@ -127,5 +135,21 @@ share_downloads:
     share: domain
   - url: 'https://download.microsoft.com/download/B/E/D/BED73AAC-3C8A-43F5-AF4F-EB4FEA6C8F3A/ENU/x64/sqlncli.msi'
     description: SQL Server 2012 Native Client
+    share: domain
+    subfolder: UEM
+  - url: 'https://download.visualstudio.microsoft.com/download/pr/014120d7-d689-4305-befd-3cb711108212/0fd66638cde16859462a6243a4629a50/ndp48-x86-x64-allos-enu.exe'
+    description: .NET Framework 4.8
+    share: domain
+    subfolder: UEM
+  - url: 'https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe'
+    description: VC Redistributable 2013
+    share: domain
+    subfolder: UEM
+  - url: 'https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi'
+    description: URL Rewrite Module 2.1
+    share: domain
+    subfolder: UEM
+  - url: 'https://download.visualstudio.microsoft.com/download/pr/854cbd11-4b96-4a44-9664-b95991c0c4f7/8ec4944a5bd770faba2f769e647b1e6e/dotnet-hosting-3.1.8-win.exe'
+    description: .NET Core 3.1.8 Server Hosting
     share: domain
     subfolder: UEM

@@ -5,25 +5,20 @@
 # Created on: Jun/16/2020
 # -------------------------------------------------------------------------------------------------
 - hosts: "{{ groups['domain_controllers'] | random }}"
-  name: Configure domain name server
+  name: Configure private DNS records
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Workspace ONE Console
-      win_dns_record:
-        name: "uemc"
+    - win_dns_record:
+        name: "uem"
         type: "A"
-        value: "{{ hostvars['uemc01']['ansible_host'] }}"
+        value: "{{ virtual_ips[uem_console] }}"
     - win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ hostvars['uds01']['ansible_host'] }}"
-    - win_dns_record:
-        name: "uds"
-        type: "A"
-        value: "{{ hostvars['uds01']['ansible_host'] }}"
+        value: "{{ virtual_ips[uem_ds] }}"
     - name: Exchange internal FQDN
       win_dns_record:
         name: "mail"
@@ -38,3 +33,8 @@
     #- name: Exchange MX record
       #win_dns_record:
         #name: 
+#- hosts: localhost
+  #name: Create public DNS records
+  #tasks:
+    #- name: UEM Console server
+      #community.aws.route53:

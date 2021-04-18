@@ -1,0 +1,68 @@
+# Playbook to configure all Exchange 2019 mail servers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jun/04/2020
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: uem_console_servers
+  name: Deploy UEM Console servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - name: Create folder for prerequisite installers
+      win_file:
+        path: C:\Installers
+        state: directory
+
+    - name: Copy installers
+      win_copy:
+        src: \\{{ domain_name }}\Shares\domain\UEM\{{ item }}
+        dest: C:\Installers\{{ item }}
+        remote_src: yes
+      loop:
+        - ndp48-x86-x64-allos-enu.exe
+        - sqlncli.msi
+        - vcredist_x64.exe
+        - rewrite_amd64_en-US.msi
+
+    - name: Get current .NET version
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
+        name: Release
+      register: dotnetversion
+
+    - name: Install .NET Framework 4.8
+      win_package:
+        path: C:\Installers\ndp48-x86-x64-allos-enu.exe
+        arguments: /q /norestart
+      register: dotnetinstall
+      when: dotnetversion.value != 528049
+
+    - name: Reboot after .NET install
+      win_reboot:
+      when: dotnetinstall.reboot_required
+
+    - name: Install Visual C++ Redistributable
+      win_package:
+        path: C:\Installers\vcredist_x64.exe
+        arguments: /q
+        product_id: '{050d4fc8-5d48-4b8f-8972-47c82c46020f}'
+
+    - name: Install .NET Core 3.1.8 Hosting Bundle
+      win_package:
+        path: C:\Installers\dotnet-hosting-3.1.8-win.exe
+        arguments: /q /norestart
+        product_id: '{7186a742-a2d9-4dab-80df-80aa5e8013e3}'
+
+    - name: Install SQL Native Client 2012
+      win_package:
+        path: C:\Installers\sqlncli.msi
+        product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
