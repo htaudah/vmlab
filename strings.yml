@@ -39,7 +39,7 @@ public_ip_seg: ''
 public_ip_2: ''
 
 ### ACTIVE DIRECTORY ###
-domain_name: haramco.org
+domain_name: haramco.net
 base_dn: 'dc={{ domain_name.split(".") | join(",dc=") }}'
 domain_admin_user: 'Administrator'
 domain_admin_dn: 'cn=Administrator,cn=Users,{{ base_dn }}'
