@@ -19,7 +19,7 @@ network_gateway: '{{ network_subnet }}.1'
 network_mask: '255.255.255.0'
 # To allow for the Active Directory DNS servers initially being unavailable, always fall back
 # to whatever DNS is available
-fallback_dns_server: '10.20.12.12'
+fallback_dns_server: '8.8.8.8'
 
 ### SPECIAL IP ADDRESSES ###
 # These are addresses that don't correspond to any of the hosts listed in the inventory (e.g. cluster
