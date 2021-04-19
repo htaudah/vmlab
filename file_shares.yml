@@ -125,7 +125,7 @@
         resource_name: DFSReplicationGroup
         GroupName: Shares
         Ensure: Present
-        Members: "{{ groups['file_shares'] | map('regex_replace', '(.*)', '\\1.' + domain_name) | list }}"
+        Members: "{{ groups['file_shares'] }}"
         Folders: "{{ win_shared_folders | selectattr('cluster', 'equalto', true) | map(attribute='name') | list }}"
         Topology: Fullmesh
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
