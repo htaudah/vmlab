@@ -35,8 +35,7 @@ virtual_ips:
 ### PUBLIC IP ADDRESSES ###
 # This environment will require three public IP addresses to be provided
 public_ip_uagr: ''
-public_ip_seg: ''
-public_ip_2: ''
+public_ip_uem: '3.10.245.54'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.net
@@ -153,3 +152,6 @@ share_downloads:
     description: .NET Core 3.1.8 Server Hosting
     share: domain
     subfolder: UEM
+  - url: 'https://d1drul0h659ga0.cloudfront.net/21.2.0.5_Full_Install.zip'
+    description: UEM 2120 Full Installer
+    share: domain

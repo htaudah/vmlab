@@ -33,8 +33,33 @@
     #- name: Exchange MX record
       #win_dns_record:
         #name: 
-#- hosts: localhost
-  #name: Create public DNS records
-  #tasks:
-    #- name: UEM Console server
-      #community.aws.route53:
+- hosts: localhost
+  name: Create public DNS records
+  tasks:
+    - name: UAGR
+      community.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: uagr.{{ domain_name }}
+        value: "{{ public_ip_uagr }}"
+
+    - name: UEM Device Services
+      community.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: uds.{{ domain_name }}
+        value: "{{ public_ip_uem }}"
+
+    - name: Email Notification Service
+      community.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: ens.{{ domain_name }}
+        value: "{{ public_ip_uem }}"
+
+    - name: Secure Email Gateway
+      community.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: seg.{{ domain_name }}
+        value: "{{ public_ip_uem }}"
