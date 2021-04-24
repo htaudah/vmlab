@@ -212,6 +212,47 @@
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
 
+- hosts: domain_controllers
+  name: Grant Database cluster VCO permissions
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Grant DB cluster VCO child creation permission on database OU
+      win_dsc:
+        resource_name: ADObjectPermissionEntry
+        IdentityReference: '{{ domain_first_name }}\dbcluster'
+        Path: "{{ server_ou }}"
+        ActiveDirectoryRights:
+          - 'CreateChild'
+        AccessControlType: Allow
+        ActiveDirectorySecurityInheritance: All
+        ObjectType: 'bf967a86-0de6-11d0-a285-00aa003049e2'
+        InheritedObjectType: '00000000-0000-0000-0000-000000000000'
+        Ensure: Present
+      run_once: yes
+
+- hosts: databases
+  name: Configure SQL Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  any_errors_fatal: yes
+  tasks:
     - name: Enable SQL AlwaysON
       win_dsc:
         resource_name: SqlAlwaysOnService
@@ -293,6 +334,7 @@
       win_dsc:
         resource_name: SqlWaitForAG
         Name: MainAG
+        InstanceName: "{{ db_instance }}"
         RetryIntervalSec: 20
         RetryCount: 30
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"

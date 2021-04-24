@@ -39,6 +39,7 @@ public_ip_uem: '3.10.245.54'
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
+domain_first_name: '{{ domain_name | regex_replace("(.*?)\..*", "\1") }}'
 base_dn: 'dc={{ domain_name.split(".") | join(",dc=") }}'
 domain_admin_user: 'Administrator'
 domain_admin_dn: 'cn=Administrator,cn=Users,{{ base_dn }}'
