@@ -339,7 +339,7 @@
         RetryCount: 30
         PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
         PsDscRunAsCredential_password: "{{ domain_admin_password }}"
-      when: inventory_hostname != (groups['databases'] | first)
+      when: inventory_hostname == (groups['databases'] | first)
 
     - name: Create database owner accounts
       win_dsc:
