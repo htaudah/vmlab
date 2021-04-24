@@ -5,7 +5,7 @@
 - import_playbook: allocate_host_variables.yml
 
 - hosts: uem_console_servers
-  name: Deploy UEM Console servers
+  name: Join UEM Console Servers to the domain
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -14,6 +14,23 @@
     ansible_connection: winrm
     ansible_user: Administrator
     ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
+- hosts: uem_console_servers
+  name: Deploy UEM Console servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ win_domain_password }}"
     ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:
