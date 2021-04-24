@@ -12,8 +12,8 @@
     - "{{ playbook_dir }}/customizations.yml"
   vars:
     ansible_connection: winrm
-    ansible_user: Administrator@{{ domain_name }}
-    ansible_password: "{{ domain_admin_password }}"
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
     ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:

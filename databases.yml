@@ -228,7 +228,7 @@
     - name: Grant DB cluster VCO child creation permission on database OU
       win_dsc:
         resource_name: ADObjectPermissionEntry
-        IdentityReference: '{{ domain_first_name }}\dbcluster'
+        IdentityReference: '{{ domain_first_name }}\dbcluster$'
         Path: "{{ server_ou }}"
         ActiveDirectoryRights:
           - 'CreateChild'
