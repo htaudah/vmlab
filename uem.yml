@@ -30,7 +30,7 @@
   vars:
     ansible_connection: winrm
     ansible_user: Administrator@{{ domain_name }}
-    ansible_password: "{{ win_domain_password }}"
+    ansible_password: "{{ domain_admin_password }}"
     ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:
@@ -49,6 +49,8 @@
         - sqlncli.msi
         - vcredist_x64.exe
         - rewrite_amd64_en-US.msi
+        - dotnet-hosting-3.1.8-win.exe
+        - 21.2.0.5_Full_Install.zip
 
     - name: Get current .NET version
       win_reg_stat:
