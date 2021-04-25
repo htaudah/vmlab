@@ -50,7 +50,7 @@
         - vcredist_x64.exe
         - rewrite_amd64_en-US.msi
         - dotnet-hosting-3.1.8-win.exe
-        - 21.2.0.5_Full_Install.zip
+        - "{{ uem_installer_name }}.zip"
 
     - name: Get current .NET version
       win_reg_stat:
@@ -87,3 +87,9 @@
         path: C:\Installers\sqlncli.msi
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
+
+    - name: Extract UEM installer
+      community.windows.win_unzip:
+        src: C:\Installers\{{ uem_installer_name }}.zip
+        dest: C:\Installers\{{ uem_installer_name }}
+        creates: C:\Installers\{{ uem_installer_name }}

@@ -122,6 +122,8 @@ win_shared_folders:
     path: backups
     full: Administrator@{{ domain_name }},dbsvc@{{ domain_name }}
 
+# The name of the UEM installer zip is referenced several times
+uem_installer_name: '21.2.0.5_Full_Install'
 # Provide a list of URLs to have some files automatically populated from the web
 share_downloads:
   - url: 'https://download.microsoft.com/download/2/C/4/2C47A5C1-A1F3-4843-B9FE-84C0032C61EC/UcmaRuntimeSetup.exe'
@@ -153,6 +155,6 @@ share_downloads:
     description: .NET Core 3.1.8 Server Hosting
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/21.2.0.5_Full_Install.zip'
+  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ uem_installer_name }}.zip'
     description: UEM 2120 Full Installer
     share: domain
