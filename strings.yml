@@ -60,6 +60,13 @@ databases:
   - name: accessdb
     owner_username: access_db_acct
     owner_password: "{{ database_password }}"
+builtin_databases:
+  - name: msdb
+    username: uem_db_acct
+    role: SQLAgentUserRole
+  - name: msdb
+    username: uem_db_acct
+    role: db_datareader
 
 ### CDROM PATHS ###
 # If iso files are in a content library, look for their corresponding datastore path

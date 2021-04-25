@@ -91,5 +91,5 @@
     - name: Extract UEM installer
       community.windows.win_unzip:
         src: C:\Installers\{{ uem_installer_name }}.zip
-        dest: C:\Installers\{{ uem_installer_name }}
+        dest: C:\Installers
         creates: C:\Installers\{{ uem_installer_name }}

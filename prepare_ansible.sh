@@ -20,6 +20,7 @@ sed -i -r 's/^#(host_key_checking.*)/\1/' /etc/ansible/ansible.cfg
 # These collections provide additional functionality not yet available in base
 ansible-galaxy collection install community.vmware
 ansible-galaxy collection install ansible.windows
+ansible-galaxy collection install community.windows
 rm -rf ~/.ansible/collections/ansible_collections/community/vmware/
 git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_collections/community/vmware
 pip3 install pyvmomi

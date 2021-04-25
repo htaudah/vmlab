@@ -429,3 +429,16 @@
       loop_control:
         label: "{{ item.owner_username }}"
       run_once: yes
+
+    - name: Set permissions to built-in databases
+      win_dsc:
+        resource_name: SqlDatabaseRole
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        DatabaseName: "{{ item.name }}"
+        Name: "{{ item.role }}"
+        MembersToInclude:
+          - "{{ item.username }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ builtin_databases }}"
