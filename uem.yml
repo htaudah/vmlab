@@ -62,12 +62,13 @@
       win_package:
         path: C:\Installers\ndp48-x86-x64-allos-enu.exe
         arguments: /q /norestart
+        product_id: none
       register: dotnetinstall
       when: dotnetversion.value != 528049
 
     - name: Reboot after .NET install
       win_reboot:
-      when: dotnetinstall.reboot_required
+      when: dotnetversion.value != 528049
 
     - name: Install Visual C++ Redistributable
       win_package:
@@ -84,4 +85,5 @@
     - name: Install SQL Native Client 2012
       win_package:
         path: C:\Installers\sqlncli.msi
+        arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
