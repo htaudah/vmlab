@@ -430,6 +430,19 @@
         label: "{{ item.owner_username }}"
       run_once: yes
 
+    - name: Add users to built-in databases
+      win_dsc:
+        resource_name: SqlDatabaseUser
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        DatabaseName: "{{ item.name }}"
+        Name: "{{ item.username }}"
+        UserType: Login
+        LoginName: "{{ item.username }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
+      loop: "{{ builtin_databases }}"
+
     - name: Set permissions to built-in databases
       win_dsc:
         resource_name: SqlDatabaseRole
