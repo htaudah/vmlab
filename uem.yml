@@ -113,3 +113,9 @@
         chdir: C:\Installers\{{ uem_installer_name }}\DB
         executable: cmd
       when: stat_file.stat.exists == False
+      run_once: yes
+
+    - name: Copy Console configuration
+      win_template:
+        src: configurations/CN_ConfigScript.xml
+        dest: C:\CN_ConfigScript.xml
