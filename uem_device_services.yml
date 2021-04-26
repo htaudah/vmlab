@@ -39,6 +39,11 @@
         path: C:\Installers
         state: directory
 
+    - name: Create folder for installer logs
+      win_file:
+        path: C:\InstallerLogs
+        state: directory
+
     - name: Copy installers
       win_copy:
         src: \\{{ domain_name }}\Shares\domain\UEM\{{ item }}
@@ -116,4 +121,4 @@
       win_package:
         path: C:\Installers\{{ uem_installer_name }}\Application\{{ uem_app_installer_name }}
         product_id: '{2D579F60-1CAF-49A3-9986-BBE1C9A38065}'
-        arguments: '/s /V"/qn /lie C:\InstallerLogs\CNInstall.log TARGETDIR=C:\AirWatch INSTALLDIR=C:\AirWatch AWSETUPCONFIGFILE=C:\CN_ConfigScript.xml AWCERTAUTHTOKEN=UAE1WL4NVD"'
+        arguments: '/s /V"/qn /lie C:\InstallerLogs\CNInstall.log TARGETDIR=C:\AirWatch INSTALLDIR=C:\AirWatch AWSETUPCONFIGFILE=C:\CN_ConfigScript.xml AWCERTAUTHTOKEN={{ uem_token }}"'

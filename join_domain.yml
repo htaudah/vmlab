@@ -4,7 +4,15 @@
 # Created on: Jun/22/2020
 # -------------------------------------------------------------------------------------------------
 - name: Enable CredSSP before joining the domain
-  win_shell: Enable-WSManCredSSP -Role Server -Force
+  win_shell: |
+    if ((Get-WSManCredSSP)[1] -match "not configured") {
+      echo "already enabled"
+    }
+    else {
+      Enable-WSManCredSSP -Role Server -Force
+    }
+  register: credssp_result
+  changed_when: "'not configured' in credssp_result.stdout"
 
 - name: Join server to domain
   win_domain_membership:
