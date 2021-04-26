@@ -90,8 +90,8 @@
 
     - name: Install URL Rewrite 2.1
       win_package:
-        path: C:\Installers\UcmaRuntimeSetup.exe
-        product_id: '{A41CBE7D-949C-41DD-9869-ABBD99D753DA}'
+        path: C:\Installers\rewrite_amd64_en-US.msi
+        product_id: '{9BCA2118-F753-4A1E-BCF3-5A820729965C}'
         arguments: /quiet /norestart
         state: present
 
@@ -102,7 +102,7 @@
         creates: C:\Installers\{{ uem_installer_name }}
 
     - name: Check if DB installer already ran
-      win_state:
+      win_stat:
         path: C:\InstallerLogs\DBInstall.log
       register: stat_file
       run_once: yes
