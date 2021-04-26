@@ -131,6 +131,7 @@ win_shared_folders:
 
 # The name of the UEM installer zip is referenced several times
 uem_installer_name: '21.2.0.5_Full_Install'
+uem_db_installer_name: 'WorkspaceONE_UEM_DB_{{ uem_installer_name.split("_") | first }}_Setup.exe'
 # Provide a list of URLs to have some files automatically populated from the web
 share_downloads:
   - url: 'https://download.microsoft.com/download/2/C/4/2C47A5C1-A1F3-4843-B9FE-84C0032C61EC/UcmaRuntimeSetup.exe'

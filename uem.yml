@@ -3,6 +3,7 @@
 # Created on: Jun/04/2020
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
+- import_playbook: web_servers.yml
 
 - hosts: uem_console_servers
   name: Join UEM Console Servers to the domain
@@ -88,8 +89,28 @@
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
 
+    - name: Install URL Rewrite 2.1
+      win_package:
+        path: C:\Installers\UcmaRuntimeSetup.exe
+        product_id: '{A41CBE7D-949C-41DD-9869-ABBD99D753DA}'
+        arguments: /quiet /norestart
+        state: present
+
     - name: Extract UEM installer
       community.windows.win_unzip:
         src: C:\Installers\{{ uem_installer_name }}.zip
         dest: C:\Installers
         creates: C:\Installers\{{ uem_installer_name }}
+
+    - name: Check if DB installer already ran
+      win_state:
+        path: C:\InstallerLogs\DBInstall.log
+      register: stat_file
+      run_once: yes
+
+    - name: Run DB installer
+      win_shell: "x{{ uem_db_installer_name }}" /s /V"/qn /lie C:\InstallerLogs\DBInstall.log TARGETDIR=C:\AirWatch IS_SQLSERVER_AUTHENTICATION=1 IS_SQLSERVER_SERVER=MainAG IS_SQLSERVER_USERNAME=uem_db_acct IS_SQLSERVER_PASSWORD={{ database_password }} IS_SQLSERVER_DATABASE=uemdb"
+      args:
+        chdir: C:\Installers\{{ uem_installer_name }}\DB
+        executable: cmd
+      when: stat_file.stat.exists == False
