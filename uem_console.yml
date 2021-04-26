@@ -136,3 +136,27 @@
         path: C:\Installers\{{ uem_installer_name }}\Application\{{ uem_app_installer_name }}
         product_id: '{2D579F60-1CAF-49A3-9986-BBE1C9A38065}'
         arguments: '/s /V"/qn /lie C:\InstallerLogs\CNInstall.log TARGETDIR=C:\AirWatch INSTALLDIR=C:\AirWatch AWSETUPCONFIGFILE=C:\CN_ConfigScript.xml AWCERTAUTHTOKEN={{ uem_token }}"'
+
+    - name: Create self-signed Console certificate
+      win_shell: |
+        $existing_cert = dir Cert:\LocalMachine\My\ | Where-Object { $_.Subject -match "uemc.{{ domain_name }}" }
+        if ($existing_cert.Count -gt 0)
+        {
+          echo "$($existing_cert[0].Thumbprint):cert already exists"
+        }
+        else
+        {
+          $new_cert = New-SelfSignedCertificate -DnsName uemc.{{ domain_name }} -CertStoreLocation Cert:\LocalMachine\My\
+          echo "$new_cert:new cert created"
+        }
+      register: cert_result
+      changed_when: "'cert already exists' in cert_result.stdout"
+
+    - name: Add HTTPS binding to self-signed certificate
+      community.windows.win_iis_webbinding:
+        name: Default Web Site
+        protocol: https
+        port: 443
+        ssl_flags: 0
+        certificate_hash: "{{ cert_result.split(':') | first }}"
+        state: present
