@@ -51,7 +51,10 @@
       - IIS-IPSecurity
       - IIS-ASP
       - IIS-ServerSideIncludes
-      - WCF-HTTP-Activation
+      - WAS-WindowsActivationService
+      - WAS-ConfigurationAPI
+      - WCF-Services45
+      - WCF-HTTP-Activation45
       - MSMQ
       - MSMQ-Services
       - MSMQ-Server
