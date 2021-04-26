@@ -155,7 +155,7 @@ share_downloads:
     description: VC Redistributable 2013
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/rewrite_amd64_en-US.msi'
+  - url: 'https://d1drul0h659ga0.cloudfront.net/rewrite_amd64.msi'
     description: URL Rewrite Module 2.1
     share: domain
     subfolder: UEM
