@@ -93,3 +93,9 @@
         path: C:\Installers\sqlncli.msi
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
+
+    - name: Extract UEM installer
+      community.windows.win_unzip:
+        src: C:\Installers\{{ uem_installer_name }}.zip
+        dest: C:\Installers
+        creates: C:\Installers\{{ uem_installer_name }}
