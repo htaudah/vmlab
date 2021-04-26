@@ -58,7 +58,7 @@
       - MSMQ-ADIntegration
       - MSMQ-HTTP
       - MSMQ-Triggers
-      - MSMQ-Mutlicast
+      - MSMQ-Multicast
       - MSMQ-RoutingServer
   tasks:
     - include_tasks: join_domain.yml
