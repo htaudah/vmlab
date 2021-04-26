@@ -94,8 +94,26 @@
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
 
+    - name: Install URL Rewrite 2.1
+      win_package:
+        path: C:\Installers\rewrite_amd64.msi
+        product_id: '{38D32370-3A31-40E9-91D0-D236F47E3C4A}'
+        arguments: /quiet /norestart
+        state: present
+
     - name: Extract UEM installer
       community.windows.win_unzip:
         src: C:\Installers\{{ uem_installer_name }}.zip
         dest: C:\Installers
         creates: C:\Installers\{{ uem_installer_name }}
+
+    - name: Copy Device Services configuration
+      win_template:
+        src: configurations/uem/DS_ConfigScript.xml
+        dest: C:\DS_ConfigScript.xml
+
+    - name: Install UEM Device Services
+      win_package:
+        path: C:\Installers\{{ uem_installer_name }}\Application\{{ uem_app_installer_name }}
+        product_id: '{2D579F60-1CAF-49A3-9986-BBE1C9A38065}'
+        arguments: '/s /V"/qn /lie C:\InstallerLogs\CNInstall.log TARGETDIR=C:\AirWatch INSTALLDIR=C:\AirWatch AWSETUPCONFIGFILE=C:\CN_ConfigScript.xml AWCERTAUTHTOKEN=UAE1WL4NVD"'
