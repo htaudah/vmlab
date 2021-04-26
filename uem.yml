@@ -70,6 +70,12 @@
       win_reboot:
       when: dotnetversion.value != 528049
 
+    - name: Install BranchCache feature
+      win_feature:
+        name: BranchCache
+        state: present
+      register: branch_feature
+
     - name: Install Visual C++ Redistributable
       win_package:
         path: C:\Installers\vcredist_x64.exe
