@@ -1,11 +1,11 @@
-# Playbook to configure all Exchange 2019 mail servers
+# Playbook to configure all UEM Device Services servers
 # Written by: Hani Audah <ht.aramco@gmail.com>
-# Created on: Jun/04/2020
+# Created on: Apr/26/2021
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
 - hosts: uem_console_servers
-  name: Join UEM Console Servers to the domain
+  name: Join UEM Device Services servers to the domain
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -21,8 +21,8 @@
       vars:
         machine_ou: "{{ server_ou }}"
 
-- hosts: uem_console_servers
-  name: Deploy UEM Console servers
+- hosts: uem_ds_servers
+  name: Deploy UEM Device Services servers
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -87,41 +87,3 @@
         path: C:\Installers\sqlncli.msi
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
         product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
-
-    - name: Install URL Rewrite 2.1
-      win_package:
-        path: C:\Installers\rewrite_amd64.msi
-        product_id: '{38D32370-3A31-40E9-91D0-D236F47E3C4A}'
-        arguments: /quiet /norestart
-        state: present
-
-    - name: Extract UEM installer
-      community.windows.win_unzip:
-        src: C:\Installers\{{ uem_installer_name }}.zip
-        dest: C:\Installers
-        creates: C:\Installers\{{ uem_installer_name }}
-
-    - name: Check if DB installer already ran
-      win_stat:
-        path: C:\InstallerLogs\DBInstall.log
-      register: stat_file
-      run_once: yes
-
-    - name: Run DB installer
-      win_shell: '{{ uem_db_installer_name }} /s /V\"/qn /lie C:\InstallerLogs\DBInstall.log TARGETDIR=C:\AirWatch IS_SQLSERVER_AUTHENTICATION=1 IS_SQLSERVER_SERVER=MainAG IS_SQLSERVER_USERNAME=uem_db_acct IS_SQLSERVER_PASSWORD={{ database_password }} IS_SQLSERVER_DATABASE=uemdb\"'
-      args:
-        chdir: C:\Installers\{{ uem_installer_name }}\DB
-        executable: cmd
-      when: stat_file.stat.exists == False
-      run_once: yes
-
-    - name: Copy Console configuration
-      win_template:
-        src: configurations/uem/CN_ConfigScript.xml
-        dest: C:\CN_ConfigScript.xml
-
-    - name: Install UEM Console
-      win_package:
-        path: C:\Installers\{{ uem_installer_name }}\Application\{{ uem_app_installer_name }}
-        product_id: '{2D579F60-1CAF-49A3-9986-BBE1C9A38065}'
-        arguments: '/s /V"/qn /lie C:\InstallerLogs\CNInstall.log TARGETDIR=C:\AirWatch INSTALLDIR=C:\AirWatch AWSETUPCONFIGFILE=C:\CN_ConfigScript.xml AWCERTAUTHTOKEN=UAE1WL4NVD"'
