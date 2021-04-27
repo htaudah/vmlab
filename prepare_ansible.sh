@@ -26,3 +26,5 @@ git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_c
 pip3 install pyvmomi
 # Needed for hashing and setting passwords for local Linux users
 pip3 install passlib
+# Needed for certbot integration with route53
+pip3 install boto3
