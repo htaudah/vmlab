@@ -38,7 +38,7 @@
           - pcs
           - pacemaker
           - fence-agents-all
-        enablerepo: HighAvailability
+        enablerepo: ha
 
     - name: Start up PCS services
       systemd:
