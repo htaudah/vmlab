@@ -97,7 +97,7 @@
       win_package:
         path: C:\Installers\sqlncli.msi
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
-        product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
+        product_id: '{B9274744-8BAE-4874-8E59-2610919CD419}'
 
     - name: Install URL Rewrite 2.1
       win_package:

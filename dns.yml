@@ -4,6 +4,8 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: Jun/16/2020
 # -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
 - hosts: "{{ groups['domain_controllers'] | random }}"
   name: Configure private DNS records
   vars_files:
@@ -19,12 +21,20 @@
         name: "uds"
         type: "A"
         value: "{{ virtual_ips[uem_ds] }}"
-    - name: Exchange internal FQDN
-      win_dns_record:
-        name: "mail"
+    - win_dns_record:
+        name: "lb01"
         type: "A"
-        # TODO: for now just point to our only load balancer; revise later
-        value: "{{ network_subnet }}.{{ hostvars['"
+        value: "{{ network_subnet }}.{{ hostvars['lb01']['host_address'] }}"
+    - win_dns_record:
+        name: "lb02"
+        type: "A"
+        value: "{{ network_subnet }}.{{ hostvars['lb02']['host_address'] }}"
+    #- name: Exchange internal FQDN
+      #win_dns_record:
+        #name: "mail"
+        #type: "A"
+        ## TODO: for now just point to our only load balancer; revise later
+        #value: "{{ network_subnet }}.{{ hostvars['"
     - win_dns_record:
         name: "pki"
         type: "A"
