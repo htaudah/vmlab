@@ -55,12 +55,16 @@
       #win_dns_record:
         #name: 
 
-- hosts: localhost
+# Use the certbot since it already has the aws credentials
+- hosts: certbot
   name: Create public DNS records
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
   tasks:
     - name: UAGR
       community.aws.route53:
