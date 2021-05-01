@@ -34,7 +34,7 @@ virtual_ips:
 
 ### PUBLIC IP ADDRESSES ###
 # This environment will require three public IP addresses to be provided
-public_ip_uagr: ''
+public_ip_uagr: '18.168.72.197'
 public_ip_uem: '3.10.245.54'
 
 ### ACTIVE DIRECTORY ###
