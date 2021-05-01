@@ -158,5 +158,5 @@
         protocol: https
         port: 443
         ssl_flags: 0
-        certificate_hash: "{{ cert_result.split(':') | first }}"
+        certificate_hash: "{{ cert_result.stdout.split(':') | first }}"
         state: present
