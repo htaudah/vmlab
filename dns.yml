@@ -22,12 +22,12 @@
     - win_dns_record:
         name: "uem"
         type: "A"
-        value: "{{ virtual_ips[uem_console] }}"
+        value: "{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ virtual_ips[uem_ds] }}"
+        value: "{{ virtual_ips['uem_ds'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
         name: "lb01"
@@ -54,8 +54,13 @@
     #- name: Exchange MX record
       #win_dns_record:
         #name: 
+
 - hosts: localhost
   name: Create public DNS records
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
   tasks:
     - name: UAGR
       community.aws.route53:
