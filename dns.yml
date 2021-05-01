@@ -23,28 +23,33 @@
         name: "uem"
         type: "A"
         value: "{{ virtual_ips[uem_console] }}"
+        zone: "{{ domain_name }}"
     - win_dns_record:
         name: "uds"
         type: "A"
         value: "{{ virtual_ips[uem_ds] }}"
+        zone: "{{ domain_name }}"
     - win_dns_record:
         name: "lb01"
         type: "A"
         value: "{{ network_subnet }}.{{ hostvars['lb01']['host_address'] }}"
+        zone: "{{ domain_name }}"
     - win_dns_record:
         name: "lb02"
         type: "A"
         value: "{{ network_subnet }}.{{ hostvars['lb02']['host_address'] }}"
+        zone: "{{ domain_name }}"
     #- name: Exchange internal FQDN
       #win_dns_record:
         #name: "mail"
         #type: "A"
         ## TODO: for now just point to our only load balancer; revise later
         #value: "{{ network_subnet }}.{{ hostvars['"
-    - win_dns_record:
-        name: "pki"
-        type: "A"
-        value: "{{ network_subnet }}.60"
+    #- win_dns_record:
+        #name: "pki"
+        #type: "A"
+        #value: "{{ network_subnet }}.60"
+        #zone: "{{ domain_name }}"
 
     #- name: Exchange MX record
       #win_dns_record:
