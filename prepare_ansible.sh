@@ -21,8 +21,12 @@ sed -i -r 's/^#(host_key_checking.*)/\1/' /etc/ansible/ansible.cfg
 ansible-galaxy collection install community.vmware
 ansible-galaxy collection install ansible.windows
 ansible-galaxy collection install community.windows
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.aws
 rm -rf ~/.ansible/collections/ansible_collections/community/vmware/
+rm -rf ~/.ansible/collections/ansible_collections/community/general/
 git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_collections/community/vmware
+git clone https://github.com/htaudah/community.general.git ~/.ansible/collections/ansible_collections/community/general
 pip3 install pyvmomi
 # Needed for hashing and setting passwords for local Linux users
 pip3 install passlib
