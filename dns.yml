@@ -67,6 +67,7 @@
         state: present
         zone: "{{ domain_name }}"
         record: uagr.{{ domain_name }}
+        type: A
         value: "{{ public_ip_uagr }}"
 
     - name: UEM Device Services
@@ -74,6 +75,7 @@
         state: present
         zone: "{{ domain_name }}"
         record: uds.{{ domain_name }}
+        type: A
         value: "{{ public_ip_uem }}"
 
     - name: Email Notification Service
@@ -81,6 +83,7 @@
         state: present
         zone: "{{ domain_name }}"
         record: ens.{{ domain_name }}
+        type: A
         value: "{{ public_ip_uem }}"
 
     - name: Secure Email Gateway
@@ -88,4 +91,5 @@
         state: present
         zone: "{{ domain_name }}"
         record: seg.{{ domain_name }}
+        type: A
         value: "{{ public_ip_uem }}"
