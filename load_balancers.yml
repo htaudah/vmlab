@@ -55,38 +55,38 @@
         password: "{{ linux_local_password | password_hash('sha512') }}"
         update_password: always
 
-    #- name: Create the pacemaker cluster
-      #community.general.pacemaker_cluster:
-        #name: lbcluster
-        #state: online
-        #nodes:
-          #- lb01.haramco.org
-          #- lb02.haramco.org
-        #pcs_user: hacluster
-        #pcs_password: "{{ linux_local_password }}"
-      #run_once: yes
+    - name: Create the pacemaker cluster
+      community.general.pacemaker_cluster:
+        name: lbcluster
+        state: online
+        nodes:
+          - lb01.haramco.org
+          - lb02.haramco.org
+        pcs_user: hacluster
+        pcs_password: "{{ linux_local_password }}"
+      run_once: yes
 
-    #- name: Create the UEM console virtual IP resource
-      #community.general.pacemaker_resource:
-        #name: VirtualIP-uem_console
-        #type: ocf:heartbeat:IPaddr2
-        #attributes:
-          #ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
-          #cidr_netmask: "24"
-      #run_once: yes
+    - name: Create the UEM console virtual IP resource
+      community.general.pacemaker_resource:
+        name: VirtualIP-uem_console
+        type: ocf:heartbeat:IPaddr2
+        attributes:
+          ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
+          cidr_netmask: "24"
+      run_once: yes
 
-    #- name: Configure the stonith device
-      #community.general.pacemaker_stonith_device:
-        #name: vmfence
-        #type: fence_vmware_rest
-        #fencing_options:
-          #pcmk_host_map: "{{ (groups['load_balancers'] | map('regex_replace', '(.*)', '\\1.' + domain_name + ':' + userid + '-\\1') | join(';')) }}"
-          #ssl: 1
-          #ssl_insecure: 1
-          #ipaddr: "{{ vcenter_hostname }}"
-          #login: "{{ vcenter_username }}"
-          #passwd: "{{ vcenter_password }}"
-      #run_once: yes
+    - name: Configure the stonith device
+      community.general.pacemaker_stonith_device:
+        name: vmfence
+        type: fence_vmware_rest
+        fencing_options:
+          pcmk_host_map: "{{ (groups['load_balancers'] | map('regex_replace', '(.*)', '\\1.' + domain_name + ':' + userid + '-\\1') | join(';')) }}"
+          ssl: 1
+          ssl_insecure: 1
+          ipaddr: "{{ vcenter_hostname }}"
+          login: "{{ vcenter_username }}"
+          passwd: "{{ vcenter_password }}"
+      run_once: yes
 
     - name: Install HAProxy
       dnf:
