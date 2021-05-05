@@ -17,18 +17,21 @@
     - firewalld:
         service: https
         permanent: yes
+        immediate: yes
         state: enabled
         zone: public
 
     - firewalld:
         service: http
         permanent: yes
+        immediate: yes
         state: enabled
         zone: public
 
     - firewalld:
         service: high-availability
         permanent: yes
+        immediate: yes
         state: enabled
         zone: public
 
