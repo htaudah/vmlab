@@ -22,12 +22,12 @@
     - win_dns_record:
         name: "uem"
         type: "A"
-        value: "{{ virtual_ips['uem_console'] }}"
+        value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ virtual_ips['uem_ds'] }}"
+        value: "{{ network_subnet }}.{{ virtual_ips['uem_ds'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
         name: "lb01"

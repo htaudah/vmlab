@@ -79,7 +79,7 @@
         flat: yes
       loop: "{{ certificates }}"
 
-- hosts: "{{ certificates | map(attribute='destination_host') | list }}"
+- hosts: load_balancers
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
@@ -92,12 +92,10 @@
       file:
         path: "{{ item.destination_path }}"
         state: directory
-      when: inventory_hostname == item.destination_host
       loop: "{{ certificates }}"
 
     - name: Copy certificates to intended destination
       copy:
         src: "/var/certs/{{ item.subject }}.{{ domain_name }}"
         dest: "{{ item.destination_path }}"
-      when: inventory_hostname == item.destination_host
       loop: "{{ certificates }}"

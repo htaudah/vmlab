@@ -107,7 +107,6 @@
         cat ${CERTPATH}/fullchain.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/privkey.pem >> ${CERTPATH}/merged.pem
         mkdir {{ item.destination_path }}/certificates
         cp -f ${CERTPATH}/merged.pem {{ item.destination_path }}/certificates/{{ item.subject }}.{{ domain_name }}.pem
-      when: inventory_hostname == item.destination_host
       ignore_errors: yes
       loop: "{{ certificates }}"
 

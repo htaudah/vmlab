@@ -91,16 +91,13 @@ rootca_common_name: "{{ orgname }} Authority"
 issuing_common_name: "{{ orgname }} Issuing Authority"
 ca_distinguished_suffix: "o={{ orgname }} Trust Services,{{ base_dn }}"
 
-# Certificates to be generated and deployed
+# Certificates to be generated and deployed to load balancers
 certificates:
   - subject: uemc
-    destination_host: lb01
     destination_path: /var/lib/haproxy
   - subject: uds
-    destination_host: lb01
     destination_path: /var/lib/haproxy
   - subject: mail
-    destination_host: lb01
     destination_path: /var/lib/haproxy
 
 ### FILE SHARES ###
