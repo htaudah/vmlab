@@ -97,7 +97,7 @@
       win_package:
         path: C:\Installers\sqlncli.msi
         arguments: IACCEPTSQLNCLILICENSETERMS=YES
-        product_id: '{13146756-9716-4843-84CA-053916D2FCF9}'
+        product_id: '{B9274744-8BAE-4874-8E59-2610919CD419}'
 
     - name: Install URL Rewrite 2.1
       win_package:
@@ -125,7 +125,7 @@
 
     - name: Create self-signed Device Services certificate
       win_shell: |
-        $existing_cert = dir Cert:\LocalMachine\My\ | Where-Object { $_.Subject -match "uemc.{{ domain_name }}" }
+        $existing_cert = dir Cert:\LocalMachine\My\ | Where-Object { $_.Subject -match "uds.{{ domain_name }}" }
         if ($existing_cert.Count -gt 0)
         {
           echo "$($existing_cert[0].Thumbprint):cert already exists"
@@ -144,5 +144,5 @@
         protocol: https
         port: 443
         ssl_flags: 0
-        certificate_hash: "{{ cert_result.split(':') | first }}"
+        certificate_hash: "{{ cert_result.stdout.split(':') | first }}"
         state: present
