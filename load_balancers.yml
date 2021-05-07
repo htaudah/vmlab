@@ -77,7 +77,7 @@
 
     - name: Create the UEM Device Services virtual IP resource
       community.general.pacemaker_resource:
-        name: VirtualIP-uem_console
+        name: VirtualIP-uem_device_services
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uem_ds'] }}"
