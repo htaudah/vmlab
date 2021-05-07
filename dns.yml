@@ -66,6 +66,16 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    - name: Ensure AWS config directory exists
+      file:
+        path: /root/.aws
+        state: directory
+
+    - name: Transfer AWS access config
+      template:
+        src: configurations/aws_config
+        dest: /root/.aws/config
+
     - name: UAGR
       community.aws.route53:
         state: present
