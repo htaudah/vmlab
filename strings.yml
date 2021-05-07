@@ -84,7 +84,7 @@ iso_paths:
 
 ### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)
-route53_access_id: 'AKIAYI5M7BDMOEL7DSD6'
+route53_access_id: 'AKIASTEE5YWTP4IEBUHY'
 
 ### PUBLIC KEY INFRASTRUCTURE ###
 rootca_common_name: "{{ orgname }} Authority"
