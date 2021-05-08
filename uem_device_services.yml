@@ -140,7 +140,7 @@
         else
         {
           $new_cert = New-SelfSignedCertificate -DnsName uds.{{ domain_name }} -CertStoreLocation Cert:\LocalMachine\My\
-          echo "$new_cert.Thumbprint:new cert created"
+          echo "$($new_cert.Thumbprint):new cert created"
         }
       register: cert_result
       changed_when: "'cert already exists' not in cert_result.stdout"
