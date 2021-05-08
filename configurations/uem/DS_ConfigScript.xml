@@ -38,7 +38,7 @@
   <!-- Comma separated list of nodes for Explicit Clustering -->
   <property name="AWCMNODES" value="" />
   <!-- AWCM server SSL offloading status; SSL offloaded = 1, Not SSL offloaded = empty string -->
-  <property name="AWCMSSLOFFLOADED" value="" />
+  <property name="AWCMSSLOFFLOADED" value="1" />
   <!-- Use your own publicly trusted SSL cert for AWCM; If providing cert = empty string; Use a self signed cert = 1 -->
   <property name="AWCMUSEOWNCERT" value="1" />
   <!-- Absolute path to cert for AWCM, if providing own -->

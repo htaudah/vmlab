@@ -12,7 +12,7 @@
       echo "already enabled"
     }
   register: credssp_result
-  changed_when: "'not configured' in credssp_result.stdout"
+  changed_when: "'already enabled' not in credssp_result.stdout"
 
 - name: Join server to domain
   win_domain_membership:
