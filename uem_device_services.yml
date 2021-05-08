@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: uem_console_servers
+- hosts: uem_ds_servers
   name: Join UEM Device Services servers to the domain
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
@@ -56,6 +56,13 @@
         - rewrite_amd64.msi
         - dotnet-hosting-3.1.8-win.exe
         - "{{ uem_installer_name }}.zip"
+        - jre-8u221-windows-x64.exe
+
+    - name: Install Java JRE
+      win_package:
+        path: C:\Installers\jre-8u221-windows-x64.exe
+        arguments: /s
+        product_id: '{26A24AE4-039D-4CA4-87B4-2F64180221F0}'
 
     - name: Get current .NET version
       win_reg_stat:

@@ -164,3 +164,7 @@ share_downloads:
   - url: 'https://d1drul0h659ga0.cloudfront.net/{{ uem_installer_name }}.zip'
     description: UEM 2120 Full Installer
     share: domain
+  - url: 'https://d1drul0h659ga0.cloudfront.net/jre-8u221-windows-x64.exe'
+    description: JRE 8u221 Installer
+    share: domain
+    subfolder: UEM

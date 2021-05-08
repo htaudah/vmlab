@@ -6,10 +6,10 @@
 - name: Enable CredSSP before joining the domain
   win_shell: |
     if ((Get-WSManCredSSP)[1] -match "not configured") {
-      echo "already enabled"
+      Enable-WSManCredSSP -Role Server -Force
     }
     else {
-      Enable-WSManCredSSP -Role Server -Force
+      echo "already enabled"
     }
   register: credssp_result
   changed_when: "'not configured' in credssp_result.stdout"
