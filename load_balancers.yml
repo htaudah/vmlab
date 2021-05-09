@@ -35,6 +35,13 @@
         state: enabled
         zone: public
 
+    - firewalld:
+        port: 2001/tcp
+        permanent: yes
+        immediate: yes
+        state: enabled
+        zone: public
+
     - name: Install pacemaker tools
       dnf:
         name:
@@ -106,6 +113,12 @@
       template:
         src: configurations/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
+
+    - name: Allow haproxy to bind any port
+      seboolean:
+        name: haproxy_connect_any
+        state: yes
+        persistent: yes
 
     - name: Create merged certificate private key files
       shell: |

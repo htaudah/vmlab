@@ -23,6 +23,7 @@ ansible-galaxy collection install ansible.windows
 ansible-galaxy collection install community.windows
 ansible-galaxy collection install community.general
 ansible-galaxy collection install community.aws
+ansible-galaxy collection install ansible.posix
 rm -rf ~/.ansible/collections/ansible_collections/community/vmware/
 rm -rf ~/.ansible/collections/ansible_collections/community/general/
 git clone https://github.com/htaudah/vmware.git ~/.ansible/collections/ansible_collections/community/vmware

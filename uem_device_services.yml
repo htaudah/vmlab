@@ -34,6 +34,13 @@
     ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:
+    - win_firewall_rule:
+        name: AWCM In
+        direction: in
+        protocol: tcp
+        localport: 2001
+        profiles: domain
+
     - name: Create folder for prerequisite installers
       win_file:
         path: C:\Installers
