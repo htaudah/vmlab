@@ -27,6 +27,8 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         resource_pool: "{{ resource_pool }}"
-        folder: "{{ workload_folder }}"
+        folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
         ovf: /var/ova/euc-uag-2103.ova
         datastore: "{{ workload_datastore }}"
+        networks:
+          uag-network: "{{ network_name }}"
