@@ -29,3 +29,4 @@
         resource_pool: "{{ resource_pool }}"
         folder: "{{ workload_folder }}"
         ovf: /var/ova/euc-uag-2103.ova
+        datastore: "{{ workload_datastore }}"
