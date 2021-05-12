@@ -51,8 +51,9 @@
     - name: Populate shares with web files
       win_get_url:
         url: "{{ item[0].url }}"
-        dest: C:\shares\{{ item[1].subfolder | default('') }}\{{ item[1].path }}
+        dest: C:\shares\{{ item[0].subfolder | default('') }}\{{ item[1].path }}
       when: item[0].share == item[1].name
+      run_once: yes
       # perform Cartesian product then filter out invalid pairs
       loop: "{{ share_downloads | product(win_shared_folders) | list }}"
 
