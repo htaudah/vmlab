@@ -16,15 +16,16 @@
       file:
         path: /var/ova
         state: directory
-      loop: "{{ certificates }}"
     - name: Download UAG appliance OVA file
       get_url:
         url: 'https://d1drul0h659ga0.cloudfront.net/euc-uag-2103.ova'
         dest: /var/ova/euc-uag-2103.ova
     - name: Create Windows virtual machines
+      community.vmware.vmware_deploy_ovf:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         resource_pool: "{{ resource_pool }}"
         folder: "{{ workload_folder }}"
+        ovf: /var/ova/euc-uag-2103.ova
