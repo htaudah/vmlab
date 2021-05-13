@@ -34,6 +34,8 @@
         networks: "{'Internet':'{{ network_name }}', 'ManagementNetwork':'{{ network_name }}', 'BackendNetwork':'{{ network_name }}'}"
         validate_certs: no
         power_on: no
+        # needed to force the non-user configurable properties (settingsJSON)
+        inject_ovf_env: yes
         properties:
           settingsJSON: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"TUNNEL_GATEWAY\",\"airwatchComponentsInstalled\":\"TUNNEL\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"apiuser\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"10.43.71.250\",\"airwatchAgentStartUpMode\": \"install\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
           rootPassword: "{{ linux_local_password }}"
