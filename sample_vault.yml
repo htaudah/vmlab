@@ -16,3 +16,5 @@ route53_access_secret: 'asdf1234'
 dns_email: 'email@gmail.com'
 # Workspace ONE installation token (needs to be updated before a UEM install)
 uem_token: 'token1234'
+# Workspace ONE UEM API user password
+uem_api_password: 'Password@123'

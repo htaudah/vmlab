@@ -168,3 +168,6 @@ share_downloads:
     description: JRE 8u221 Installer
     share: domain
     subfolder: UEM
+
+### WORKSPACE ONE UEM CONFIGURATIONS ###
+uem_api_user: apiuser
