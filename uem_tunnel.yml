@@ -35,7 +35,7 @@
         validate_certs: no
         power_on: no
         properties:
-          settingsJson: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"TUNNEL_GATEWAY\",\"airwatchComponentsInstalled\":\"TUNNEL\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"apiuser\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"10.43.71.250\",\"airwatchAgentStartUpMode\": \"install\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
+          settingsJSON: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"TUNNEL_GATEWAY\",\"airwatchComponentsInstalled\":\"TUNNEL\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"apiuser\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"10.43.71.250\",\"airwatchAgentStartUpMode\": \"install\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
           rootPassword: "{{ linux_local_password }}"
           adminPassword: "{{ linux_local_password }}"
           ceipEnabled: "False"
@@ -46,5 +46,4 @@
           ipMode0: STATICV4
           netmask0: "{{ network_mask }}"
           uagname: "{{ userid }}-{{ inventory_hostname }}"
-          vm.vmname: "{{ userid }}-{{ inventory_hostname }}"
       delegate_to: localhost
