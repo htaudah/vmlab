@@ -30,7 +30,7 @@
         folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
         ovf: /var/ova/euc-uag-2103.ova
         datastore: "{{ workload_datastore }}"
-        networks: "{u'Internet':u'{{ network_name }}', u'ManagementNetwork':u'{{ network_name }}', u'BackendNetwork':u'{{ network_name }}'}"
+        networks: "{'Internet':'{{ network_name }}', 'ManagementNetwork':'{{ network_name }}', 'BackendNetwork':'{{ network_name }}'}"
         validate_certs: no
         power_on: no
         properties:
@@ -39,10 +39,11 @@
           adminPassword: "{{ linux_local_password }}"
           ceipEnabled: "False"
           defaultGateway: "{{ network_gateway }}"
-          DNS: "{{ groups['domain_controllers'] | join(' ') }}"
+          DNS: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(' ') }}"
           dnsSearch: "{{ domain_name }}"
           ip0: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
           ipMode0: STATICV4
           netmask0: "{{ network_mask }}"
           uagname: "{{ userid }}-{{ inventory_hostname }}"
+          vm.vmname: "{{ userid }}-{{ inventory_hostname }}"
       delegate_to: localhost
