@@ -27,7 +27,7 @@
     - win_dns_record:
         name: "uds"
         type: "A"
-        value: "{{ network_subnet }}.{{ virtual_ips['uem_ds'] }}"
+        value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
         name: "lb01"
