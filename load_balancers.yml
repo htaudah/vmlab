@@ -82,15 +82,6 @@
           cidr_netmask: "24"
       run_once: yes
 
-    - name: Create the UEM Device Services virtual IP resource
-      community.general.pacemaker_resource:
-        name: VirtualIP-uem_device_services
-        type: ocf:heartbeat:IPaddr2
-        attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['uem_ds'] }}"
-          cidr_netmask: "24"
-      run_once: yes
-
     - name: Configure the stonith device
       community.general.pacemaker_stonith_device:
         name: vmfence
