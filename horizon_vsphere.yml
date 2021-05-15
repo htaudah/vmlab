@@ -1,0 +1,60 @@
+# Playbook to deploy all ESXi appliances
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/14/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: nested_esxi
+  connection: local
+  name: Create Infrastructure Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create directory for OVA files
+      file:
+        path: /var/ova
+        state: directory
+          
+    - name: Download ESXi appliance OVA file
+      get_url:
+        url: 'https://download3.vmware.com/software/vmw-tools/nested-esxi/Nested_ESXi7.0u2_Appliance_Template_v1.ova'
+        dest: /var/ova/esxi-7.0u2.ova
+
+    - name: Create ESXi machines
+      community.vmware.vmware_deploy_ovf:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        resource_pool: "{{ resource_pool }}"
+        folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        ovf: /var/ova/esxi-7.0u2.ova
+        datastore: "{{ workload_datastore }}"
+        networks: "{'VM Network':'{{ network_name }}'}"
+        validate_certs: no
+        power_on: no
+        properties:
+          guestinfo.password: "{{ linux_local_password }}"
+          guestinfo.gateway: "{{ network_gateway }}"
+          guestinfo.dns: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | first }}"
+          guestinfo.domain: "{{ domain_name }}"
+          guestinfo.ipaddress: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+          guestinfo.netmask: "{{ network_mask }}"
+          guestinfo.hostname: "{{ userid }}-{{ inventory_hostname }}"
+      delegate_to: localhost
+
+    - name: Reconfigure ESXi machines (CPU and Memory)
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        state: present
+        hardware:
+          memory_mb: 24576
+          num_cpus: 4
+      delegate_to: localhost
