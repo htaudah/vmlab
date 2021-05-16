@@ -21,8 +21,8 @@
         state: directory
       loop: "{{ certificates }}"
 
-- hosts: certbot
-  name: Create certbot server, generate necessary certificates, and distribute them
+- hosts: utility
+  name: Install certbot software, generate necessary certificates, and distribute them
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"

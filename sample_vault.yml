@@ -18,3 +18,5 @@ dns_email: 'email@gmail.com'
 uem_token: 'token1234'
 # Workspace ONE UEM API user password
 uem_api_password: 'Password@123'
+# vCenter console password for the nested Horizon vSphere environment
+nested_vcenter_password: 'Password@123'

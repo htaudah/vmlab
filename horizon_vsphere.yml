@@ -58,3 +58,55 @@
           memory_mb: 24576
           num_cpus: 4
       delegate_to: localhost
+
+    - name: Power on ESXi machines
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        state: poweredon
+      delegate_to: localhost
+
+- hosts: utility
+  name: Create nested vCenter server
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    nested_vcenter_ip: "{{ hostvars['vcenter']['ansible_host'] }}"
+  tasks:
+    - name: Create directory for iso mount
+      file:
+        path: /mnt/vcsa
+        state: directory
+
+    - name: Attach vCenter iso to utility machine
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        state: present
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "{{ iso_paths['vcenter_7u2'] }}"
+      delegate_to: localhost
+
+    - name: Mount vCenter installation iso
+      mount:
+        path: /mnt/vcsa
+        src: /dev/sr0
+        fstype: iso9660
+        opts: ro,noauto
+        state: present
+
+    - name: Transfer vCenter config
+      template:
+        src: configurations/nested_vcenter.json
+        dest: /var/tmp/nested_vcenter.json

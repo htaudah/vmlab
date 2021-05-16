@@ -11,6 +11,7 @@ template_centos_8: "{{ userid }}-centos-8-template"
 workload_folder: /Workloads/PROD-LOND-01-USERS/{{ userid }}
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
+cluster_name: Cluster-1
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
 network_subnet: "172.28.10"
@@ -81,6 +82,7 @@ iso_paths:
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
   vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.2.5.iso'
   uem_2011: '[WorkloadDatastore] /haudah-temp/20.11.0.5_Full_Install.zip'
+  vcenter_7u2: '[WorkloadDatastore] /haudah-temp/VMware-VCSA-all-7.0.2-17920168.iso'
 
 ### PUBLIC CERTIFICATES ###
 # AWS Access for Route53 (needed for automated certificate creation)
