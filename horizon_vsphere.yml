@@ -36,6 +36,7 @@
         networks: "{'VM Network':'{{ network_name }}'}"
         validate_certs: no
         power_on: no
+        allow_duplicates: no
         properties:
           guestinfo.password: "{{ linux_local_password }}"
           guestinfo.gateway: "{{ network_gateway }}"
@@ -77,6 +78,8 @@
     - "{{ playbook_dir }}/customizations.yml"
   vars:
     nested_vcenter_ip: "{{ hostvars['vcenter']['ansible_host'] }}"
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
   tasks:
     - name: Create directory for iso mount
       file:
