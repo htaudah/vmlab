@@ -70,68 +70,47 @@
         state: poweredon
       delegate_to: localhost
 
-- hosts: utility
-  name: Create nested vCenter server
-  vars_files:
-    - "{{ playbook_dir }}/vault.yml"
-    - "{{ playbook_dir }}/strings.yml"
-    - "{{ playbook_dir }}/customizations.yml"
-  vars:
-    nested_vcenter_ip: "{{ hostvars['vcenter']['ansible_host'] }}"
-    ansible_user: root
-    ansible_password: "{{ linux_local_password }}"
-  tasks:
-    - name: Create directory for iso mount
-      file:
-        path: /mnt/vcsa
-        state: directory
+    - name: Download UAG appliance OVA file
+      get_url:
+        url: 'https://d1drul0h659ga0.cloudfront.net/vcenter-7u2.ova'
+        dest: /var/ova/vcenter-7u2.ova
 
-    - name: Attach vCenter iso to utility machine
-      community.vmware.vmware_guest:
+    - name: Deploy vCenter appliance
+      community.vmware.vmware_deploy_ovf:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        state: present
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: iso
-            iso_path: "{{ iso_paths['vcenter_7u2'] }}"
-      delegate_to: localhost
-
-    - name: Mount vCenter installation iso
-      mount:
-        path: /mnt/vcsa
-        src: /dev/sr0
-        fstype: iso9660
-        opts: ro,noauto
-        state: mounted
-
-    - name: Transfer vCenter config
-      template:
-        src: configurations/nested_vcenter.json
-        dest: /var/tmp/nested_vcenter.json
-
-    - name: Unmount vCenter installation iso
-      mount:
-        path: /mnt/vcsa
-        state: unmounted
-
-    - name: Eject VCSA cdrom from machine
-      command: eject cdrom
-
-    - name: Attach vCenter iso to utility machine
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        name: "{{ userid }}-{{ inventory_hostname }}"
-        state: present
-        cdrom:
-          - controller_type: sata
-            controller_number: 0
-            unit_number: 0
-            type: client
+        datacenter: "{{ datacenter_name }}"
+        resource_pool: "{{ resource_pool }}"
+        folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
+        name: "{{ userid }}-vcenter"
+        ovf: /var/ova/vcenter-7u2.ova
+        datastore: "{{ workload_datastore }}"
+        networks: "{'Network 1':'{{ network_name }}'}"
+        validate_certs: no
+        power_on: yes
+        # needed to force the non-user configurable properties (settingsJSON)
+        enable_hidden_properties: yes
+        inject_ovf_env: yes
+        allow_duplicates: no
+        wait_for_ip_address: yes
+        deployment_option: tiny
+        properties:
+          guestinfo.cis.deployment.autoconfig: "True"
+          guestinfo.cis.deployment.node.type: embedded
+          guestinfo.cis.appliance.net.addr: "{{ nested_vcenter_ip }}"
+          guestinfo.cis.ceip_enabled: "False"
+          guestinfo.cis.appliance.net.addr.family: ipv4
+          guestinfo.cis.appliance.net.gateway: "{{ network_gateway }}"
+          guestinfo.cis.system.vm0.port: 443
+          guestinfo.cis.appliance.net.pnid: vcenter.{{ domain_name }}
+          guestinfo.cis.appliance.net.prefix: 24
+          guestinfo.cis.vmdir.domain-name: vsphere.local
+          guestinfo.cis.vmdir.first-instance: "True"
+          guestinfo.cis.appliance.net.dns.servers: "172.28.10.50,172.28.10.51"
+          guestinfo.cis.vmdir.password: "{{ linux_local_password }}"
+          guestinfo.cis.appliance.root.passwd: "{{ linux_local_password }}"
+          guestinfo.cis.appliance.net.mode: static
+          guestinfo.cis.appliance.ntp.servers: "pool.ntp.org"
+          guestinfo.cis.appliance.ssh.enabled: "True"
       delegate_to: localhost
