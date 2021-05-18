@@ -113,3 +113,6 @@
       template:
         src: configurations/nested_vcenter.json
         dest: /var/tmp/nested_vcenter.json
+
+    - name: Eject VCSA cdrom from machine
+      command: eject cdrom
