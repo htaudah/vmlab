@@ -114,6 +114,11 @@
         src: configurations/nested_vcenter.json
         dest: /var/tmp/nested_vcenter.json
 
+    - name: Unmount vCenter installation iso
+      mount:
+        path: /mnt/vcsa
+        state: unmounted
+
     - name: Eject VCSA cdrom from machine
       command: eject cdrom
 
