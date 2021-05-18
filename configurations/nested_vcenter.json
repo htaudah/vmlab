@@ -38,7 +38,7 @@
             "prefix": "24",
             "gateway": "{{ network_gateway }}",
             "dns_servers": [
-                {{ "groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(', ')" }}
+                "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(', ') }}"
             ]
         },
         "os": {
