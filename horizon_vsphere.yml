@@ -16,11 +16,19 @@
       file:
         path: /var/ova
         state: directory
+      delegate_to: localhost
           
     - name: Download ESXi appliance OVA file
       get_url:
         url: 'https://download3.vmware.com/software/vmw-tools/nested-esxi/Nested_ESXi7.0u2_Appliance_Template_v1.ova'
         dest: /var/ova/esxi-7.0u2.ova
+      delegate_to: localhost
+
+    - name: Download vCenter appliance OVA file
+      get_url:
+        url: 'https://d1drul0h659ga0.cloudfront.net/vcenter-7u2.ova'
+        dest: /var/ova/vcenter-7u2.ova
+      delegate_to: localhost
 
     - name: Create ESXi machines
       community.vmware.vmware_deploy_ovf:
@@ -70,11 +78,14 @@
         state: poweredon
       delegate_to: localhost
 
-    - name: Download UAG appliance OVA file
-      get_url:
-        url: 'https://d1drul0h659ga0.cloudfront.net/vcenter-7u2.ova'
-        dest: /var/ova/vcenter-7u2.ova
-
+- hosts: vcenter
+  connection: local
+  name: Create Infrastructure Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
     - name: Deploy vCenter appliance
       community.vmware.vmware_deploy_ovf:
         hostname: "{{ vcenter_hostname }}"
@@ -98,7 +109,7 @@
         properties:
           guestinfo.cis.deployment.autoconfig: "True"
           guestinfo.cis.deployment.node.type: embedded
-          guestinfo.cis.appliance.net.addr: "{{ nested_vcenter_ip }}"
+          guestinfo.cis.appliance.net.addr: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
           guestinfo.cis.ceip_enabled: "False"
           guestinfo.cis.appliance.net.addr.family: ipv4
           guestinfo.cis.appliance.net.gateway: "{{ network_gateway }}"
