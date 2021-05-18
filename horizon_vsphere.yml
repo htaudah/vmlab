@@ -113,9 +113,9 @@
           guestinfo.cis.ceip_enabled: "False"
           guestinfo.cis.appliance.net.addr.family: ipv4
           guestinfo.cis.appliance.net.gateway: "{{ network_gateway }}"
-          guestinfo.cis.system.vm0.port: 443
+          guestinfo.cis.system.vm0.port: "443"
           guestinfo.cis.appliance.net.pnid: vcenter.{{ domain_name }}
-          guestinfo.cis.appliance.net.prefix: 24
+          guestinfo.cis.appliance.net.prefix: "24"
           guestinfo.cis.vmdir.domain-name: vsphere.local
           guestinfo.cis.vmdir.first-instance: "True"
           guestinfo.cis.appliance.net.dns.servers: "172.28.10.50,172.28.10.51"
