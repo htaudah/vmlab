@@ -116,3 +116,17 @@
 
     - name: Eject VCSA cdrom from machine
       command: eject cdrom
+
+    - name: Attach vCenter iso to utility machine
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        state: present
+        cdrom:
+          - controller_type: sata
+            controller_number: 0
+            unit_number: 0
+            type: client
+      delegate_to: localhost
