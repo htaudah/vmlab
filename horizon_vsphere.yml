@@ -119,9 +119,21 @@
           guestinfo.cis.vmdir.domain-name: vsphere.local
           guestinfo.cis.vmdir.first-instance: "True"
           guestinfo.cis.appliance.net.dns.servers: "172.28.10.50,172.28.10.51"
-          guestinfo.cis.vmdir.password: "{{ linux_local_password }}"
+          guestinfo.cis.vmdir.password: "{{ nested_vcenter_password }}"
           guestinfo.cis.appliance.root.passwd: "{{ linux_local_password }}"
           guestinfo.cis.appliance.net.mode: static
           guestinfo.cis.appliance.ntp.servers: "pool.ntp.org"
           guestinfo.cis.appliance.ssh.enabled: "True"
       delegate_to: localhost
+
+    - name: Authenticate to vCenter API
+      uri:
+        url: https://{{ hostvars[inventory_hostname]['ansible_host'] }}/api/session
+        user: administrator@vsphere.local
+        password: "{{ nested_vcenter_password }}"
+        method: POST
+        validate_certs: no
+      register: auth_response
+
+    - debug:
+        msg: auth_response.content
