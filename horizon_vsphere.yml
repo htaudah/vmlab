@@ -135,6 +135,8 @@
         validate_certs: no
         status_code: 201
       register: auth_response
+      retries: 30
+      delay: 20
 
     - name: Monitor vCenter deployment
       uri:
@@ -143,6 +145,6 @@
         headers:
           vmware-api-session-id: "{{ auth_response.json }}"
       register: monitor_response
-
-    - debug:
-        msg: auth_response.content.json
+      until: monitor_response.json.value.status == "SUCCEEDED"
+      retries: 45
+      delay: 20
