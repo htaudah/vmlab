@@ -133,7 +133,16 @@
         password: "{{ nested_vcenter_password }}"
         method: POST
         validate_certs: no
+        status_code: 201
       register: auth_response
 
+    - name: Monitor vCenter deployment
+      uri:
+        url: https://{{ hostvars[inventory_hostname]['ansible_host'] }}/rest/vcenter/deployment
+        validate_certs: no
+        headers:
+          vmware-api-session-id: "{{ auth_response.json }}"
+      register: monitor_response
+
     - debug:
-        msg: auth_response.content
+        msg: auth_response.content.json
