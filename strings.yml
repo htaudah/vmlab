@@ -177,3 +177,5 @@ uem_api_user: apiuser
 ### NESTED HORIZON VSPHERE ENVIRONMENT ###
 nested_datacenter_name: Nested-SDDC-Datacenter
 nested_cluster_name: Nested-Cluster-1
+nested_switch_name: Nested-Switch
+nested_portgroup_name: Nested-PortGroup
