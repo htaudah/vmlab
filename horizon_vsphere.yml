@@ -194,15 +194,17 @@
         version: 7.0.0
         validate_certs: no
         mtu: 1600
+        uplink_quantity: 1
         state: present
 
-    - name: Create nested VD port group
-      community.vmware.vmware_dvswitch:
+    - name: Create nested VD portgroup
+      community.vmware.vmware_portgroup:
         hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         switch: "{{ nested_switch_name }}"
         portgroup: "{{ nested_portgroup_name }}"
+        state: present
 
     - name: Add hosts to DV switch
       community.vmware.vmware_dvs_host:
