@@ -109,7 +109,7 @@
         properties:
           guestinfo.cis.deployment.autoconfig: "True"
           guestinfo.cis.deployment.node.type: embedded
-          guestinfo.cis.appliance.net.addr: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+          guestinfo.cis.appliance.net.addr: "{{ hostvars['vcenter']['ansible_host'] }}"
           guestinfo.cis.ceip_enabled: "False"
           guestinfo.cis.appliance.net.addr.family: ipv4
           guestinfo.cis.appliance.net.gateway: "{{ network_gateway }}"
@@ -127,7 +127,7 @@
 
     - name: Authenticate to vCenter API
       uri:
-        url: https://{{ hostvars[inventory_hostname]['ansible_host'] }}/api/session
+        url: https://{{ hostvars['vcenter']['ansible_host'] }}/api/session
         user: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         method: POST
@@ -139,7 +139,7 @@
 
     - name: Monitor vCenter deployment
       uri:
-        url: https://{{ hostvars[inventory_hostname]['ansible_host'] }}/rest/vcenter/deployment
+        url: https://{{ hostvars['vcenter']['ansible_host'] }}/rest/vcenter/deployment
         validate_certs: no
         headers:
           vmware-api-session-id: "{{ auth_response.json }}"
