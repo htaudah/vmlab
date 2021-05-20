@@ -78,7 +78,7 @@
         state: poweredon
       delegate_to: localhost
 
-- hosts: vcenter
+- hosts: localhost
   connection: local
   name: Create Infrastructure Servers
   vars_files:
@@ -148,3 +148,12 @@
       until: monitor_response.json.value.status == "SUCCEEDED"
       retries: 45
       delay: 20
+
+    - name: Create datacenter
+      community.vmware.vmware_datacenter:
+        hostname: vcenter.{{ domain_name }}
+        username: administrator@vsphere.local
+        password: "{{ nested_vcenter_password }}"
+        datacenter_name: "{{ nested_datacenter_name }}"
+        state: present
+      delegate_to: localhost
