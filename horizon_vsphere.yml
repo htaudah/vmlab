@@ -207,6 +207,7 @@
         switch_name: "{{ nested_switch_name }}"
         validate_certs: no
         vlan_id: 0
+        portgroup_type: earlyBinding
         state: present
 
     - name: Add hosts to DV switch
