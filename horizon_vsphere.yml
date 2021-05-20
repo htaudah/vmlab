@@ -206,7 +206,7 @@
         portgroup_name: "{{ nested_portgroup_name }}"
         switch_name: "{{ nested_switch_name }}"
         validate_certs: no
-        vlan_id: 0
+        vlan_id: "0"
         portgroup_type: earlyBinding
         state: present
 
