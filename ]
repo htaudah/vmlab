@@ -124,6 +124,7 @@
           guestinfo.cis.appliance.net.mode: static
           guestinfo.cis.appliance.ntp.servers: "pool.ntp.org"
           guestinfo.cis.appliance.ssh.enabled: "True"
+      delegate_to: localhost
 
     - name: Authenticate to vCenter API
       uri:
@@ -155,6 +156,7 @@
         password: "{{ nested_vcenter_password }}"
         datacenter_name: "{{ nested_datacenter_name }}"
         state: present
+      delegate_to: localhost
 
     - name: Create cluster
       community.vmware.vmware_cluster:
@@ -165,6 +167,7 @@
         cluster_name: Nested-Cluster-1
         enable_drs: yes
         state: present
+      delegate_to: localhost
 
     - name: Add nested ESXi hosts to datacenter
       community.vmware.vmware_host:
@@ -172,9 +175,5 @@
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter: "{{ nested_datacenter_name }}"
-        cluster: Nested-Cluster-1
         state: present
-        esxi_hostname: "{{ item }}"
-        esxi_hostname: root
-        esxi_password: "{{ linux_local_password }}"
-      loop: "{{ groups['nested_esxi'] }}"
+      delegate_to: localhost
