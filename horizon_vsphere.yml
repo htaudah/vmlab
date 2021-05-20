@@ -151,25 +151,27 @@
 
     - name: Create datacenter
       community.vmware.vmware_datacenter:
-        hostname: hostvars['vcenter']['ansible_host']
+        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter_name: "{{ nested_datacenter_name }}"
+        validate_certs: no
         state: present
 
     - name: Create cluster
       community.vmware.vmware_cluster:
-        hostname: hostvars['vcenter']['ansible_host']
+        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter_name: "{{ nested_datacenter_name }}"
         cluster_name: "{{ nested_cluster_name }}"
         enable_drs: yes
+        validate_certs: no
         state: present
 
     - name: Add nested ESXi hosts to datacenter
       community.vmware.vmware_host:
-        hostname: hostvars['vcenter']['ansible_host']
+        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter: "{{ nested_datacenter_name }}"
@@ -178,4 +180,5 @@
         esxi_hostname: "{{ item }}"
         esxi_hostname: root
         esxi_password: "{{ linux_local_password }}"
+        validate_certs: no
       loop: "{{ groups['nested_esxi'] }}"
