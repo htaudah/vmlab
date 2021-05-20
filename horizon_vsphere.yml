@@ -197,16 +197,6 @@
         uplink_quantity: 1
         state: present
 
-    - name: Create nested VD portgroup
-      community.vmware.vmware_portgroup:
-        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
-        username: administrator@vsphere.local
-        password: "{{ nested_vcenter_password }}"
-        switch: "{{ nested_switch_name }}"
-        portgroup: "{{ nested_portgroup_name }}"
-        cluster: "{{ nested_cluster_name }}"
-        state: present
-
     - name: Add hosts to DV switch
       community.vmware.vmware_dvs_host:
         hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
@@ -217,6 +207,17 @@
         vmnics:
           - vmnic1
       loop: "{{ groups['nested_esxi'] }}"
+
+    - name: Create nested VD portgroup
+      community.vmware.vmware_portgroup:
+        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
+        username: administrator@vsphere.local
+        password: "{{ nested_vcenter_password }}"
+        switch: "{{ nested_switch_name }}"
+        portgroup: "{{ nested_portgroup_name }}"
+        cluster: "{{ nested_cluster_name }}"
+        validate_certs: no
+        state: present
 
     #- name: Enable vMotion for VMKernel adapters
       #community.vmware.vmware_vmkernel:
