@@ -134,6 +134,7 @@
         validate_certs: no
         status_code: 201
       register: auth_response
+      until: auth_response.status == 201
       retries: 30
       delay: 20
 
