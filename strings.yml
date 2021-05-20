@@ -173,3 +173,7 @@ share_downloads:
 
 ### WORKSPACE ONE UEM CONFIGURATIONS ###
 uem_api_user: apiuser
+
+### NESTED HORIZON VSPHERE ENVIRONMENT ###
+nested_datacenter_name: Nested-SDDC-Datacenter
+nested_cluster_name: Nested-Cluster-1

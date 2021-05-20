@@ -145,7 +145,7 @@
         headers:
           vmware-api-session-id: "{{ auth_response.json }}"
       register: monitor_response
-      until: monitor_response.json.value.status == "SUCCEEDED"
+      until: '"status" in monitor_response.json.value and monitor_response.json.value.status == "SUCCEEDED"'
       retries: 45
       delay: 20
 
@@ -163,7 +163,7 @@
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter_name: "{{ nested_datacenter_name }}"
-        cluster_name: Nested-Cluster-1
+        cluster_name: "{{ nested_cluster_name }}"
         enable_drs: yes
         state: present
 
@@ -173,7 +173,7 @@
         username: administrator@vsphere.local
         password: "{{ nested_vcenter_password }}"
         datacenter: "{{ nested_datacenter_name }}"
-        cluster: Nested-Cluster-1
+        cluster: "{{ nested_cluster_name }}"
         state: present
         esxi_hostname: "{{ item }}"
         esxi_hostname: root
