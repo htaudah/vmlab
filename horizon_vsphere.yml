@@ -177,7 +177,7 @@
         datacenter: "{{ nested_datacenter_name }}"
         cluster: "{{ nested_cluster_name }}"
         state: present
-        esxi_hostname: "{{ item }}.{{ domain_name }}"
+        esxi_hostname: "{{ hostvars[item]['ansible_host'] }}"
         esxi_username: root
         esxi_password: "{{ linux_local_password }}"
         validate_certs: no
