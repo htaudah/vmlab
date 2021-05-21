@@ -173,7 +173,6 @@ share_downloads:
   - url: 'https://d1drul0h659ga0.cloudfront.net/horizon-8.2.exe'
     description: Horizon Connection Server 8.2
     share: domain
-    subfolder: UEM
 
 ### WORKSPACE ONE UEM CONFIGURATIONS ###
 uem_api_user: apiuser

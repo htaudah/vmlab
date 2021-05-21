@@ -46,3 +46,29 @@
         remote_src: yes
       loop:
         - horizon-8.2.exe
+
+    - name: Get current user (domain admin) SID
+      win_shell: |
+        ([System.Security.Principal.WindowsIdentity]::GetCurrent()).User.Value
+      register: usersid
+      changed_when: "'S-1' not in usersid.stdout"
+
+    - name: Install primary Horizon Connection Server
+      win_package:
+        path: C:\Installers\horizon-8.2.exe
+        product_id: '{203F3FCC-0874-49DE-9A40-661A92A1A713}'
+        arguments: >-
+          /s /v\"/qn VDM_SERVER_INSTANCE_TYPE=1 VDM_INITIAL_ADMIN_SID={{ usersid.stdout }}
+          VDM_SERVER_RECOVERY_PWD={{ horizon_recovery_password }}\"
+        state: present
+      when: inventory_hostname == "{{ groups['horizon_connection_servers'] | first }}"
+
+    - name: Install replica Horizon Connection Server
+      win_package:
+        path: C:\Installers\horizon-8.2.exe
+        product_id: '{203F3FCC-0874-49DE-9A40-661A92A1A713}'
+        arguments: >-
+          /s /v\"/qn VDM_SERVER_INSTANCE_TYPE=2 ADAM_PRIMARY_NAME={{ groups['horizon_connection_servers'] | first }}.{{ domain_name }}
+          VDM_INITIAL_ADMIN_SID={{ usersid.stdout }}\"
+        state: present
+      when: inventory_hostname != "{{ groups['horizon_connection_servers'] | first }}"
