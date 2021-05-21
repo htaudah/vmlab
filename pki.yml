@@ -338,3 +338,9 @@
         IsSingleInstance: 'Yes'
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+
+    - name: Create CA template
+      win_dsc:
+        resource_name: AdcsTemplate
+        Name: 'Web Server'
+        Ensure: Present
