@@ -129,7 +129,7 @@
         Path: "{{ horizon_desktop_ou }}"
         IdentityReference: "{{ domain_first_name }}\\horizoncloner"
         ActiveDirectoryRights:
-          - ExtendedProperty
+          - ExtendedRight
         InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
         ObjectType: '00299570-246d-11d0-a768-00aa006e0529'
         ActiveDirectorySecurityInheritance: Descendents
