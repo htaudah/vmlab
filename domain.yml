@@ -93,8 +93,9 @@
         name: horizoncloner
         password: "{{ domain_user_password }}"
         path: "{{ service_ou }}"
+      run_once: yes
 
-    - name: Grant Horizon clone account necessary permissions on virtual desktop OU
+    - name: Grant Horizon clone account permissions to create computer objects in virtual desktop OU
       win_dsc:
         resource_name: ADObjectPermissionEntry
         Path: "{{ horizon_desktop_ou }}"
@@ -102,7 +103,35 @@
         ActiveDirectoryRights:
           - CreateChild
           - DeleteChild
+        ObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        InheritedObjectType: '00000000-0000-0000-0000-000000000000'
+        ActiveDirectorySecurityInheritance: All
+        AccessControlType: Allow
+      run_once: yes
+
+    - name: Grant Horizon clone account permissions to Read/Write properties in virtual desktop OU
+      win_dsc:
+        resource_name: ADObjectPermissionEntry
+        Path: "{{ horizon_desktop_ou }}"
+        IdentityReference: "{{ domain_first_name }}\\horizoncloner"
+        ActiveDirectoryRights:
           - ReadProperty
           - WriteProperty
         InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        ObjectType: '00000000-0000-0000-0000-000000000000'
         ActiveDirectorySecurityInheritance: Descendents
+        AccessControlType: Allow
+      run_once: yes
+
+    - name: Grant Horizon clone account permissions to reset passwords in virtual desktop OU
+      win_dsc:
+        resource_name: ADObjectPermissionEntry
+        Path: "{{ horizon_desktop_ou }}"
+        IdentityReference: "{{ domain_first_name }}\\horizoncloner"
+        ActiveDirectoryRights:
+          - ExtendedProperty
+        InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        ObjectType: '00299570-246d-11d0-a768-00aa006e0529'
+        ActiveDirectorySecurityInheritance: Descendents
+        AccessControlType: Allow
+      run_once: yes
