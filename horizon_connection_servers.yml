@@ -21,6 +21,19 @@
       vars:
         machine_ou: "{{ server_ou }}"
 
+- hosts: horizon_connection_servers
+  name: Join Connection Servers to domain
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
     - name: Create folder for installers
       win_file:
         path: C:\Installers
