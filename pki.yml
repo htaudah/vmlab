@@ -82,7 +82,7 @@
         #path: C:\Windows\System32\CertSrv\CertEnroll\{{ rootca_common_name }}.crl
         #state: absent
 
-    - name: Restart certificate services
+    - name: Start certificate services
       win_service:
         name: CertSvc
         state: started
@@ -350,5 +350,5 @@
     - name: Create CA template
       win_dsc:
         resource_name: AdcsTemplate
-        Name: 'Web Server'
+        Name: WebServer
         Ensure: Present
