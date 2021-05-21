@@ -103,7 +103,7 @@
         ActiveDirectoryRights:
           - CreateChild
           - DeleteChild
-        ObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        ObjectType: 'bf967a86-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
         InheritedObjectType: '00000000-0000-0000-0000-000000000000'
         ActiveDirectorySecurityInheritance: All
         AccessControlType: Allow
@@ -117,7 +117,7 @@
         ActiveDirectoryRights:
           - ReadProperty
           - WriteProperty
-        InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        InheritedObjectType: 'bf967a86-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
         ObjectType: '00000000-0000-0000-0000-000000000000'
         ActiveDirectorySecurityInheritance: Descendents
         AccessControlType: Allow
@@ -130,7 +130,7 @@
         IdentityReference: "{{ domain_first_name }}\\horizoncloner"
         ActiveDirectoryRights:
           - ExtendedRight
-        InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        InheritedObjectType: 'bf967a86-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
         ObjectType: '00299570-246d-11d0-a768-00aa006e0529'
         ActiveDirectorySecurityInheritance: Descendents
         AccessControlType: Allow
