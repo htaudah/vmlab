@@ -249,7 +249,7 @@
         $retrieve_result = . "$($env:SystemRoot)\System32\certreq.exe" -q -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
       with_fileglob: /var/certs/issuing/*.req
       register: issue_cert
-      changed_when: not all(['certificate already exists' in res.stdout for res in install_cert.results])
+      changed_when: "'certificate already exists' in issue_cert.stdout"
 
     - name: Copy the issued certificates to control node
       fetch:
