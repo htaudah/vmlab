@@ -24,6 +24,8 @@
       - "{{ user_ou }}"
       - "{{ group_ou }}"
       - "{{ service_ou }}"
+      - "{{ horizon_desktop_ou }}"
+      - "{{ horizon_rdsh_ou }}"
   tasks:
     - name: Install DSC module for Active Directory
       win_psmodule:
@@ -85,3 +87,22 @@
         password: "{{ domain_user_password }}"
         path: "{{ service_ou }}"
       run_once: yes
+
+    - name: Account to clone Horizon virtual desktops and RDSH machines
+      win_domain_user:
+        name: horizoncloner
+        password: "{{ domain_user_password }}"
+        path: "{{ service_ou }}"
+
+    - name: Grant Horizon clone account necessary permissions on virtual desktop OU
+      win_dsc:
+        resource_name: ADObjectPermissionEntry
+        Path: "{{ horizon_desktop_ou }}"
+        IdentityReference: "{{ domain_first_name }}\\horizoncloner"
+        ActiveDirectoryRights:
+          - CreateChild
+          - DeleteChild
+          - ReadProperty
+          - WriteProperty
+        InheritedObjectType: 'bf967aba-0de6-11d0-a285-00aa003049e2' # Computer Object type GUID
+        ActiveDirectorySecurityInheritance: Descendents
