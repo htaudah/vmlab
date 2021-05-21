@@ -58,7 +58,7 @@
         path: C:\Installers\horizon-8.2.exe
         product_id: '{203F3FCC-0874-49DE-9A40-661A92A1A713}'
         arguments: >-
-          /s /v\"/qn VDM_SERVER_INSTANCE_TYPE=1 VDM_INITIAL_ADMIN_SID={{ usersid.stdout }}
+          /s /v\"/qn VDM_SERVER_INSTANCE_TYPE=1 VDM_INITIAL_ADMIN_SID={{ usersid.stdout | trim }}
           VDM_SERVER_RECOVERY_PWD={{ horizon_recovery_password }}\"
         state: present
       when: inventory_hostname == "{{ groups['horizon_connection_servers'] | first }}"
@@ -69,6 +69,6 @@
         product_id: '{203F3FCC-0874-49DE-9A40-661A92A1A713}'
         arguments: >-
           /s /v\"/qn VDM_SERVER_INSTANCE_TYPE=2 ADAM_PRIMARY_NAME={{ groups['horizon_connection_servers'] | first }}.{{ domain_name }}
-          VDM_INITIAL_ADMIN_SID={{ usersid.stdout }}\"
+          VDM_INITIAL_ADMIN_SID={{ usersid.stdout | trim }}\"
         state: present
       when: inventory_hostname != "{{ groups['horizon_connection_servers'] | first }}"
