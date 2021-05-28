@@ -360,8 +360,9 @@
 
     - name: Request and issue certificates
       win_shell: |
+        $cert_root = \"C:\Windows\Temp\cert_requests\"
         # Check if cert already exists
-        if (Test-Path -Path C:\Windows\Temp\{{ item }}.crt)
+        if (Test-Path -Path $cert_root\cert_requests\{{ item }}.crt)
         {
           echo \"certificate already exists\"
           exit 0
@@ -372,8 +373,8 @@
         #######################
         $UID = [guid]::NewGuid()
         $files = @{}
-        $files['settings'] = \"$($env:TEMP)\$($UID)-settings.inf\";
-        $files['csr'] = \"$($env:TEMP)\$($UID)-csr.req\"
+        $files['settings'] = \"$cert_root\cert_requests\$($UID)-settings.inf\";
+        $files['csr'] = \"$cert_root\$($UID)-csr.req\"
 
         $request = @{}
         $request['SAN'] = @{}
@@ -428,7 +429,7 @@
         {
           throw \"Unexpected result when issuing requested certificate\"
         }
-        $retrieve_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -q -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -Retrieve $request_id C:\Windows\Temp\cert_requests\{{ item.split('.req') | first | basename }}.crt
+        $retrieve_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -q -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -Retrieve $request_id $cert_root\cert_requests\{{ item.split('.req') | first | basename }}.crt
         ########################
         # Remove temporary files
         ########################
