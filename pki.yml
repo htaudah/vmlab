@@ -358,7 +358,7 @@
         # Check if cert already exists
         if (Test-Path -Path C:\Windows\Temp\{{ item }}.crt)
         {
-          echo "certificate already exists"
+          echo \"certificate already exists\"
           exit 0
         }
 
@@ -367,8 +367,8 @@
         #######################
         $UID = [guid]::NewGuid()
         $files = @{}
-        $files['settings'] = "$($env:TEMP)\$($UID)-settings.inf";
-        $files['csr'] = "$($env:TEMP)\$($UID)-csr.req"
+        $files['settings'] = \"$($env:TEMP)\$($UID)-settings.inf\";
+        $files['csr'] = \"$($env:TEMP)\$($UID)-csr.req\"
 
         $request = @{}
         $request['SAN'] = @{}
@@ -376,29 +376,29 @@
         #########################
         # Create the settings.inf
         #########################
-        $settingsInf = "
+        $settingsInf = \"
         [Version] 
-        Signature=`"`$Windows NT`$ 
+        Signature=`\"`$Windows NT`$ 
         [NewRequest] 
         KeyLength =  2048
         Exportable = TRUE 
         MachineKeySet = TRUE 
         SMIME = FALSE
         RequestType =  PKCS10 
-        ProviderName = `"Microsoft RSA SChannel Cryptographic Provider`" 
+        ProviderName = `\"Microsoft RSA SChannel Cryptographic Provider`\" 
         ProviderType =  12
         HashAlgorithm = sha256
         ;Variables
-        Subject = `"CN={{ item }},OU=,O={{ orgname }},L=Riyadh,S=,C=SA`"
+        Subject = `\"CN={{ item }},OU=,O={{ orgname }},L=Riyadh,S=,C=SA`\"
         [Extensions]
-        2.5.29.17 = `"{text}`"
-        _continue_ = `"DNS={{ item }}.{{ domain_name }}`"
+        2.5.29.17 = `\"{text}`\"
+        _continue_ = `\"DNS={{ item }}.{{ domain_name }}`\"
         ;Certreq info
         ;http://technet.microsoft.com/en-us/library/dn296456.aspx
         ;CSR Decoder
         ;https://certlogik.com/decoder/
         ;https://ssltools.websecurity.symantec.com/checker/views/csrCheck.jsp
-        "
+        \"
 
         # Save settings to file in temp
         $settingsInf > $files['settings']
@@ -409,21 +409,21 @@
         # CSR TIME
         #################################
 
-        $request_result = . "$($env:SystemRoot)\System32\certreq.exe" -new $files['settings'] $files['csr'] > $null
+        $request_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -new $files['settings'] $files['csr'] > $null
 
-        $request_result = . "$($env:SystemRoot)\System32\certreq.exe" -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -attrib "CertificateTemplate:WebServer" -Submit $files['csr']
+        $request_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -attrib \"CertificateTemplate:WebServer\" -Submit $files['csr']
         $Matches = [Regex]::Match($request_result, 'RequestId:\s([0-9]*)')
         if ($Matches.Groups.Count -lt 2)
         {
-          throw "Error getting Request ID from certificate request"
+          throw \"Error getting Request ID from certificate request\"
         }
         $request_id = $Matches.Groups[1].Value
-        $submit_result = . "$($env:SystemRoot)\System32\certutil.exe" -Resubmit $request_id
+        $submit_result = . \"$($env:SystemRoot)\System32\certutil.exe\" -Resubmit $request_id
         if ($submit_result[0] -notmatch 'Certificate issued')
         {
-          throw "Unexpected result when issuing requested certificate"
+          throw \"Unexpected result when issuing requested certificate\"
         }
-        $retrieve_result = . "$($env:SystemRoot)\System32\certreq.exe" -q -Config "{{ inventory_hostname }}\{{ rootca_common_name }}" -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
+        $retrieve_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -q -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -Retrieve $request_id C:\Windows\Temp\{{ item.split('.req') | first | basename }}.crt
         ########################
         # Remove temporary files
         ########################

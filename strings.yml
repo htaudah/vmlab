@@ -104,7 +104,7 @@ certificates:
   - subject: mail
     destination_path: /var/lib/haproxy
 # Intranet certificates to be generated and deployed to load balancers
-internal_certifices:
+internal_certificates:
   - vdi
 
 ### FILE SHARES ###
