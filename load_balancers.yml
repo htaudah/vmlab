@@ -128,9 +128,9 @@
         # Where we expect all the cert files to reside
         CERTPATH=/var/lib/haproxy/{{ item }}.{{ domain_name }}
         [ ${CERTPATH}/{{ item }}.key -ot ${CERTPATH}/{{ item }}.pfx ] &&
-        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nodes -nocerts -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > {{ item }}.key
+        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nodes -nocerts -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > ${CERTPATH}/{{ item }}.key
         [ ${CERTPATH}/{{ item }}.pem -ot ${CERTPATH}/{{ item }}.pfx ] &&
-        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nokeys -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > {{ item }}.pem
+        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nokeys -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ${CERTPATH}/{{ item }}.pem
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.pem ] &&
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.key ] &&
         cat ${CERTPATH}/{{ item }}.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/{{ item }}.key >> ${CERTPATH}/merged.pem
