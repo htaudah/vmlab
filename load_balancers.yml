@@ -118,7 +118,7 @@
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/fullchain.pem ] &&
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
         cat ${CERTPATH}/fullchain.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/privkey.pem >> ${CERTPATH}/merged.pem
-        mkdir {{ item.destination_path }}/certificates
+        mkdir -p {{ item.destination_path }}/certificates
         cp -f ${CERTPATH}/merged.pem {{ item.destination_path }}/certificates/{{ item.subject }}.{{ domain_name }}.pem
       ignore_errors: yes
       loop: "{{ certificates }}"
@@ -132,9 +132,9 @@
         [ ${CERTPATH}/{{ item }}.pem -ot ${CERTPATH}/{{ item }}.pfx ] &&
         openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nokeys -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > {{ item }}.pem
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.pem ] &&
-        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
+        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.key ] &&
         cat ${CERTPATH}/{{ item }}.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/{{ item }}.key >> ${CERTPATH}/merged.pem
-        mkdir /var/lib/haproxy/certificates
+        mkdir -p /var/lib/haproxy/certificates
         cp -f ${CERTPATH}/merged.pem /var/lib/haproxy/certificates/{{ item }}.{{ domain_name }}.pem
       ignore_errors: yes
       loop: "{{ internal_certificates }}"
