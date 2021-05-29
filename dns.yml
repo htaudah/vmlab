@@ -30,6 +30,11 @@
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
+        name: "vdi"
+        type: "A"
+        value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
+        zone: "{{ domain_name }}"
+    - win_dns_record:
         name: "lb01"
         type: "A"
         value: "{{ network_subnet }}.{{ hostvars['lb01']['host_address'] }}"
