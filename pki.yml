@@ -4,6 +4,20 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
+- hosts: localhost
+  connection: local
+  name: Create certificate directories on control node
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create certificate directories
+      file:
+        path: /var/certs/{{ item }}.{{ domain_name }}
+        state: directory
+      loop: "{{ internal_certificates }}"
+
 - hosts: rootca
   name: Configure Root Certificate Authority
   vars_files:
@@ -360,9 +374,9 @@
 
     - name: Request and issue certificates
       win_shell: |
-        $cert_root = \"C:\Windows\Temp\cert_requests\"
+        $cert_root = "C:\Windows\Temp\cert_requests"
         # Check if cert already exists
-        if (Test-Path -Path $cert_root\cert_requests\{{ item }}.crt)
+        if (Test-Path -Path $cert_root\cert_requests\{{ item }}.pfx)
         {
           echo \"certificate already exists\"
           exit 0
@@ -373,8 +387,9 @@
         #######################
         $UID = [guid]::NewGuid()
         $files = @{}
-        $files['settings'] = \"$cert_root\cert_requests\$($UID)-settings.inf\";
-        $files['csr'] = \"$cert_root\$($UID)-csr.req\"
+        $files['settings'] = "$cert_root\{{ item }}-settings.inf";
+        $files['csr'] = "$cert_root\{{ item }}-csr.req"
+        $files['cer'] = "$cert_root\{{ item }}.cer"
 
         $request = @{}
         $request['SAN'] = @{}
@@ -382,29 +397,29 @@
         #########################
         # Create the settings.inf
         #########################
-        $settingsInf = \"
+        $settingsInf = "
         [Version] 
-        Signature=`\"`$Windows NT`$`\"
+        Signature=`"`$Windows NT`$`"
         [NewRequest] 
         KeyLength =  2048
         Exportable = TRUE 
         MachineKeySet = TRUE 
         SMIME = FALSE
         RequestType =  PKCS10 
-        ProviderName = `\"Microsoft RSA SChannel Cryptographic Provider`\" 
+        ProviderName = `"Microsoft RSA SChannel Cryptographic Provider`" 
         ProviderType =  12
         HashAlgorithm = sha256
         ;Variables
-        Subject = `\"CN={{ item }},OU=,O={{ orgname }},L=Riyadh,S=,C=SA`\"
+        Subject = `"CN={{ item }},OU=,O={{ orgname }},L=Riyadh,S=,C=SA`"
         [Extensions]
-        2.5.29.17 = `\"{text}`\"
-        _continue_ = `\"DNS={{ item }}.{{ domain_name }}`\"
+        2.5.29.17 = `"{text}`"
+        _continue_ = `"DNS={{ item }}.{{ domain_name }}`"
         ;Certreq info
         ;http://technet.microsoft.com/en-us/library/dn296456.aspx
         ;CSR Decoder
         ;https://certlogik.com/decoder/
         ;https://ssltools.websecurity.symantec.com/checker/views/csrCheck.jsp
-        \"
+        "
 
         # Save settings to file in temp
         $settingsInf > $files['settings']
@@ -415,27 +430,62 @@
         # CSR TIME
         #################################
 
-        $request_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -new $files['settings'] $files['csr'] > $null
+        $request_result = . "$($env:SystemRoot)\System32\certreq.exe" -new $files['settings'] $files['csr'] > $null
 
-        $request_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -attrib \"CertificateTemplate:WebServer\" -Submit $files['csr']
+        $request_result = . "$($env:SystemRoot)\System32\certreq.exe" -f -Config "{{ inventory_hostname }}\{{ issuing_common_name }}" -attrib "CertificateTemplate:WebServer" -Submit $files['csr'] $files['cer']
         $Matches = [Regex]::Match($request_result, 'RequestId:\s([0-9]*)')
         if ($Matches.Groups.Count -lt 2)
         {
-          throw \"Error getting Request ID from certificate request\"
+          throw "Error getting Request ID from certificate request"
+          exit 1
         }
         $request_id = $Matches.Groups[1].Value
-        $submit_result = . \"$($env:SystemRoot)\System32\certutil.exe\" -Resubmit $request_id
-        if ($submit_result[0] -notmatch 'Certificate issued')
+        $accept_result = . "$($env:SystemRoot)\System32\certutil.exe" -accept $files['cer']
+        if ($accept_result[0] -notmatch 'Installed Certificate')
         {
-          throw \"Unexpected result when issuing requested certificate\"
+          throw "Unexpected result when accepting issued certificate"
+          exit 1
         }
-        $retrieve_result = . \"$($env:SystemRoot)\System32\certreq.exe\" -q -Config \"{{ inventory_hostname }}\{{ rootca_common_name }}\" -Retrieve $request_id $cert_root\cert_requests\{{ item.split('.req') | first | basename }}.crt
+        $Matches = [Regex]::Match($accept_result[5], 'Thumbprint:\s([a-z0-9]+)')
+        $thumbprint = $Matches.Groups[1].Value
+        # password for securing PFX file
+        $pfxpwd = ConvertTo-SecureString -String "{{ pfx_password }}" -Force -AsPlainText
+        Get-Item -Path Cert:\LocalMachine\my\$thumbprint | Export-PfxCertificate -FilePath C:\Windows\Temp\cert_requests\{{ item }}.pfx -Password $pfxpwd
         ########################
         # Remove temporary files
         ########################
         $files.Values | ForEach-Object {
           Remove-Item $_ -ErrorAction SilentlyContinue
         }
+        Remove-Item -Path Cert:\LocalMachine\my\$thumbprint
       loop: "{{ internal_certificates }}"
       register: issue_cert
       changed_when: not ('certificate already exists' in issue_cert.stdout)
+
+    - name: Copy certificates to control node
+      fetch:
+        src: C:\Windows\Temp\cert_requests\{{ item }}.pfx
+        dest: /var/certs/{{ item }}.{{ domain_name }}/
+        flat: yes
+      loop: "{{ internal_certificates }}"
+
+- hosts: load_balancers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - name: Make sure intended destinations exist
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop: "{{ internal_certificates }}"
+
+    - name: Copy certificates to intended destination
+      copy:
+        src: "/var/certs/{{ item }}.{{ domain_name }}"
+        dest: /var/lib/haproxy
+      loop: "{{ internal_certificates }}"
