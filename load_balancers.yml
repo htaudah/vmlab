@@ -123,6 +123,22 @@
       ignore_errors: yes
       loop: "{{ certificates }}"
 
+    - name: Create merged internal certificate private key files
+      shell: |
+        # Where we expect all the cert files to reside
+        CERTPATH=/var/lib/haproxy/{{ item }}.{{ domain_name }}
+        [ ${CERTPATH}/{{ item }}.key -ot ${CERTPATH}/{{ item }}.pfx ] &&
+        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nodes -nocerts -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > {{ item }}.key
+        [ ${CERTPATH}/{{ item }}.pem -ot ${CERTPATH}/{{ item }}.pfx ] &&
+        openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nokeys -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > {{ item }}.pem
+        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.pem ] &&
+        [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
+        cat ${CERTPATH}/{{ item }}.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/{{ item }}.key >> ${CERTPATH}/merged.pem
+        mkdir /var/lib/haproxy/certificates
+        cp -f ${CERTPATH}/merged.pem /var/lib/haproxy/certificates/{{ item }}.{{ domain_name }}.pem
+      ignore_errors: yes
+      loop: "{{ internal_certificates }}"
+
     - name: Start and enable the haproxy service
       systemd:
         name: haproxy

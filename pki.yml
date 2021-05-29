@@ -214,6 +214,7 @@
         OverwriteExistingCAinDS: yes
         OutputCertRequestFile: C:\Windows\Temp\{{ inventory_hostname }}.req
         IsSingleInstance: 'Yes'
+      register: install_issuing
 
     - name: Copy issuing CA request
       fetch:
@@ -390,9 +391,7 @@
         $files['settings'] = "$cert_root\{{ item }}-settings.inf";
         $files['csr'] = "$cert_root\{{ item }}-csr.req"
         $files['cer'] = "$cert_root\{{ item }}.cer"
-
-        $request = @{}
-        $request['SAN'] = @{}
+        $files['rsp'] = "$cert_root\{{ item }}.rsp"
 
         #########################
         # Create the settings.inf
@@ -440,7 +439,7 @@
           exit 1
         }
         $request_id = $Matches.Groups[1].Value
-        $accept_result = . "$($env:SystemRoot)\System32\certutil.exe" -accept $files['cer']
+        $accept_result = . "$($env:SystemRoot)\System32\certreq.exe" -accept $files['cer']
         if ($accept_result[0] -notmatch 'Installed Certificate')
         {
           throw "Unexpected result when accepting issued certificate"
