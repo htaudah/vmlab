@@ -4,17 +4,17 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: "{{ groups['databases'] | random }}"
-  name: Configure private DNS records
+- hosts: "{{ groups['databases'] | first }}"
+  name: Get REST API key
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   vars:
     ansible_connection: winrm
-    ansible_user: Administrator
-    ansible_password: "{{ win_local_password }}"
-    ansible_winrm_transport: ntlm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
     ansible_port: 5985
   tasks:
     - name: Get admin REST API key
@@ -24,8 +24,8 @@
       register: apikey
       no_log: yes
 
-    - debug:
-        msg: "{{ (apikey.stdout | from_json).APIKey }}"
+    - set_fact:
+      uem_api_key: "{{ (apikey.stdout | from_json).APIKey }}"
 
 - hosts: localhost
   connection: local
@@ -35,6 +35,9 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
+    - debug:
+      msg: "{{ hostvars[groups['databases'] | first]['ansible_facts']['uem_api_key'] }}"
+
     - name: Create Tunnel configuration
       uri:
         url: https://uemc.{{ domain_name }}/api/mdm/tunnel/configurations
