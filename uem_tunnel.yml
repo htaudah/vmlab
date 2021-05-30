@@ -22,7 +22,7 @@
         url: 'https://d1drul0h659ga0.cloudfront.net/euc-uag-2103.ova'
         dest: /var/ova/euc-uag-2103.ova
 
-    - name: Create Windows virtual machines
+    - name: Deploy OVA appliances
       community.vmware.vmware_deploy_ovf:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -36,12 +36,12 @@
         networks: "{'Internet':'{{ network_name }}', 'ManagementNetwork':'{{ network_name }}', 'BackendNetwork':'{{ network_name }}'}"
         allow_duplicates: no
         validate_certs: no
-        power_on: no
+        power_on: yes
         # needed to force the non-user configurable properties (settingsJSON)
         enable_hidden_properties: yes
         inject_ovf_env: yes
         properties:
-          settingsJSON: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"TUNNEL_GATEWAY\",\"airwatchComponentsInstalled\":\"TUNNEL\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"apiuser\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"{{ hostvars[inventory_hostname] }}.{{ domain_name }}\",\"airwatchAgentStartUpMode\": \"install\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
+          settingsJSON: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"TUNNEL_GATEWAY\",\"airwatchComponentsInstalled\":\"TUNNEL\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"administrator\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"{{ hostvars[inventory_hostname] }}.{{ domain_name }}\",\"airwatchAgentStartUpMode\": \"install\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
           rootPassword: "{{ linux_local_password }}"
           adminPassword: "{{ linux_local_password }}"
           ceipEnabled: "False"

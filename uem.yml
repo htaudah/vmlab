@@ -12,15 +12,28 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Authenticate to vCenter API
+    - name: Get admin REST API key
+      win_shell: >
+        Invoke-Sqlcmd -Query "SELECT APIKey FROM dbo.APIKey WHERE ServiceName = 'AirWatchAPI'" -ServerInstance MainAG
+        -Database "{{ uemdb }}" -OutputSqlErrors 1 -AbortOnError -querytimeout 300 | ConvertTo-Json
+      register: apikey
+      delegate_to: "{{ groups['databases'] | random }}"
+      no_log: yes
+
+    - debug:
+        msg: "{{ (apikey.stdout | from_json).APIKey }}"
+
+    - name: Create Tunnel configuration
       uri:
-        url: https://{{ hostvars['vcenter']['ansible_host'] }}/api/session
-        user: administrator@vsphere.local
-        password: "{{ nested_vcenter_password }}"
+        url: https://uemc.{{ domain_name }}/api/mdm/tunnel/configurations
+        user: administrator
+        password: "{{ uem_api_password }}"
         method: POST
         validate_certs: no
-        status_code: 201
+        status_code: 500
+        body_format: form-multipart
+        body:
+          file1:
+            filename: configurations/uem/CN_ConfigScript.xml
+            mime_type: text/plain
       register: auth_response
-      until: auth_response.status == 201
-      retries: 30
-      delay: 20
