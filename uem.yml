@@ -1,0 +1,26 @@
+# Playbook to configure the UEM environment
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/30/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: localhost
+  connection: local
+  name: Create tunnel configuration
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Authenticate to vCenter API
+      uri:
+        url: https://{{ hostvars['vcenter']['ansible_host'] }}/api/session
+        user: administrator@vsphere.local
+        password: "{{ nested_vcenter_password }}"
+        method: POST
+        validate_certs: no
+        status_code: 201
+      register: auth_response
+      until: auth_response.status == 201
+      retries: 30
+      delay: 20

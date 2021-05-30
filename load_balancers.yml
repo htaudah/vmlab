@@ -42,6 +42,20 @@
         state: enabled
         zone: public
 
+    - firewalld:
+        port: 8443/tcp
+        permanent: yes
+        immediate: yes
+        state: enabled
+        zone: public
+
+    - firewalld:
+        port: 8444/tcp
+        permanent: yes
+        immediate: yes
+        state: enabled
+        zone: public
+
     - name: Install pacemaker tools
       dnf:
         name:
@@ -79,6 +93,24 @@
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
+          cidr_netmask: "24"
+      run_once: yes
+
+    - name: Create the UEM Tunnel Relay virtual IP resource
+      community.general.pacemaker_resource:
+        name: VirtualIP-uem_console
+        type: ocf:heartbeat:IPaddr2
+        attributes:
+          ip: "{{ network_subnet }}.{{ virtual_ips['uagr'] }}"
+          cidr_netmask: "24"
+      run_once: yes
+
+    - name: Create the UEM Tunnel Endpoint virtual IP resource
+      community.general.pacemaker_resource:
+        name: VirtualIP-uem_console
+        type: ocf:heartbeat:IPaddr2
+        attributes:
+          ip: "{{ network_subnet }}.{{ virtual_ips['uage'] }}"
           cidr_netmask: "24"
       run_once: yes
 
