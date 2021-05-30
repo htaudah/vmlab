@@ -38,18 +38,23 @@
     - set_fact:
         uem_api_key: "{{ hostvars[groups['databases'] | first]['uem_api_key'] }}"
 
+    #- name: Create Tunnel configuration
+      #uri:
+        #url: https://uds.{{ domain_name }}/api/mdm/tunnel/configurations
+        #user: administrator
+        #password: "{{ uem_api_password }}"
+        #method: POST
+        #validate_certs: no
+        #status_code: 500
+        #headers:
+          #aw-tenant-code: "{{ uem_api_key }}"
+        #body_format: form-multipart
+        #body:
+          #tunnelConfig:
+            #filename: configurations/uem/tunnel.json
+            #mime_type: text/plain
+
     - name: Create Tunnel configuration
-      uri:
-        url: https://uemc.{{ domain_name }}/api/mdm/tunnel/configurations
-        user: administrator
-        password: "{{ uem_api_password }}"
-        method: POST
-        validate_certs: no
-        status_code: 500
-        headers:
-          aw-tenant-code: "{{ uem_api_key }}"
-        body_format: form-multipart
-        body:
-          file1:
-            filename: configurations/uem/tunnel.json
-            mime_type: text/plain
+      shell: >
+        curl -X "POST" "https://uds.{{ domain.name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
+        -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
