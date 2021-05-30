@@ -25,7 +25,7 @@
       no_log: yes
 
     - set_fact:
-      uem_api_key: "{{ (apikey.stdout | from_json).APIKey }}"
+        uem_api_key: "{{ (apikey.stdout | from_json).APIKey }}"
 
 - hosts: localhost
   connection: local
@@ -35,8 +35,8 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - debug:
-      msg: "{{ hostvars[groups['databases'] | first]['ansible_facts']['uem_api_key'] }}"
+    - set_fact:
+        uem_api_key: "{{ hostvars[groups['databases'] | first]['uem_api_key'] }}"
 
     - name: Create Tunnel configuration
       uri:
@@ -46,9 +46,10 @@
         method: POST
         validate_certs: no
         status_code: 500
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
         body_format: form-multipart
         body:
           file1:
-            filename: configurations/uem/CN_ConfigScript.xml
+            filename: configurations/uem/tunnel.json
             mime_type: text/plain
-      register: auth_response
