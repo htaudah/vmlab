@@ -4,6 +4,29 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
+- hosts: "{{ groups['databases'] | random }}"
+  name: Configure private DNS records
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Get admin REST API key
+      win_shell: >
+        Invoke-Sqlcmd -Query "SELECT APIKey FROM dbo.APIKey WHERE ServiceName = 'AirWatchAPI'" -ServerInstance MainAG
+        -Database uemdb -OutputSqlErrors 1 -AbortOnError -querytimeout 300 | ConvertTo-Json
+      register: apikey
+      no_log: yes
+
+    - debug:
+        msg: "{{ (apikey.stdout | from_json).APIKey }}"
+
 - hosts: localhost
   connection: local
   name: Create tunnel configuration
@@ -12,17 +35,6 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Get admin REST API key
-      win_shell: >
-        Invoke-Sqlcmd -Query "SELECT APIKey FROM dbo.APIKey WHERE ServiceName = 'AirWatchAPI'" -ServerInstance MainAG
-        -Database "{{ uemdb }}" -OutputSqlErrors 1 -AbortOnError -querytimeout 300 | ConvertTo-Json
-      register: apikey
-      delegate_to: "{{ groups['databases'] | random }}"
-      no_log: yes
-
-    - debug:
-        msg: "{{ (apikey.stdout | from_json).APIKey }}"
-
     - name: Create Tunnel configuration
       uri:
         url: https://uemc.{{ domain_name }}/api/mdm/tunnel/configurations
