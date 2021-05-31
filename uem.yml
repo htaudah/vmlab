@@ -38,6 +38,19 @@
     - set_fact:
         uem_api_key: "{{ hostvars[groups['databases'] | first]['uem_api_key'] }}"
 
+    - name: Get global Organization Group UUID
+      uri:
+        url: https://uds.{{ domain_name }}/api/system/groups/7
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+      register: global_group_response
+
     - name: Get customer Organization Group UUID
       uri:
         url: https://uds.{{ domain_name }}/api/system/groups/570
@@ -50,6 +63,43 @@
           aw-tenant-code: "{{ uem_api_key }}"
           Accept: application/json
       register: org_id_response
+
+    - name: Get existing Site URLs configuration
+        url: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+      register: site_urls_response
+
+    - name: Replace OG UUID in tunnel configuration file
+      template:
+        src: configurations/uem/tunnel-template.json
+        dest: configurations/uem/tunnel.json
+
+    - name: Replace OG UUID in site URLs configuration file
+      template:
+        src: configurations/uem/site-urls-template.xml
+        dest: configurations/uem/site-urls.xml
+
+    - name: Enable AWCM
+      uri:
+        url: https://uds.{{ domain_name }}/api/mdm/tunnel/configurations?group-uuid={{ org_id_response.json.Uuid }}
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: POST
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+        status_code: 204
+        body: "{{ lookup('file', 'configurations/uem/site-urls.xml') }}"
+        body_format: application/xml
+      when:
 
     - name: Get existing Tunnel configuration
       uri:
