@@ -38,23 +38,24 @@
     - set_fact:
         uem_api_key: "{{ hostvars[groups['databases'] | first]['uem_api_key'] }}"
 
-    #- name: Create Tunnel configuration
-      #uri:
-        #url: https://uds.{{ domain_name }}/api/mdm/tunnel/configurations
-        #user: administrator
-        #password: "{{ uem_api_password }}"
-        #method: POST
-        #validate_certs: no
-        #status_code: 500
-        #headers:
-          #aw-tenant-code: "{{ uem_api_key }}"
-        #body_format: form-multipart
-        #body:
-          #tunnelConfig:
-            #filename: configurations/uem/tunnel.json
-            #mime_type: text/plain
+    - name: Get customer Organization Group UUID
+      uri:
+        url: https://uds.{{ domain_name }}/api/groups/570
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        status_code: 500
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+      register: org_id_response
 
-    - name: Create Tunnel configuration
-      shell: >
-        curl -X "POST" "https://uds.{{ domain.name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
-        -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
+    - debug:
+        msg: "{{ org_id_response }}"
+
+    #- name: Create Tunnel configuration
+      #shell: >
+        #curl -X "POST" "https://uds.{{ domain_name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
+        #-H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
