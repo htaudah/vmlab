@@ -62,6 +62,7 @@
         headers:
           aw-tenant-code: "{{ uem_api_key }}"
           Accept: application/json
+        status_code: [200, 404]
       register: tunnel_config_response
 
     - name: Replace OG UUID in tunnel configuration file
