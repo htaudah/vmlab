@@ -98,7 +98,7 @@
 
     - name: Create the UEM Tunnel Relay virtual IP resource
       community.general.pacemaker_resource:
-        name: VirtualIP-uem_console
+        name: VirtualIP-uagr
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uagr'] }}"
@@ -107,7 +107,7 @@
 
     - name: Create the UEM Tunnel Endpoint virtual IP resource
       community.general.pacemaker_resource:
-        name: VirtualIP-uem_console
+        name: VirtualIP-uage
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['uage'] }}"
