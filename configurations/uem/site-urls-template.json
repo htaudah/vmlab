@@ -1,5 +1,5 @@
 {
-    "organizationGroupUuid": "{{ global_group_response.json.Uuid",
+    "organizationGroupUuid": "{{ global_group_response.json.Uuid }}",
     "consoleUrl": "https://uemc.{{ domain_name }}",
     "mdmEnrollmentUrl": "https://uds.{{ domain_name }}/DeviceManagement/Enrollment",
     "deviceserviceUrl": "https://uds.{{ domain_name }}/DeviceServices",
