@@ -65,15 +65,15 @@
       register: org_id_response
 
     - name: Get existing Site URLs configuration
-      url: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
-      user: administrator
-      password: "{{ uem_api_password }}"
-      force_basic_auth: yes
-      method: GET
-      validate_certs: no
-      headers:
-        aw-tenant-code: "{{ uem_api_key }}"
-        Accept: application/json
+      uri: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
       register: site_urls_response
 
     - name: Replace OG UUID in tunnel configuration file
