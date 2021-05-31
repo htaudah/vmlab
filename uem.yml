@@ -84,8 +84,8 @@
 
     - name: Replace OG UUID in site URLs configuration file
       template:
-        src: configurations/uem/site-urls-template.xml
-        dest: configurations/uem/site-urls.xml
+        src: configurations/uem/site-urls-template.json
+        dest: configurations/uem/site-urls.json
 
     - name: Enable AWCM
       uri:
@@ -98,8 +98,8 @@
         headers:
           aw-tenant-code: "{{ uem_api_key }}"
         status_code: 204
-        body: "{{ lookup('file', 'configurations/uem/site-urls.xml') }}"
-        body_format: application/xml
+        body: "{{ lookup('file', 'configurations/uem/site-urls.json') }}"
+        body_format: json
       when:
 
     - name: Get existing Tunnel configuration

@@ -1,0 +1,30 @@
+{
+    "organizationGroupUuid": "{{ global_group_response.json.Uuid",
+    "consoleUrl": "https://uemc.{{ domain_name }}",
+    "mdmEnrollmentUrl": "https://uds.{{ domain_name }}/DeviceManagement/Enrollment",
+    "deviceserviceUrl": "https://uds.{{ domain_name }}/DeviceServices",
+    "selfservicePortalUrl": "https://uds.{{ domain_name }}/MyDevice",
+    "samlAuthenticationUrl": "https://uds.{{ domain_name }}/IdentityService",
+    "soapApiUrl": "https://uemc.{{ domain_name }}/AirWatchServices",
+    "restApiUrl": "https://uds.{{ domain_name }}/API",
+    "appCatalogUrl": "https://uds.{{ domain_name }}/Catalog",
+    "deviceManagementUrl": "https://uds.{{ domain_name }}/DeviceManagement",
+    "mdmAgentAppcastUrl": "https://uds.{{ domain_name }}/DeviceServices/AirWatchAgentAppcast.xml",
+    "cloudNotificationServiceUrl": "http://localhost/nws/notify/apns",
+    "vppApplicationUpdatesUrl": "https://itunes.apple.com/lookup",
+    "airwatchCloudMessaging": {
+        "awcmServerExternalUrl": "uds.{{ domain_name }}",
+        "awcmServerExternalPort": 2001,
+        "awcmServerInternalUrl": "https://uds.{{ domain_name }}:2001/awcm"
+    },
+    "mobileFlowAPIURL": "https://prod.hero.vmwservices.com/",
+    "devicesGatewayUrl": "https://uds.{{ domain_name }}/DevicesGateway",
+    "factoryProvisioningServiceUrl": "http://localhost/FactoryProvisioning/package",
+    "alexaForBusinessServiceUrl": "https://localhost:5001",
+    "deviceUpdatesUrl": "https://gdmf.apple.com/v2/pmv",
+    "enterpriseAppRepoServiceUrl": "https://ear.awmdm.com/v1",
+    "extendedDeviceInventoryUrl": "http://localhost/edi/devices/{0}/extend",
+    "stageNowUrl": "https://emmtk.zebra.com/v1/generate-barcode",
+    "honeywellEPUrl": "https://sps.api.honeywell.com/opintel/api/",
+    "OutlookaddInAppcastUrl": "https://sps.api.honeywell.com/opintel/api/"
+}
