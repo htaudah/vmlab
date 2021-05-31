@@ -89,7 +89,7 @@
 
     - name: Enable AWCM
       uri:
-        url: https://uds.{{ domain_name }}/api/mdm/tunnel/configurations?group-uuid={{ org_id_response.json.Uuid }}
+        url: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
         user: administrator
         password: "{{ uem_api_password }}"
         force_basic_auth: yes
@@ -100,7 +100,7 @@
         status_code: 204
         body: "{{ lookup('file', 'configurations/uem/site-urls.json') }}"
         body_format: json
-      when:
+      when: site_urls_response.json.airwatchCloudMessaging is None
 
     - name: Get existing Tunnel configuration
       uri:
