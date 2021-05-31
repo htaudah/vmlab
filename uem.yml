@@ -65,7 +65,8 @@
       register: org_id_response
 
     - name: Get existing Site URLs configuration
-      uri: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
+      uri:
+        url: https://uds.{{ domain_name }}/api/system/systemcode/siteurls
         user: administrator
         password: "{{ uem_api_password }}"
         force_basic_auth: yes
