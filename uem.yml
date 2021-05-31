@@ -40,22 +40,37 @@
 
     - name: Get customer Organization Group UUID
       uri:
-        url: https://uds.{{ domain_name }}/api/groups/570
+        url: https://uds.{{ domain_name }}/api/system/groups/570
         user: administrator
         password: "{{ uem_api_password }}"
         force_basic_auth: yes
         method: GET
         validate_certs: no
-        status_code: 500
         headers:
           aw-tenant-code: "{{ uem_api_key }}"
           Accept: application/json
       register: org_id_response
 
-    - debug:
-        msg: "{{ org_id_response }}"
+    - name: Get existing Tunnel configuration
+      uri:
+        url: https://uds.{{ domain_name }}/api/mdm/tunnel/configurations?group-uuid={{ org_id_response.json.Uuid }}
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+      register: tunnel_config_response
 
-    #- name: Create Tunnel configuration
-      #shell: >
-        #curl -X "POST" "https://uds.{{ domain_name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
-        #-H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
+    - name: Replace OG UUID in tunnel configuration file
+      template:
+        src: configurations/uem/tunnel-template.json
+        dest: configurations/uem/tunnel.json
+
+    - name: Create Tunnel configuration
+      shell: >
+        curl -X "POST" "https://uds.{{ domain_name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
+        -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
+      when: tunnel_config_response.status == 404
