@@ -100,7 +100,7 @@
         status_code: 204
         body: "{{ lookup('file', 'configurations/uem/site-urls.json') }}"
         body_format: json
-      when: site_urls_response.json.airwatchCloudMessaging == None
+      when: "'airwatchCloudMessaging' not in site_urls_response.json"
 
     - name: Get existing Tunnel configuration
       uri:
