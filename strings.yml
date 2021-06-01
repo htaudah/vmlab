@@ -178,6 +178,9 @@ share_downloads:
   - url: 'https://d1drul0h659ga0.cloudfront.net/horizon-8.2.exe'
     description: Horizon Connection Server 8.2
     share: domain
+  - url: 'https://d1drul0h659ga0.cloudfront.net/access-connector-19.03.0.1.exe'
+    description: Access Connector 19.03.01
+    share: domain
 
 ### WORKSPACE ONE UEM CONFIGURATIONS ###
 uem_api_user: apiuser

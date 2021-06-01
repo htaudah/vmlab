@@ -1,0 +1,74 @@
+# Playbook to deploy all Tunnel UAG appliances
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: May/10/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: access
+  connection: local
+  name: Deploy Access appliances
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create directory for OVA files
+      file:
+        path: /var/ova
+        state: directory
+      delegate_to: localhost
+
+    - name: Download Access appliance OVA file
+      get_url:
+        url: 'https://d1drul0h659ga0.cloudfront.net/access-20.10.0.1-17586971.ova'
+        dest: /var/ova/access-20.10.0.1-17586971.ova
+      delegate_to: localhost
+
+    - name: Deploy OVA appliances
+      community.vmware.vmware_deploy_ovf:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        resource_pool: "{{ resource_pool }}"
+        folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        ovf: /var/ova/access-20.10.0.1-17586971.ova
+        datastore: "{{ workload_datastore }}"
+        networks: "{'Network 1':'{{ network_name }}'}"
+        allow_duplicates: no
+        validate_certs: no
+        power_on: yes
+        # needed to force the non-user configurable properties (settingsJSON)
+        enable_hidden_properties: yes
+        inject_ovf_env: yes
+        properties:
+          ceip.enabled: "False"
+          vami.DNS.WorkspaceOneAccess: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(",") }}"
+          vami.netmask0.WorkspaceOneAccess: "{{ network_mask }}"
+          vami.ip0.WorkspaceOneAccess: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+          vami.hostname: "{{ inventory_hostname }}"
+          vamitimezone: Europe/Moscow
+          vami.gateway.WorkspaceOneAccess: "{{ network_gateway }}"
+          vami.searchpath.WorkspaceOneAccess: "{{ domain_name }}"
+          vami.domain.WorkspaceOneAccess: "{{ domain_name }}"
+      delegate_to: localhost
+
+- hosts: access_connectors
+  name: Install Access connectors
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - name: Copy connector installer
+      win_copy:
+        src: \\{{ domain_name }}\Shares\domain\access-connector-19.03.0.1.exe
+        dest: C:\Installers\{{ item }}
+        remote_src: yes

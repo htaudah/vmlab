@@ -119,7 +119,7 @@
           guestinfo.cis.appliance.net.prefix: "24"
           guestinfo.cis.vmdir.domain-name: vsphere.local
           guestinfo.cis.vmdir.first-instance: "True"
-          guestinfo.cis.appliance.net.dns.servers: "172.28.10.50,172.28.10.51"
+          guestinfo.cis.appliance.net.dns.servers: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(",") }}"
           guestinfo.cis.vmdir.password: "{{ nested_vcenter_password }}"
           guestinfo.cis.appliance.root.passwd: "{{ linux_local_password }}"
           guestinfo.cis.appliance.net.mode: static
