@@ -397,9 +397,26 @@
         InstanceName: "{{ db_instance }}"
         Name: "{{ item.name }}"
         RecoveryModel: Full
+        Collation: Latin1_General_CS_AS
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.name }}"
+      run_once: yes
+
+    - name: Enable READ_COMMITTED_SNAPSHOT isolation
+      win_dsc:
+        resource_name: SqlScript
+        ServerName: "{{ inventory_hostname }}"
+        InstanceName: "{{ db_instance }}"
+        #GetQuery:
+        TestQuery: SELECT \'FOUND\' AS FOUND FROM sys.databases WHERE name = \'{{ item.name }}\' AND is_read_committed_snapshot_on = 1
+        SetQuery: ALTER DATABASE accessdb SET READ_COMMITTED_SNAPSHOT ON
+        Credential_username: "{{ item.owner_username }}"
+        Credential_password: "{{ item.owner_password }}"
+      loop: "{{ databases }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: "{{ item.read_committed }}"
       run_once: yes
 
     - name: Add databases to availability group

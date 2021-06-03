@@ -63,6 +63,7 @@ databases:
   - name: accessdb
     owner_username: access_db_acct
     owner_password: "{{ database_password }}"
+    read_committed: yes
 builtin_databases:
   - name: msdb
     username: uem_db_acct
