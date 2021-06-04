@@ -116,7 +116,7 @@
         status_code: [200, 404]
       register: tunnel_config_response
 
-    - name: Replace OG UUID in tunnel configuration file
+    - name: Process tunnel configuration template
       template:
         src: configurations/uem/tunnel-template.json
         dest: configurations/uem/tunnel.json
@@ -140,3 +140,23 @@
           Accept: application/json
         status_code: 200
       register: cg_config_response
+
+    - name: Process content gateway configuration template
+      template:
+        src: configurations/uem/content-gateway-template.json
+        dest: configurations/uem/content-gateway.json
+
+    - name: Create Content Gateway configuration
+      uri:
+        url: https://uds.{{ domain_name }}/mcm/V3/groups/content-gateway/configuration
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: POST
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+        status_code: 201
+        body: "{{ lookup('file', 'configurations/uem/api/content-gateway.json') }}"
+        body_format: json
+      when: "{{ cg_config_response.json | length }}" > 0
