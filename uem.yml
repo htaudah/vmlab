@@ -159,4 +159,10 @@
         status_code: 201
         body: "{{ lookup('file', 'configurations/uem/api/content-gateway.json') }}"
         body_format: json
-      when: "{{ cg_config_response.json | length }}" > 0
+      when: "{{ cg_config_response.json | length }} > 0"
+
+    - name: Create Content Gateway configuration
+      shell: >
+        curl -X "POST" "https://uds.{{ domain_name }}/mcm/V3/groups/content-gateway/configuration" -u administrator:{{ uem_api_password }}
+        -H "aw-tenant-code: {{ uem_api_key }}" -k '@configurations/api/uem/content-gateway.json'
+      when: tunnel_config_response.status == 404
