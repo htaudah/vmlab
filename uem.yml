@@ -143,8 +143,8 @@
 
     - name: Process content gateway configuration template
       template:
-        src: configurations/uem/content-gateway-template.json
-        dest: configurations/uem/content-gateway.json
+        src: configurations/uem/api/content-gateway-template.json
+        dest: configurations/uem/api/content-gateway.json
 
     - name: Create Content Gateway configuration
       uri:
