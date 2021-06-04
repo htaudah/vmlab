@@ -126,3 +126,17 @@
         curl -X "POST" "https://uds.{{ domain_name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
         -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
       when: tunnel_config_response.status == 404
+
+    - name: Get existing Content Gateway configuration
+      uri:
+        url: https://uds.{{ domain_name }}/api/mcm/V3/groups/content-gateway/organization-group/{{ org_id_response.json.Uuid }}
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+        status_code: 200
+      register: cg_config_response

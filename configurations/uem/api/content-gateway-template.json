@@ -1,0 +1,17 @@
+{
+    "organization_group_uuid": "{{ global_group_response.json.Uuid }}",
+    "content_gateway_configuration_name": "cgconfig",
+    "content_gateway_active": true,
+    "content_gateway_configuration_type": 2,
+    "content_gateway_url": "https://uage.{{ domain_name }}:443/",
+    "content_gateway_port": 443,
+    "content_gateway_content_scheme": "HTTPS",
+    "content_gateway_relay_address": "https://uagr.{{ domain_name }}:443/",
+    "content_gateway_relay_port": 443,
+    "ignore_ssl_errors": false,
+    "server_ssl_offloaded": true,
+    "server_ssl_port": 80,
+    "content_gateway_relay_scheme": "HTTPS",
+    "content_gateway_public_ssl_certificate_uuid": "00000000-0000-0000-0000-000000000000",
+    "organization_group_name": "{{ orgname }}"
+}
