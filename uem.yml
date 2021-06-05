@@ -159,4 +159,4 @@
         status_code: 201
         body: "{{ lookup('file', 'configurations/uem/api/content-gateway.json') }}"
         body_format: json
-      when: "{{ cg_config_response.json | length }} > 0"
+      when: "{{ cg_config_response.json | length }} == 0"
