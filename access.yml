@@ -47,7 +47,7 @@
           vami.DNS.WorkspaceOneAccess: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(',') }}"
           vami.netmask0.WorkspaceOneAccess: "{{ network_mask }}"
           vami.ip0.WorkspaceOneAccess: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
-          vami.hostname: "{{ inventory_hostname }}"
+          vami.hostname: "{{ inventory_hostname }}.{{ domain_name }}"
           vamitimezone: Europe/Moscow
           vami.gateway.WorkspaceOneAccess: "{{ network_gateway }}"
           vami.searchpath.WorkspaceOneAccess: "{{ domain_name }}"

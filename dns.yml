@@ -57,8 +57,8 @@
       #win_dns_record:
         #name: 
 
-# Use the certbot since it already has the aws credentials
-- hosts: certbot
+# Use the utility machine since it already has the aws credentials
+- hosts: utility
   name: Create public DNS records
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
