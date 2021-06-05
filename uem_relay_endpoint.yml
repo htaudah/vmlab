@@ -48,6 +48,19 @@
         url: 'https://d1drul0h659ga0.cloudfront.net/euc-uag-2103.ova'
         dest: /var/ova/euc-uag-2103.ova
 
+    - name: Get customer Organization Group UUID
+      uri:
+        url: https://uds.{{ domain_name }}/api/system/groups/570
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+      register: org_id_response
+
     - name: Get existing Content Gateway configuration
       uri:
         url: https://uds.{{ domain_name }}/api/mcm/V3/groups/content-gateway/organization-group/{{ org_id_response.json.Uuid }}
