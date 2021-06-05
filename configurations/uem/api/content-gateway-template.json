@@ -1,5 +1,5 @@
 {
-    "organization_group_uuid": "{{ global_group_response.json.Uuid }}",
+    "organization_group_uuid": "{{ org_id_response.json.Uuid }}",
     "content_gateway_configuration_name": "cgconfig",
     "content_gateway_active": true,
     "content_gateway_configuration_type": 2,
