@@ -46,6 +46,32 @@
         name: python3-certbot-dns-route53
         state: present
 
+    - name: Download chromium driver
+      get_url:
+        url: https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+        dest: /tmp/chromedriver.zip
+        mode: u+rx
+
+    - name: Unzip chromium driver
+      unarchive:
+        src: /tmp/chromedriver.zip
+        dest: /usr/local/share/chromedriver
+
+    - name: Create link to chromium driver
+      file:
+        src: /usr/local/share/chromedriver
+        dest: /usr/local/bin/chromedriver
+        state: link
+
+    - name: Install Selenium
+      pip:
+        name: selenium
+
+    - name: Install chromium
+      dnf:
+        name: chromium
+        state: present
+
     #- name: Install Route 53 python package
       #pip:
         #name: certbot_dns_route53

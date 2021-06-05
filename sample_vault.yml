@@ -22,3 +22,9 @@ uem_api_password: 'Password@123'
 nested_vcenter_password: 'Password@123'
 horizon_recovery_password: 'Password@123'
 pfx_password: 'Password@123'
+# WS1 Access admin password
+access_admin_password: 'Password@123'
+# WS1 Access root password
+access_root_password: 'Password@123'
+# WS1 Access ssh password
+access_ssh_password: 'Password@123'

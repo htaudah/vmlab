@@ -79,13 +79,13 @@
 
     - name: Replace OG UUID in tunnel configuration file
       template:
-        src: configurations/uem/tunnel-template.json
-        dest: configurations/uem/tunnel.json
+        src: configurations/uem/api/tunnel-template.json
+        dest: configurations/uem/api/tunnel.json
 
     - name: Replace OG UUID in site URLs configuration file
       template:
-        src: configurations/uem/site-urls-template.json
-        dest: configurations/uem/site-urls.json
+        src: configurations/uem/api/site-urls-template.json
+        dest: configurations/uem/api/site-urls.json
 
     - name: Enable AWCM
       uri:
@@ -98,7 +98,7 @@
         headers:
           aw-tenant-code: "{{ uem_api_key }}"
         status_code: 204
-        body: "{{ lookup('file', 'configurations/uem/site-urls.json') }}"
+        body: "{{ lookup('file', 'configurations/uem/api/site-urls.json') }}"
         body_format: json
       when: "'airwatchCloudMessaging' not in site_urls_response.json"
 
@@ -118,13 +118,13 @@
 
     - name: Process tunnel configuration template
       template:
-        src: configurations/uem/tunnel-template.json
-        dest: configurations/uem/tunnel.json
+        src: configurations/uem/api/tunnel-template.json
+        dest: configurations/uem/api/tunnel.json
 
     - name: Create Tunnel configuration
       shell: >
         curl -X "POST" "https://uds.{{ domain_name }}/api/mdm/tunnel/configurations" -u administrator:{{ uem_api_password }}
-        -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/tunnel.json'
+        -H "aw-tenant-code: {{ uem_api_key }}" -k --form 'tunnelConfig=@configurations/uem/api/tunnel.json'
       when: tunnel_config_response.status == 404
 
     - name: Get existing Content Gateway configuration

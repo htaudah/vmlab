@@ -34,36 +34,12 @@
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "lb01"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['lb01']['host_address'] }}"
+    - name: Create A records for non-Windows hosts
+      win_dns_record:
+        name: "{{ item }}"
+        value: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
         zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "lb02"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['lb02']['host_address'] }}"
-        zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "vcenter"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['vcenter']['host_address'] }}"
-        zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "esxi01"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['esxi01']['host_address'] }}"
-        zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "esxi02"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['esxi02']['host_address'] }}"
-        zone: "{{ domain_name }}"
-    - win_dns_record:
-        name: "access01"
-        type: "A"
-        value: "{{ network_subnet }}.{{ hostvars['access01']['host_address'] }}"
-        zone: "{{ domain_name }}"
+      loop: "{{ groups['linux:appliances'] }}"
     #- name: Exchange internal FQDN
       #win_dns_record:
         #name: "mail"
