@@ -4,6 +4,29 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
+- hosts: "{{ groups['databases'] | first }}"
+  name: Get REST API key
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - name: Get admin REST API key
+      win_shell: >
+        Invoke-Sqlcmd -Query "SELECT APIKey FROM dbo.APIKey WHERE ServiceName = 'AirWatchAPI'" -ServerInstance MainAG
+        -Database uemdb -OutputSqlErrors 1 -AbortOnError -querytimeout 300 | ConvertTo-Json
+      register: apikey
+      no_log: yes
+
+    - set_fact:
+        uem_api_key: "{{ (apikey.stdout | from_json).APIKey }}"
+
 - hosts: uem_tunnel_relay:uem_tunnel_endpoint
   connection: local
   name: Create Infrastructure Servers
@@ -12,6 +35,9 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
+    - set_fact:
+        uem_api_key: "{{ hostvars[groups['databases'] | first]['uem_api_key'] }}"
+
     - name: Create directory for OVA files
       file:
         path: /var/ova
@@ -21,6 +47,21 @@
       get_url:
         url: 'https://d1drul0h659ga0.cloudfront.net/euc-uag-2103.ova'
         dest: /var/ova/euc-uag-2103.ova
+
+    - name: Get existing Content Gateway configuration
+      uri:
+        url: https://uds.{{ domain_name }}/api/mcm/V3/groups/content-gateway/organization-group/{{ org_id_response.json.Uuid }}
+        user: administrator
+        password: "{{ uem_api_password }}"
+        force_basic_auth: yes
+        method: GET
+        validate_certs: no
+        headers:
+          aw-tenant-code: "{{ uem_api_key }}"
+          Accept: application/json
+        status_code: 200
+      register: cg_config_response
+      delegate_to: localhost
 
     - name: Deploy OVA appliances
       community.vmware.vmware_deploy_ovf:
