@@ -7,7 +7,6 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 browser = webdriver.Chrome('/usr/local/share/chromedriver', options=chrome_options)
 browser.implicitly_wait(10)
 uem_url = ("https://uemc.haramco.org/AirWatch")
-access_url = ("https://uemc.haramco.org/AirWatch")
 browser.get(url)
 browser.find_element_by_id('UserName').send_keys('Administrator')
 browser.find_element_by_id('UserName').submit()
@@ -31,6 +30,8 @@ browser.find_element_by_css_selector('label[for="ContentGatewayEnabled_True"]').
 browser.find_element_by_css_selector('input[name="Save"]').click()
 
 # WS1 Access
+access_url = ("https://access01.haramco.org/cfg/setup")
+browser.get(url)
 browser.find_element_by_id('pass').send_keys('Baltona31@')
 browser.find_element_by_id('passConf').send_keys('Baltona31@')
 browser.find_element_by_id('rootPass').send_keys('Baltona31@Baltona31@')

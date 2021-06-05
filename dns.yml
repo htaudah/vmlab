@@ -37,9 +37,10 @@
     - name: Create A records for non-Windows hosts
       win_dns_record:
         name: "{{ item }}"
+        type: "A"
         value: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
         zone: "{{ domain_name }}"
-      loop: "{{ groups['linux:appliances'] }}"
+      loop: "{{ groups['linux'] | union(groups['appliances']) }}"
     #- name: Exchange internal FQDN
       #win_dns_record:
         #name: "mail"
