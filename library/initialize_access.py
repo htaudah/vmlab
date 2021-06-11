@@ -34,13 +34,6 @@ command_line:
 '''
 
 from selenium import webdriver
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--disable-dev-shm-usage')
-browser = webdriver.Chrome('/usr/local/share/chromedriver', options=chrome_options)
-browser.implicitly_wait(10)
-
 
 # uem_url = ("https://uemc.haramco.org/AirWatch")
 # browser.get(url)
@@ -65,21 +58,55 @@ browser.implicitly_wait(10)
 # browser.find_element_by_css_selector('label[for="ContentGatewayEnabled_True"]').click()
 # browser.find_element_by_css_selector('input[name="Save"]').click()
 
-# WS1 Access
-access_url = ("https://access01.haramco.org/cfg/setup")
-browser.get(access_url)
-browser.find_element_by_id('pass').send_keys('Baltona31@')
-browser.find_element_by_id('passConf').send_keys('Baltona31@')
-browser.find_element_by_id('rootPass').send_keys('Baltona31@Baltona31@')
-browser.find_element_by_id('rootPassConf').send_keys('Baltona31@Baltona31@')
-browser.find_element_by_id('sshPass').send_keys('Baltona31@Baltona31@')
-browser.find_element_by_id('sshPassConf').send_keys('Baltona31@Baltona31@')
-browser.find_element_by_id('nextButton').click()
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            ssh_password = dict(type='str', required=True),
+            root_password = dict(type='str', required=True),
+            admin_password = dict(type='str', required=True),
+            database_path = dict(type='str', required=True),
+            database_user = dict(type='str', required=True),
+            database_password = dict(type='str', required=True),
+            timeout = dict(type='int', default=20),
+        ),
+        supports_check_mode = False
+    )
 
-browser.find_element_by_css_selector('input.externDB').click()
-browser.find_element_by_id('jdbcurl').send_keys('jdbc:sqlserver://MainAG.haramco.org:1433;DatabaseName=accessdb')
-browser.find_element_by_id('dbUsername').send_keys('temp_acct')
-browser.find_element_by_id('dbPassword').send_keys('Baltona31@')
-browser.find_element_by_id('nextButton').click()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    browser = webdriver.Chrome('/usr/local/share/chromedriver', options=chrome_options)
+    browser.implicitly_wait(10)
 
-browser.quit()
+    access_url = ("https://access01.haramco.org/cfg/setup")
+    browser.get(access_url)
+    browser.find_element_by_id('pass').send_keys('Baltona31@')
+    browser.find_element_by_id('passConf').send_keys('Baltona31@')
+    browser.find_element_by_id('rootPass').send_keys('Baltona31@Baltona31@')
+    browser.find_element_by_id('rootPassConf').send_keys('Baltona31@Baltona31@')
+    browser.find_element_by_id('sshPass').send_keys('Baltona31@Baltona31@')
+    browser.find_element_by_id('sshPassConf').send_keys('Baltona31@Baltona31@')
+    browser.find_element_by_id('nextButton').click()
+
+    time.sleep(10)
+
+    browser.find_element_by_css_selector('input.externDB').click()
+    browser.find_element_by_id('jdbcurl').send_keys('jdbc:sqlserver://MainAG.haramco.org:1433;DatabaseName=accessdb')
+    browser.find_element_by_id('dbUsername').send_keys('temp_acct')
+    browser.find_element_by_id('dbPassword').send_keys('Baltona31@')
+    browser.find_element_by_id('nextButton').click()
+
+    # Now wait up to 20 minutes for initialization to complete
+    count = 0
+    while browser.current_url != success_url:
+        time.sleep(60)
+        count += 1
+        if count == timeout:
+            module.fail_json(msg="Timed out while waiting for initializationt to complete")
+
+    browser.quit()
+
+
+if __name__ == '__main__':
+    main()
