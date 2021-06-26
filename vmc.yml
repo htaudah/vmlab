@@ -54,7 +54,7 @@
     - set_fact:
         segment_taken: yes
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
-      loop: "{{ segments_response | regex_findall() }}"
+      loop: "{{ segments_response | regex_findall('\d+\.\d+\.\d+\.\d+/\d{2}') }}"
 
     - name: Print segment taken
       debug:
