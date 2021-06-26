@@ -28,7 +28,7 @@
 
     - name: Get SDDC ID
       uri:
-        url: https://vmc.vmware.com/vmc/api/orgs/{{ org_response.json | json_query(filter_org_id) }}
+        url: https://vmc.vmware.com/vmc/api/orgs/{{ org_response.json | json_query(filter_org_id) }}/sddcs
         method: GET
         validate_certs: no
         headers:
