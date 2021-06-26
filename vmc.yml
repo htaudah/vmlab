@@ -38,9 +38,9 @@
         filter_org_id: "[? display_name=='{{ vmc_org_name }}'].id | [0]"
 
     - set_fact:
-        nsx_public_url: "{{ sddc_response | json_query(filter_nsx_url) }}"
+        nsx_public_url: "{{ sddc_response.json | json_query(filter_nsx_url) }}"
       vars:
-        filter_nsx_url: "[? name='{{ vmc_sddc_name }}'].resource_config.nsx_api_public_endpoint_url"
+        filter_nsx_url: "[? name=='{{ vmc_sddc_name }}'].resource_config.nsx_api_public_endpoint_url"
 
     - name: Get NSX Segments
       uri:
