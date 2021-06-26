@@ -52,6 +52,9 @@
       register: segments_response
 
     - set_fact:
+        segment_exists: no
+
+    - set_fact:
         segment_exists: yes
       when: "{{ segments_response.json.results | json_query(filter_segment) }}"
       vars:
@@ -64,3 +67,6 @@
         segment_taken: yes
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
       loop: "{{ segments_response | regex_findall('\\d+\\.\\d+\\.\\d+\\.\\d+/\\d{2}') }}"
+
+    - debug:
+        msg: "{{ segment_taken }}"
