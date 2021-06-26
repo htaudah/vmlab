@@ -38,6 +38,10 @@ virtual_ips:
 public_ip_uagr: '18.168.72.197'
 public_ip_uem: '3.10.245.54'
 
+### VMC on AWS ###
+vmc_org_name: VMC-PS-EMEA-Prod
+vmc_sddc_name: PROD-LOND-01
+
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
 domain_first_name: '{{ domain_name.split(".") | first }}'
