@@ -60,9 +60,6 @@
       vars:
         filter_segment: "[? id=='{{ network_name }}'].subnets[] | [? network=='{{ network_subnet }}.0/24']"
 
-    - debug:
-        msg: "{{ segment_exists }}"
-
     - set_fact:
         segment_taken: no
 
@@ -71,5 +68,26 @@
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
       loop: "{{ segments_response | regex_findall('\\d+\\.\\d+\\.\\d+\\.\\d+/\\d{2}') }}"
 
-    - debug:
-        msg: "{{ segment_taken }}"
+    - name: Fail if network segment was created manually
+      fail:
+        msg: A network segment exists for the specified subnet, but was created manually
+      when: segment_taken and not segment_exists
+
+    - name: Create the network segment
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/segments/{{ network_name }}"
+        method: POST
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        status_code: 201
+        body: >
+          {
+            "display_name":"{{ network_name }}",
+            "subnets": [
+              {
+                "gateway_address":"{{ network_gateway }}/24"
+              }
+            ]
+          }
+        body_format: json
+      when: not segment_exists
