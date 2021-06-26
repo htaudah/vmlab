@@ -64,6 +64,9 @@
         msg: "{{ segment_exists }}"
 
     - set_fact:
+        segment_taken: no
+
+    - set_fact:
         segment_taken: yes
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
       loop: "{{ segments_response | regex_findall('\\d+\\.\\d+\\.\\d+\\.\\d+/\\d{2}') }}"
