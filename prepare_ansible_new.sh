@@ -30,3 +30,5 @@ git clone https://github.com/htaudah/community.general.git ~/.ansible/collection
 pip3 install pyvmomi
 # Needed for hashing and setting passwords for local Linux users
 pip3 install passlib
+# Needed for the json_query filter
+pip3 install jmespath
