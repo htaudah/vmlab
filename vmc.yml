@@ -23,7 +23,7 @@
         method: GET
         validate_certs: no
         headers:
-          csp-auth-token: "{{ access_token_response.access_token }}"
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
       register: org_response
 
     - name: Get SDDC ID
@@ -32,7 +32,7 @@
         method: GET
         validate_certs: no
         headers:
-          csp-auth-token: "{{ access_token_response.access_token }}"
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
       register: sddc_response
       vars:
         filter_org_id: "[? display_name='{{ vmc_org_name }}'].id"
@@ -48,7 +48,7 @@
         method: PUT
         validate_certs: no
         headers:
-          csp-auth-token: "{{ access_token_response.access_token }}"
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
       register: segments_response
 
     - name: Print segments
