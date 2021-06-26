@@ -52,10 +52,14 @@
       register: segments_response
 
     - set_fact:
+        segment_exists: "{{ segments_response.json | json_query(filter_segment) }}"
+      vars:
+        filter_segment: "[? id=='{{ network_name }}'].subnets[] | [? network=='{{ network_subnet }}.0/24']"
+
+    - debug:
+        msg: "{{ segment_exists }}"
+
+    - set_fact:
         segment_taken: yes
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
       loop: "{{ segments_response | regex_findall('\\d+\\.\\d+\\.\\d+\\.\\d+/\\d{2}') }}"
-
-    - name: Print segment taken
-      debug:
-        msg: "{{ segment_taken }}"

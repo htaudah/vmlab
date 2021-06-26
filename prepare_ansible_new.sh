@@ -32,3 +32,5 @@ pip3 install pyvmomi
 pip3 install passlib
 # Needed for the json_query filter
 pip3 install jmespath
+# Needed for the ipaddr filter
+pip3 install netaddr
