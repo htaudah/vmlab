@@ -52,7 +52,8 @@
       register: segments_response
 
     - set_fact:
-        segment_exists: "{{ segments_response.json | json_query(filter_segment) }}"
+        segment_exists: yes
+      when: "{{ segments_response.json.results | json_query(filter_segment) }}"
       vars:
         filter_segment: "[? id=='{{ network_name }}'].subnets[] | [? network=='{{ network_subnet }}.0/24']"
 
