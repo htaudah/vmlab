@@ -102,7 +102,11 @@
 
     - name: Get existing public IPs
       set_fact:
-        existing_public_ips: "{{ public_ip_dict | default({}) | combine({ item: public_ips_response | json_query(filter_public_ip) }) }}"
+        existing_public_ips: "{{ public_ip_dict | combine({ item: public_ips_response | json_query(filter_public_ip) }) }}"
       vars:
         filter_public_ip: "[? id=='{{ userid }}_{{ item }}'].ip | [? network=='{{ network_subnet }}.0/24']"
+        public_ip_dict: {}
       loop: "{{ public_ips }}"
+
+    - debug:
+        msg: "{{ existing_public_ips }}"
