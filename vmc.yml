@@ -93,7 +93,7 @@
 
     - name: Get Public IPs
       uri:
-        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/tier-1s/public-ips"
+        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/public-ips"
         method: GET
         validate_certs: no
         headers:
