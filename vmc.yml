@@ -107,5 +107,21 @@
         filter_public_ip: "[? id=='{{ userid }}_{{ item }}'].ip | [? network=='{{ network_subnet }}.0/24']"
       loop: "{{ public_ips }}"
 
+    - name: Create public IPs
+      uri:
+        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/public-ips"
+        method: PUT
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        body: >
+          {
+            "id":"{{ userid }}_{{ item }}",
+            "display_name":"{{ userid }}_{{ item }}",
+          }
+        body_format: json
+      when: existing_public_ips is None
+      loop: "{{ public_ips }}"
+      register: create_public_ips_response
+
     - debug:
-        msg: "{{ existing_public_ips }}"
+        msg: "{{ create_public_ips_response }}"
