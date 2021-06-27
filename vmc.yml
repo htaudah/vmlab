@@ -123,5 +123,10 @@
       loop: "{{ public_ips }}"
       register: create_public_ips_response
 
+    - name: Append created IPs to existing public IPs
+      set_fact:
+        existing_public_ips: "{{ existing_public_ips | default({}) | combine({ item.item: item.json.ip }) }}"
+      loop: "{{ create_public_ips_response.results }}"
+
     - debug:
-        msg: "{{ create_public_ips_response }}"
+        msg: "{{ existing_public_ips }}"
