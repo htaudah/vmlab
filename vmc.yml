@@ -76,7 +76,7 @@
     - name: Create the network segment
       uri:
         url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/segments/{{ network_name }}"
-        method: POST
+        method: PUT
         headers:
           csp-auth-token: "{{ access_token_response.json.access_token }}"
         status_code: 201
@@ -91,3 +91,19 @@
           }
         body_format: json
       when: not segment_exists
+
+    - name: Get Public IPs
+      uri:
+        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/policy/api/v1/infra/tier-1s/public-ips"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: public_ips_response
+
+    - name: Get existing public IPs
+      set_fact:
+        existing_public_ips: "{{ public_ip_dict | default({}) | combine({ item: public_ips_response | json_query(filter_public_ip) }) }}"
+      vars:
+        filter_public_ip: "[? id=='{{ userid }}_{{ item }}'].ip | [? network=='{{ network_subnet }}.0/24']"
+      loop: "{{ public_ips }}"

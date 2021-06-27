@@ -35,8 +35,13 @@ virtual_ips:
 
 ### PUBLIC IP ADDRESSES ###
 # This environment will require three public IP addresses to be provided
-public_ip_uagr: '18.168.72.197'
-public_ip_uem: '3.10.245.54'
+public_ip_uem: 'ext_01'
+public_ip_uagr: 'ext_02'
+public_ips:
+  - uem
+  - uagr
+#public_ip_uem: '3.10.245.54'
+#public_ip_uagr: '18.168.72.197'
 
 ### VMC on AWS ###
 vmc_org_name: VMC-PS-EMEA-Prod
