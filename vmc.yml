@@ -158,6 +158,6 @@
             "sequence_number":0
           }
         body_format: json
-      when: "{{ nat_response | query_json(filter_nat) }} is none"
+      when: "{{ nat_response | json_query(filter_nat) }} is none"
       vars:
         filter_nat: "[? id=='{{ userid }}_all_in_one']"
