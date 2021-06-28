@@ -67,6 +67,7 @@
         segment_taken: yes
       when: "{{ item | ansible.netcommon.network_in_usable(network_gateway) }}"
       loop: "{{ segments_response | regex_findall('\\d+\\.\\d+\\.\\d+\\.\\d+/\\d{2}') }}"
+      no_log: yes
 
     - name: Fail if network segment was created manually
       fail:
@@ -127,6 +128,36 @@
       set_fact:
         existing_public_ips: "{{ existing_public_ips | default({}) | combine({ item.item: item.json.ip }) }}"
       loop: "{{ create_public_ips_response.results }}"
+      no_log: yes
 
-    - debug:
-        msg: "{{ existing_public_ips }}"
+    - name: Get NAT rules
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/nat/USER/nat-rules"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: nat_response
+
+    - name: Create NAT rules
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/nat/USER/nat-rules/{{ userid }}_all_in_one"
+        method: PATCH
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        body: >
+          {
+            "display_name":"{{ userid }}_all_in_one",
+            "action":"DNAT",
+            "destination_network":"{{ existing_public_ips['all_in_one'] }}",
+            "service":"",
+            "translated_network":"{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}",
+            "firewall_match":"MATCH_EXTERNAL_ADDRESS",
+            "logging":"false",
+            "enabled":"true",
+            "sequence_number":0
+          }
+        body_format: json
+      when: "{{ nat_response | query_json(filter_nat) }} is none"
+      vars:
+        filter_nat: "[? id=='{{ userid }}_all_in_one']"

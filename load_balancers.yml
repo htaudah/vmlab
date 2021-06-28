@@ -92,7 +92,7 @@
         name: VirtualIP-uem_console
         type: ocf:heartbeat:IPaddr2
         attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
+          ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
           cidr_netmask: "24"
       run_once: yes
 
@@ -101,7 +101,7 @@
         name: VirtualIP-uagr
         type: ocf:heartbeat:IPaddr2
         attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['uagr'] }}"
+          ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
           cidr_netmask: "24"
       run_once: yes
 
@@ -110,7 +110,7 @@
         name: VirtualIP-uage
         type: ocf:heartbeat:IPaddr2
         attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['uage'] }}"
+          ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
           cidr_netmask: "24"
       run_once: yes
 

@@ -28,6 +28,7 @@ fallback_dns_server: '8.8.8.8'
 dbcluster_address: '150'
 db_listener_address: '151'
 virtual_ips:
+  all_in_one: '200'
   uem_console: '200'
   uem_ds: '201'
   uagr: '202'
@@ -38,8 +39,7 @@ virtual_ips:
 public_ip_uem: 'ext_01'
 public_ip_uagr: 'ext_02'
 public_ips:
-  - uem
-  - uagr
+  - all_in_one
 #public_ip_uem: '3.10.245.54'
 #public_ip_uagr: '18.168.72.197'
 
