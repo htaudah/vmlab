@@ -16,6 +16,7 @@
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
+        cluster: "{{ nested_cluster_name }}"
         resource_pool: "{{ resource_pool }}"
         mem_shares: normal
         mem_limit: -1
