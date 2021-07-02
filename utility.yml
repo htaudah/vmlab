@@ -17,7 +17,7 @@
   tasks:
     - name: Create certificate directories
       file:
-        path: /var/certs/{{ item.subject }}.{{ domain_name }}
+        path: /var/certs/{{ item.subject }}.{{ public_domain_name }}
         state: directory
       loop: "{{ certificates }}"
 
@@ -88,20 +88,20 @@
 
     # Certificate generation command will do nothing if certificate is not up for renewal
     - name: Run certbot command for certificates that were not created
-      shell: certbot certonly --preferred-challenges=dns -d {{ item.subject }}.{{ domain_name }} --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
+      shell: certbot certonly --preferred-challenges=dns -d {{ item.subject }}.{{ public_domain_name }} --agree-tos --email {{ dns_email }} --non-interactive --dns-route53
       loop: "{{ certificates }}"
 
     - name: Copy certificates to control node
       fetch:
-        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/fullchain.pem
-        dest: /var/certs/{{ item.subject}}.{{ domain_name }}/
+        src: /etc/letsencrypt/live/{{ item.subject }}.{{ public_domain_name }}/fullchain.pem
+        dest: /var/certs/{{ item.subject}}.{{ public_domain_name }}/
         flat: yes
       loop: "{{ certificates }}"
 
     - name: Copy private keys to control node
       fetch:
-        src: /etc/letsencrypt/live/{{ item.subject }}.{{ domain_name }}/privkey.pem
-        dest: /var/certs/{{ item.subject}}.{{ domain_name }}/
+        src: /etc/letsencrypt/live/{{ item.subject }}.{{ public_domain_name }}/privkey.pem
+        dest: /var/certs/{{ item.subject}}.{{ public_domain_name }}/
         flat: yes
       loop: "{{ certificates }}"
 
@@ -122,6 +122,6 @@
 
     - name: Copy certificates to intended destination
       copy:
-        src: "/var/certs/{{ item.subject }}.{{ domain_name }}"
+        src: "/var/certs/{{ item.subject }}.{{ public_domain_name }}"
         dest: "{{ item.destination_path }}"
       loop: "{{ certificates }}"

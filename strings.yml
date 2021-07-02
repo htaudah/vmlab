@@ -50,6 +50,7 @@ vmc_sddc_name: PROD-LOND-01
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
+public_domain_name: "{{ userid }}.{{ domain_name }}"
 domain_first_name: '{{ domain_name.split(".") | first }}'
 base_dn: 'dc={{ domain_name.split(".") | join(",dc=") }}'
 domain_admin_user: 'Administrator'

@@ -146,19 +146,19 @@
     - name: Create merged certificate private key files
       shell: |
         # Where we expect all the cert files to reside
-        CERTPATH={{ item.destination_path }}/{{ item.subject }}.{{ domain_name }}
+        CERTPATH={{ item.destination_path }}/{{ item.subject }}.{{ public_domain_name }}
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/fullchain.pem ] &&
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/privkey.pem ] &&
         cat ${CERTPATH}/fullchain.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/privkey.pem >> ${CERTPATH}/merged.pem
         mkdir -p {{ item.destination_path }}/certificates
-        cp -f ${CERTPATH}/merged.pem {{ item.destination_path }}/certificates/{{ item.subject }}.{{ domain_name }}.pem
+        cp -f ${CERTPATH}/merged.pem {{ item.destination_path }}/certificates/{{ item.subject }}.{{ public_domain_name }}.pem
       ignore_errors: yes
       loop: "{{ certificates }}"
 
     - name: Create merged internal certificate private key files
       shell: |
         # Where we expect all the cert files to reside
-        CERTPATH=/var/lib/haproxy/{{ item }}.{{ domain_name }}
+        CERTPATH=/var/lib/haproxy/{{ item }}.{{ public_domain_name }}
         [ ${CERTPATH}/{{ item }}.key -ot ${CERTPATH}/{{ item }}.pfx ] &&
         openssl pkcs12 -in ${CERTPATH}/{{ item }}.pfx -nodes -nocerts -passin pass:{{ pfx_password }} | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > ${CERTPATH}/{{ item }}.key
         [ ${CERTPATH}/{{ item }}.pem -ot ${CERTPATH}/{{ item }}.pfx ] &&
@@ -167,7 +167,7 @@
         [ ${CERTPATH}/merged.pem -ot ${CERTPATH}/{{ item }}.key ] &&
         cat ${CERTPATH}/{{ item }}.pem > ${CERTPATH}/merged.pem && cat ${CERTPATH}/{{ item }}.key >> ${CERTPATH}/merged.pem
         mkdir -p /var/lib/haproxy/certificates
-        cp -f ${CERTPATH}/merged.pem /var/lib/haproxy/certificates/{{ item }}.{{ domain_name }}.pem
+        cp -f ${CERTPATH}/merged.pem /var/lib/haproxy/certificates/{{ item }}.{{ public_domain_name }}.pem
       ignore_errors: yes
       loop: "{{ internal_certificates }}"
 

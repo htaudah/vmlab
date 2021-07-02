@@ -20,17 +20,17 @@
     ansible_port: 5985
   tasks:
     - win_dns_record:
-        name: "uemc"
+        name: "uemc.{{ userid }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "uds"
+        name: "uds.{{ userid }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "vdi"
+        name: "vdi.{{ userid }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
@@ -82,7 +82,7 @@
       community.aws.route53:
         state: present
         zone: "{{ domain_name }}"
-        record: uagr.{{ domain_name }}
+        record: uagr.{{ public_domain_name }}
         type: A
         value: "{{ public_ip_uagr }}"
 
@@ -90,7 +90,7 @@
       community.aws.route53:
         state: present
         zone: "{{ domain_name }}"
-        record: uds.{{ domain_name }}
+        record: uds.{{ public_domain_name }}
         type: A
         value: "{{ public_ip_uem }}"
 
@@ -98,7 +98,7 @@
       community.aws.route53:
         state: present
         zone: "{{ domain_name }}"
-        record: ens.{{ domain_name }}
+        record: ens.{{ public_domain_name }}
         type: A
         value: "{{ public_ip_uem }}"
 
@@ -106,6 +106,6 @@
       community.aws.route53:
         state: present
         zone: "{{ domain_name }}"
-        record: seg.{{ domain_name }}
+        record: seg.{{ public_domain_name }}
         type: A
         value: "{{ public_ip_uem }}"
