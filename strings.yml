@@ -109,8 +109,6 @@ ca_distinguished_suffix: "o={{ orgname }} Trust Services,{{ base_dn }}"
 
 # Internet certificates to be generated and deployed to load balancers
 certificates:
-  - subject: uemc
-    destination_path: /var/lib/haproxy
   - subject: uds
     destination_path: /var/lib/haproxy
   - subject: mail
@@ -118,6 +116,7 @@ certificates:
 # Intranet certificates to be generated and deployed to load balancers
 internal_certificates:
   - vdi
+  - uemc
 
 ### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared

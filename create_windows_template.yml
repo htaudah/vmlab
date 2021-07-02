@@ -4,6 +4,20 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/27/2020
 # -------------------------------------------------------------------------------------------------
+- name: Check if {{ template_friendly_name }} Template exists
+  community.vmware.vmware_vm_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ datacenter_name }}"
+    folder: "{{ workload_folder }}"
+    name: "{{ template_name }}"
+    vm_type: template
+  register: template_info
+
+- debug:
+    msg: "{{ template_info }}"
+
 - name: Create {{ template_friendly_name }} Template
   community.vmware.vmware_guest:
     hostname: "{{ vcenter_hostname }}"
