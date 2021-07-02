@@ -8,7 +8,8 @@ orgname: Haramco
 template_win_2019: "{{ userid }}-windows-server-template"
 template_win_10: "{{ userid }}-windows-client-template"
 template_centos_8: "{{ userid }}-centos-8-template"
-workload_folder: /Workloads/PROD-LOND-01-USERS/{{ userid }}
+workload_parent_folder: /Workloads/PROD-LOND-01-USERS
+workload_folder: "{{ workload_parent_folder }}/{{ userid }}"
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
 cluster_name: Cluster-1

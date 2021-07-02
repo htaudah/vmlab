@@ -1,0 +1,39 @@
+# Playbook to prepare the VMC vSphere environment for this lab deployment
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/02/2021
+# -------------------------------------------------------------------------------------------------
+- hosts: localhost
+  connection: local
+  name: Prepare vSphere environment
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create resource pool
+      community.vmware.vmware_resource_pool:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        resource_pool: "{{ resource_pool }}"
+        mem_shares: normal
+        mem_limit: -1
+        mem_reservation: 0
+        mem_expandable_reservations: yes
+        cpu_shares: normal
+        cpu_limit: -1
+        cpu_reservation: 0
+        cpu_expandable_reservations: yes
+        state: present
+          
+    - name: Create folder
+      community.vmware.vcenter_folder:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder_name: "{{ userid }}"
+        folder_type: vm
+        parent_folder: "{{ workload_parent_folder }}"
+        state: present

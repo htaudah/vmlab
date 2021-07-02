@@ -1,3 +1,7 @@
+# Playbook to prepare all network and firewall related rules on VMC for this lab deployment
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/02/2021
+# -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
 - hosts: localhost
@@ -158,6 +162,6 @@
             "sequence_number":0
           }
         body_format: json
-      when: "{{ nat_response | json_query(filter_nat) }} is none"
+      when: (nat_response | json_query(filter_nat)) is none
       vars:
         filter_nat: "[? id=='{{ userid }}_all_in_one']"
