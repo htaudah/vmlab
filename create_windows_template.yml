@@ -19,7 +19,7 @@
     query: "[?guest_name == '{{ template_name }}']"
 
 - debug:
-    msg: "{{ existing_template }}"
+    msg: "{{ existing_template is not none }}"
 
 - name: Create {{ template_friendly_name }} Template
   community.vmware.vmware_guest:
