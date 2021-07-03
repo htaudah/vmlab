@@ -9,7 +9,6 @@
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    datacenter: "{{ datacenter_name }}"
     folder: "{{ workload_folder }}"
     name: "{{ template_name }}"
     vm_type: template
