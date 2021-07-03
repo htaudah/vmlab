@@ -1,0 +1,14 @@
+# Playbook to deploy all inventory desktops
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/03/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: desktops
+  connection: local
+  name: Create Infrastructure Desktops
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
