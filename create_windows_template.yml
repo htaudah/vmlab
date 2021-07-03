@@ -9,13 +9,17 @@
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    folder: "{{ workload_folder }}"
-    name: "{{ template_name }}"
+    folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
     vm_type: template
   register: template_info
 
+- set_fact:
+    existing_template: "{{ template_info.virtual_machines | json_query(query) }}"
+  vars:
+    query: "[?guest_name == '{{ template_name }}']"
+
 - debug:
-    msg: "{{ template_info }}"
+    msg: "{{ existing_template }}"
 
 - name: Create {{ template_friendly_name }} Template
   community.vmware.vmware_guest:
