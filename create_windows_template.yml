@@ -144,4 +144,4 @@
           controller_number: 0
           unit_number: 2
           state: absent
-  when: (existing_template | length) > 0
+  when: (existing_template | length) == 0
