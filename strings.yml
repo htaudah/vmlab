@@ -13,6 +13,7 @@ workload_folder: "{{ workload_parent_folder }}/{{ userid }}"
 workload_datastore: WorkloadDatastore
 datacenter_name: SDDC-Datacenter
 cluster_name: Cluster-1
+parent_resource_pool: PROD-LOND-01-USERS
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
 network_subnet: "172.28.110"
