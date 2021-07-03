@@ -18,6 +18,9 @@
   vars:
     query: "[?guest_name == '{{ template_name }}']"
 
+- debug:
+    msg: "{{ existing_template }}"
+
 - block:
   - name: Create {{ template_friendly_name }} Template
     community.vmware.vmware_guest:
