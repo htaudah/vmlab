@@ -194,7 +194,7 @@
         body_format: json
       when: (cgw_groups_response.json | json_query(filter_cgw_groups)) is none
       vars:
-        filter_nat: "[? id=='{{ item.name }}']"
+        filter_cgw_groups: "[? id=='{{ item.name }}']"
       loop: "{{ gateway_firewall_groups }}"
 
     - name: Get Firewall Services
