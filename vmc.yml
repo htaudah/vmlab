@@ -218,7 +218,7 @@
             "service_entries": [
               {
                 "resource_type":"L4PortSetServiceEntry",
-                "ip_addresses":"",
+                "display_name":"{{ item.name }}_entry",
                 "destination_ports": [
                   {{ item.port }}
                 ],
