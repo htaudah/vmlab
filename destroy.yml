@@ -37,3 +37,89 @@
         state: absent
         force: yes
       loop: "{{ groups['linux'] }}"
+
+    - name: Delete appliance inventory machines
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ userid }}-{{ item }}"
+        resource_pool: "{{ resource_pool }}"
+        state: absent
+        force: yes
+      loop: "{{ groups['appliances'] }}"
+
+    - name: Delete OS templates
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ workload_folder }}"
+        name: "{{ item }}"
+        resource_pool: "{{ resource_pool }}"
+        state: absent
+        force: yes
+      loop:
+        - "{{ template_win_2019 }}"
+        - "{{ template_win_10 }}"
+        - "{{ template_centos_8 }}"
+
+    - name: Get access token
+      uri:
+        url: https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token={{ vmc_api_token }}
+        method: POST
+        validate_certs: no
+        headers:
+          Accept: application/json
+      register: access_token_response
+
+    - name: Get org ID
+      uri:
+        url: https://vmc.vmware.com/vmc/api/orgs
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: org_response
+
+    - name: Get SDDC ID
+      uri:
+        url: https://vmc.vmware.com/vmc/api/orgs/{{ org_response.json | json_query(filter_org_id) }}/sddcs
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: sddc_response
+      vars:
+        filter_org_id: "[? display_name=='{{ vmc_org_name }}'].id | [0]"
+
+    - set_fact:
+        nsx_public_url: "{{ sddc_response.json | json_query(filter_nsx_url) }}"
+      vars:
+        filter_nsx_url: "[? name=='{{ vmc_sddc_name }}'].resource_config.nsx_api_public_endpoint_url | [0]"
+
+    - name: Delete NAT rule
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/nat/USER/nat-rules/{{ userid }}_all_in_one"
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+
+    - name: Create public IPs
+      uri:
+        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/public-ips/{{ userid }}_{{ item }}"
+        method: DELETE
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      loop: "{{ public_ips }}"
+
+    - name: Create the network segment
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/segments/{{ network_name }}"
+        method: DELETE
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      when: not segment_exists
+

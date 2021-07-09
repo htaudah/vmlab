@@ -48,6 +48,21 @@ public_ips:
 ### VMC on AWS ###
 vmc_org_name: VMC-PS-EMEA-Prod
 vmc_sddc_name: PROD-LOND-01
+firewall_services:
+  - name: "{{ userid }}_https"
+    port: 443
+    protocol: tcp
+  - name: "{{ userid }}_tunnel"
+    port: 8443
+    protocol: tcp
+gateway_firewall_groups:
+  - name: "{{ userid }}_https_access"
+    ip_addresses:
+      - "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
+gateway_firewall_rules:
+  - name: "{{ userid }}_https_in"
+    destination_group: "{{ userid }}_https_access"
+    service: "{{ userid }}_https"
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
@@ -192,6 +207,9 @@ share_downloads:
     share: domain
   - url: 'https://d1drul0h659ga0.cloudfront.net/access-connector-19.03.0.1.exe'
     description: Access Connector 19.03.01
+    share: domain
+  - url: 'http://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi'
+    description: Chrome Enterprise
     share: domain
 
 ### WORKSPACE ONE UEM CONFIGURATIONS ###

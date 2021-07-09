@@ -5,10 +5,33 @@
 - import_playbook: allocate_host_variables.yml
 
 - hosts: desktops
-  connection: local
-  name: Create Infrastructure Desktops
+  name: Configure Infrastructure Desktops
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
+- hosts: desktops
+  name: Configure SQL Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  any_errors_fatal: yes
   tasks:

@@ -165,3 +165,111 @@
       when: (nat_response | json_query(filter_nat)) is none
       vars:
         filter_nat: "[? id=='{{ userid }}_all_in_one']"
+
+    - name: Get CGW Firewall Groups
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/groups"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: cgw_groups_response
+
+    - name: Create CGW Firewall Groups
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/groups/{{ item.name }}"
+        method: PUT
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        body: >
+          {
+            "display_name":"{{ item.name }}",
+            "expression": [
+              {
+                "resource_type":"IPAddressExpression",
+                "ip_addresses":["{{ item.ip_addresses | join(',') }}"],
+              }
+            ]
+          }
+        body_format: json
+      when: (cgw_groups_response.json | json_query(filter_cgw_groups)) is none
+      vars:
+        filter_nat: "[? id=='{{ item.name }}']"
+      loop: "{{ gateway_firewall_groups }}"
+
+    - name: Get Firewall Services
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/services"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: firewall_services_response
+
+    - name: Create non-existent firewall services
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/services/{{ item.name }}"
+        method: PUT
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        body: >
+          {
+            "display_name":"{{ item.name }}",
+            "service_entries": [
+              {
+                "resource_type":"L4PortSetServiceEntry",
+                "ip_addresses":"",
+                "destination_ports": [
+                  {{ item.port }}
+                ],
+                "l4_protocol":"{{ item.protocol }}"
+              }
+            ]
+          }
+        body_format: json
+      when: (firewall_services_response.json | json_query(filter_firewall_services)) is none
+      vars:
+        filter_firewall_services: "[? id=='{{ item.name }}']"
+      loop: "{{ firewall_services }}"
+
+    - name: Get CGW Firewall Rules
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/gateway-policies/default"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: cgw_rules_response
+
+    - name: Create non-existent firewall rules
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/gateway-policies/default/rules/{{ item.name }}"
+        method: PUT
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+        body: >
+          {
+            "display_name":"{{ item.name }}",
+            "action":"ALLOW",
+            "resource_type":"Rule",
+            "sequence_number":0,
+            "source_groups": [
+              "ANY"
+            ],
+            "logged":false,
+            "destination_groups": [
+              "/infra/domains/cgw/groups/{{ item.destination_group }}"
+            ],
+            "path":"/infra/domains/cgw/gateway-policies/default/rules/{{ item.name }}",
+            "scope": [
+              "/infra/labels/cgw-all"
+            ],
+            "services": [
+              "/infra/services/{{ item.service }}"
+            ]
+          }
+        body_format: json
+      when: (cgw_rules_response | json_query(filter_cgw_rules)) is none
+      vars:
+        filter_cgw_rules: "[? id=='{{ item.name }}']"
+      loop: "{{ gateway_firewall_rules }}"
