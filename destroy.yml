@@ -66,6 +66,7 @@
         - "{{ template_win_2019 }}"
         - "{{ template_win_10 }}"
         - "{{ template_centos_8 }}"
+      when: "{{ delete_template_on_destroy }}"
 
     - name: Get access token
       uri:
@@ -101,13 +102,37 @@
       vars:
         filter_nsx_url: "[? name=='{{ vmc_sddc_name }}'].resource_config.nsx_api_public_endpoint_url | [0]"
 
+    - name: Delete firewall rules
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/gateway-policies/default/rules/{{ item.name }}"
+        method: DELETE
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      loop: "{{ gateway_firewall_rules }}"
+
+    - name: Delete firewall services
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/services/{{ item.name }}"
+        method: DELETE
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      loop: "{{ firewall_services }}"
+
+    - name: Delete CGW Firewall Groups
+      uri:
+        url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/groups/{{ item.name }}"
+        method: DELETE
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      loop: "{{ gateway_firewall_groups }}"
+
     - name: Delete NAT rule
       uri:
         url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/nat/USER/nat-rules/{{ userid }}_all_in_one"
         headers:
           csp-auth-token: "{{ access_token_response.json.access_token }}"
 
-    - name: Create public IPs
+    - name: Delete public IPs
       uri:
         url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/public-ips/{{ userid }}_{{ item }}"
         method: DELETE
@@ -115,7 +140,7 @@
           csp-auth-token: "{{ access_token_response.json.access_token }}"
       loop: "{{ public_ips }}"
 
-    - name: Create the network segment
+    - name: Delete the network segment
       uri:
         url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/segments/{{ network_name }}"
         method: DELETE
