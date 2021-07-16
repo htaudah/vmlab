@@ -175,6 +175,9 @@
           csp-auth-token: "{{ access_token_response.json.access_token }}"
       register: cgw_groups_response
 
+    - debug:
+        msg: "{{ cgw_groups_response.json }}"
+
     - name: Create CGW Firewall Groups
       uri:
         url: "{{ nsx_public_url }}/policy/api/v1/infra/domains/cgw/groups/{{ item.name }}"
