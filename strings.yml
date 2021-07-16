@@ -51,10 +51,10 @@ vmc_sddc_name: PROD-LOND-01
 firewall_services:
   - name: "{{ userid }}_https"
     port: 443
-    protocol: tcp
+    protocol: TCP
   - name: "{{ userid }}_tunnel"
     port: 8443
-    protocol: tcp
+    protocol: TCP
 gateway_firewall_groups:
   - name: "{{ userid }}_https_access"
     ip_addresses:
