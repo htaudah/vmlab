@@ -1,0 +1,21 @@
+# Playbook to prepare the API automation service. This is only used to provide
+# an API to the other playbooks.
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Jul/24/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: django
+  name: Install pre-requisites and rundeck
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - name: Install Django into virtual env
+      pip:
+        name: Django
+        virtualenv: /rest_api/venv

@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------
 - import_playbook: allocate_host_variables.yml
 
-- hosts: localhost
+- hosts: all
   connection: local
   name: Delete Infrastructure Servers
   vars_files:
@@ -23,7 +23,8 @@
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
-      loop: "{{ groups['windows'] }}"
+      when: "'windows' in group_names"
+      delegate_to: localhost
 
     - name: Delete Linux inventory machines
       community.vmware.vmware_guest:
@@ -36,7 +37,8 @@
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
-      loop: "{{ groups['linux'] }}"
+      when: "'linux' in group_names"
+      delegate_to: localhost
 
     - name: Delete appliance inventory machines
       community.vmware.vmware_guest:
@@ -49,8 +51,17 @@
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
-      loop: "{{ groups['appliances'] }}"
+      when: "'appliances' in group_names"
+      delegate_to: localhost
 
+- hosts: localhost
+  connection: local
+  name: Delete templates and VMC configurations
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
     - name: Delete OS templates
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
@@ -129,6 +140,7 @@
     - name: Delete NAT rule
       uri:
         url: "{{ nsx_public_url }}/policy/api/v1/infra/tier-1s/cgw/nat/USER/nat-rules/{{ userid }}_all_in_one"
+        method: DELETE
         headers:
           csp-auth-token: "{{ access_token_response.json.access_token }}"
 
@@ -148,3 +160,22 @@
           csp-auth-token: "{{ access_token_response.json.access_token }}"
       when: not segment_exists
 
+    - name: Delete resource pool
+      community.vmware.vmware_resource_pool:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        parent_resource_pool: "{{ parent_resource_pool }}"
+        resource_pool: "{{ resource_pool }}"
+        state: absent
+          
+    - name: Create folder
+      community.vmware.vcenter_folder:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder_name: "{{ userid }}"
+        parent_folder: "{{ workload_parent_folder }}"
+        state: absent
