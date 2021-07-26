@@ -254,18 +254,18 @@
             "resource_type":"Rule",
             "sequence_number":0,
             "source_groups": [
-              "ANY"
+              {{ item.source_group != None | ternary(item.source_group, "ANY") }}
             ],
             "logged":false,
             "destination_groups": [
-              "/infra/domains/cgw/groups/{{ item.destination_group }}"
+              {{ item.destination_group != None | ternary("/infra/domains/cgw/groups/" + item.destination_group, "ANY") }}
             ],
             "path":"/infra/domains/cgw/gateway-policies/default/rules/{{ item.name }}",
             "scope": [
               "/infra/labels/cgw-all"
             ],
             "services": [
-              "/infra/services/{{ item.service }}"
+              {{ item.service != None | ternary("/infra/services/" + item.service, "ANY") }}
             ]
           }
         body_format: json
