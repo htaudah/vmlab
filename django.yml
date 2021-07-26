@@ -15,6 +15,10 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    - name: Install virtualenv
+      pip:
+        name: virtualenv
+
     - name: Install Django into virtual env
       pip:
         name: Django
