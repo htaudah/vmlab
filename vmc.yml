@@ -254,7 +254,7 @@
             "resource_type":"Rule",
             "sequence_number":0,
             "source_groups": [
-              {{ 'source_group' in item | ternary(item.source_group, "ANY") }}
+              {{ item.source_group if ('source_group' in item) else "ANY" }}
             ],
             "logged":false,
             "destination_groups": [
