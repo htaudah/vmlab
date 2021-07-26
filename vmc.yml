@@ -227,7 +227,7 @@
             ]
           }
         body_format: json
-      when: (firewall_services_response.json | json_query(filter_firewall_services)) is none
+      when: (firewall_services_response.json.results | json_query(filter_firewall_services)) is none
       vars:
         filter_firewall_services: "[? id=='{{ item.name }}']"
       loop: "{{ firewall_services }}"
