@@ -57,7 +57,7 @@
         name: "{{ userid }}-{{ inventory_hostname }}"
         state: poweredon
         template: "{{ template_centos_8 }}"
-        customization: "{{ custom_centos_8 if 'django' in group_names else custom_django }}"
+        customization: "{{ custom_centos_8 }}"
         networks:
           - name: "{{ network_name }}"
             type: static
