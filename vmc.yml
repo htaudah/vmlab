@@ -162,7 +162,7 @@
             "sequence_number":0
           }
         body_format: json
-      when: (nat_response | json_query(filter_nat) | length) == 0
+      when: (nat_response.json.results | json_query(filter_nat) | length) == 0
       vars:
         filter_nat: "[? id=='{{ userid }}_all_in_one']"
 
