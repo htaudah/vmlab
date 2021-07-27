@@ -68,7 +68,7 @@ gateway_firewall_rules:
     destination_group: "{{ userid }}_https_access"
     service: "{{ userid }}_https"
   - name: "{{ userid }}_out"
-    source_group: "{{ userid }}_{{ network_subnet }}.0/24"
+    source_group: "{{ userid }}_{{ network_subnet }}.0_24"
 
 ### ACTIVE DIRECTORY ###
 domain_name: haramco.org
