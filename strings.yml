@@ -60,7 +60,7 @@ gateway_firewall_groups:
   - name: "{{ userid }}_https_access"
     ip_addresses:
       - "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
-  - name: "{{ userid }}_{{ network_subnet }}.0/24"
+  - name: "{{ userid }}_{{ network_subnet }}.0_24"
     ip_addresses:
       - "{{ network_subnet }}.0/24"
 gateway_firewall_rules:
