@@ -124,7 +124,7 @@
             "display_name":"{{ userid }}_{{ item }}",
           }
         body_format: json
-      when: (existing_public_ips[item] | length) == 0
+      when: existing_public_ips[item] is none
       loop: "{{ public_ips }}"
       register: create_public_ips_response
 
