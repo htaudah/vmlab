@@ -254,18 +254,30 @@
             "resource_type":"Rule",
             "sequence_number":0,
             "source_groups": [
-              {{ item.source_group if ('source_group' in item) else "ANY" }}
+              {% if 'source_group' in item %}
+              "/infra/domains/cgw/groups/{{ item.source_group }}"
+              {% else %}
+              "ANY"
+              {% endif %}
             ],
             "logged":false,
             "destination_groups": [
-              {{ item.destination_group != None | ternary("/infra/domains/cgw/groups/" + item.destination_group, "ANY") }}
+              {% if 'destination_group' in item %}
+              "/infra/domains/cgw/groups/{{ item.destination_group }}"
+              {% else %}
+              "ANY"
+              {% endif %}
             ],
             "path":"/infra/domains/cgw/gateway-policies/default/rules/{{ item.name }}",
             "scope": [
               "/infra/labels/cgw-all"
             ],
             "services": [
-              {{ item.service != None | ternary("/infra/services/" + item.service, "ANY") }}
+              {% if 'service' in item %}
+              "/infra/services/{{ item.service }}"
+              {% else %}
+              "ANY"
+              {% endif %}
             ]
           }
         body_format: json
