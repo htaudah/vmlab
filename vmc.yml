@@ -281,7 +281,7 @@
             ]
           }
         body_format: json
-      when: (cgw_rules_response | json_query(filter_cgw_rules) | length) == 0
+      when: (cgw_rules_response.json.results | json_query(filter_cgw_rules) | length) == 0
       vars:
         filter_cgw_rules: "[? id=='{{ item.name }}']"
       loop: "{{ gateway_firewall_rules }}"
