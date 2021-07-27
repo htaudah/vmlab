@@ -124,7 +124,7 @@
             "display_name":"{{ userid }}_{{ item }}",
           }
         body_format: json
-      when: existing_public_ips[item] is none
+      when: len(existing_public_ips[item]) == 0
       loop: "{{ public_ips }}"
       register: create_public_ips_response
 
@@ -162,7 +162,7 @@
             "sequence_number":0
           }
         body_format: json
-      when: (nat_response | json_query(filter_nat)) is none
+      when: len(nat_response | json_query(filter_nat)) == 0
       vars:
         filter_nat: "[? id=='{{ userid }}_all_in_one']"
 
@@ -192,7 +192,7 @@
             ]
           }
         body_format: json
-      when: (cgw_groups_response.json.results | json_query(filter_cgw_groups)) is none
+      when: len(cgw_groups_response.json.results | json_query(filter_cgw_groups)) == 0
       vars:
         filter_cgw_groups: "[? id=='{{ item.name }}']"
       loop: "{{ gateway_firewall_groups }}"
@@ -227,7 +227,7 @@
             ]
           }
         body_format: json
-      when: (firewall_services_response.json.results | json_query(filter_firewall_services)) is none
+      when: len(firewall_services_response.json.results | json_query(filter_firewall_services)) == 0
       vars:
         filter_firewall_services: "[? id=='{{ item.name }}']"
       loop: "{{ firewall_services }}"
@@ -281,7 +281,7 @@
             ]
           }
         body_format: json
-      when: (cgw_rules_response | json_query(filter_cgw_rules)) is none
+      when: len(cgw_rules_response | json_query(filter_cgw_rules)) == 0
       vars:
         filter_cgw_rules: "[? id=='{{ item.name }}']"
       loop: "{{ gateway_firewall_rules }}"
