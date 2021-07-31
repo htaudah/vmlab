@@ -29,3 +29,8 @@
       pip:
         name: Django
         virtualenv: /rest_api/venv
+
+    - name: Start the core project
+      community.general.django_manage:
+        command: django-admin startproject core
+        virtualenv: /rest_api/venv
