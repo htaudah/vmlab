@@ -15,6 +15,12 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    # TODO: should this be in the image?
+    - name: Install python
+      dnf:
+        name: python3
+        state: present
+
     - name: Install git
       dnf:
         name: git-all
