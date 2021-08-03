@@ -3,7 +3,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
-userid: james
+userid: haudah
 orgname: Haramco
 template_win_2019: "{{ userid }}-windows-server-template"
 template_win_10: "{{ userid }}-windows-client-template"
@@ -16,7 +16,7 @@ cluster_name: Cluster-1
 parent_resource_pool: PROD-LOND-01-USERS
 resource_pool: "{{ userid }}"
 # NOTE: only 255.255.255.0 subnets are supported as of this writing
-network_subnet: "172.28.110"
+network_subnet: "172.28.10"
 network_name: "{{ userid }}-{{ network_subnet }}.0-24"
 network_gateway: '{{ network_subnet }}.1'
 network_mask: '255.255.255.0'

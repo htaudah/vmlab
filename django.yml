@@ -15,6 +15,11 @@
     ansible_user: root
     ansible_password: "{{ linux_local_password }}"
   tasks:
+    - name: Install git
+      dnf:
+        name: git-all
+        state: present
+
     - name: Create project directory
       file:
         path: /rest_api
@@ -30,8 +35,24 @@
         name: Django
         virtualenv: /rest_api/venv
 
-    - name: Start the core project
-      community.general.django_manage:
-        command: django-admin startproject core
-        projectpath: /rest_api/core
+    - name: Install paramiko into virtual env
+      pip:
+        name: paramiko
         virtualenv: /rest_api/venv
+
+    - name: Install Django Rest Framework into virtual env
+      pip:
+        name: djangorestframework
+        virtualenv: /rest_api/venv
+
+    - name: Install Django OAuth toolkit
+      pip:
+        name: django-oauth-toolkit
+        virtualenv: /rest_api/venv
+
+    - firewalld:
+        service: https
+        permanent: yes
+        immediate: yes
+        state: enabled
+        zone: public
