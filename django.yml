@@ -62,3 +62,8 @@
         immediate: yes
         state: enabled
         zone: public
+
+    - name: Pull the django project from GitHub
+      git:
+        repo: https://github.com/htaudah/restible.git
+        dest: /rest_api/restible
