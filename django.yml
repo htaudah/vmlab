@@ -20,6 +20,17 @@
       dnf:
         name: python3
         state: present
+          
+    # Needed by mod_wsgi for some reason
+    - name: Install python3-cryptography
+      dnf:
+        name: python3
+        state: present
+
+    - name: Install mod_wsgi
+      dnf:
+        name: python3-mod_wsgi
+        state: present
 
     - name: Install git
       dnf:
@@ -29,6 +40,12 @@
     - name: Create project directory
       file:
         path: /rest_api
+        state: directory
+        mode: '0755'
+
+    - name: Create static file directory
+      file:
+        path: /var/www/rest_api/static
         state: directory
         mode: '0755'
 
@@ -57,7 +74,7 @@
         virtualenv: /rest_api/venv
 
     - firewalld:
-        service: https
+        service: http
         permanent: yes
         immediate: yes
         state: enabled
@@ -67,3 +84,23 @@
       git:
         repo: https://github.com/htaudah/restible.git
         dest: /rest_api/restible
+
+    - name: Transfer apache django config
+      template:
+        src: configurations/django.conf
+        dest: /etc/httpd/conf.d/django.conf
+
+    - name: Transfer super user creation script
+      copy:
+        dest: /tmp/superuser
+        content: |
+          from django.contrib.auth import get_user_model
+          User = get_user_model()
+
+          try:
+              existing_admin = User.objects.get(username="admin")
+          except User.DoesNotExist:
+              User.objects.create_superuser('admin', "admin@{{ domain_name }}", "{{ django_superuser_password }}")
+
+    - name: Create django super user
+      shell: cat /tmp/
