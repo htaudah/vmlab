@@ -92,6 +92,6 @@
 
     - name: Create initial superuser
       community.general.django_manage:
-        command: "createsuperuser --noinput --username=admin --email=admin@{{ domain_name }}"
+        command: "ensureadmin {{ django_superuser_password }} {{ domain_name }}"
         project_path: /rest_api/restible
         virtualenv: /rest_api/venv
