@@ -19,7 +19,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
@@ -33,7 +33,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
@@ -47,7 +47,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ userid }}-{{ item }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
@@ -69,7 +69,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ item }}"
+        name: "{{ inventory_hostname }}"
         resource_pool: "{{ resource_pool }}"
         state: absent
         force: yes
