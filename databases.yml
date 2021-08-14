@@ -411,8 +411,8 @@
         GetQuery: SELECT is_read_committed_snapshot_on FROM sys.databases WHERE name = \'{{ item.name }}\'
         TestQuery: SELECT \'FOUND\' AS FOUND FROM sys.databases WHERE name = \'{{ item.name }}\' AND is_read_committed_snapshot_on = 1
         SetQuery: ALTER DATABASE accessdb SET READ_COMMITTED_SNAPSHOT ON
-        Credential_username: "Administrator@{{ domain_name }}"
-        Credential_password: "{{ domain_admin_password }}"
+        PsDscRunAsCredential_username: "Administrator@{{ domain_name }}"
+        PsDscRunAsCredential_password: "{{ domain_admin_password }}"
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.name }}"
