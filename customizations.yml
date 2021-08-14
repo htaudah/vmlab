@@ -18,6 +18,7 @@ custom_win_10:
   timezone: 150 # Riyadh
   password: "{{ win_local_password }}"
   autologon: yes
+  autologoncount: 1
   runonce: net use administrator /active:yes
   orgname: "{{ orgname }}"
 
