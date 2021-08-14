@@ -416,7 +416,7 @@
       loop: "{{ databases }}"
       loop_control:
         label: "{{ item.name }}"
-      when: "{{ item.read_committed }}"
+      when: "item.read_committed"
       run_once: yes
 
     - name: Add databases to availability group
