@@ -93,6 +93,7 @@ databases:
   - name: uemdb
     owner_username: uem_db_acct
     owner_password: "{{ database_password }}"
+    read_committed: no
   - name: accessdb
     owner_username: access_db_acct
     owner_password: "{{ database_password }}"
