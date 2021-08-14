@@ -11,9 +11,19 @@ custom_win_2019_workgroup:
   password: "{{ win_local_password }}"
   orgname: "{{ orgname }}"
 
+custom_win_10:
+  hostname: "{{ computer_name }}"
+  # DNS servers consist of list of Active Directory domain controllers
+  dns_servers: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | list }}"
+  timezone: 150 # Riyadh
+  password: "{{ win_local_password }}"
+  autologon: yes
+  runonce: net use administrator /active:yes
+  orgname: "{{ orgname }}"
+
 custom_centos_8:
   hostname: "{{ computer_name }}"
   dns_servers: "{{ (groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | list) + [fallback_dns_server] }}"
   timezone: "Asia/Riyadh"
-  password: "{{ win_local_password }}"
+  password: "{{ linux_local_password }}"
   orgname: "{{ orgname }}"

@@ -31,7 +31,7 @@
           num_cpus: 2
           num_cpu_cores_per_socket: 1
           version: 14
-        customization: "{{ custom_win_2019_workgroup }}"
+        customization: "{{ ('desktops' in group_names) | ternary(custom_win_10, custom_win_2019_workgroup) }}"
         networks:
           - name: "{{ network_name }}"
             type: static
