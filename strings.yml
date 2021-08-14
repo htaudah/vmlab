@@ -94,10 +94,12 @@ databases:
     owner_username: uem_db_acct
     owner_password: "{{ database_password }}"
     read_committed: no
+    collation: SQL_Latin1_General_CP1_Cl_AS
   - name: accessdb
     owner_username: access_db_acct
     owner_password: "{{ database_password }}"
     read_committed: yes
+    collation: Latin1_General_CS_AS
 builtin_databases:
   - name: msdb
     username: uem_db_acct
@@ -205,6 +207,7 @@ share_downloads:
   - url: 'https://d1drul0h659ga0.cloudfront.net/{{ uem_installer_name }}.zip'
     description: UEM 2120 Full Installer
     share: domain
+    subfolder: UEM
   - url: 'https://d1drul0h659ga0.cloudfront.net/jre-8u221-windows-x64.exe'
     description: JRE 8u221 Installer
     share: domain

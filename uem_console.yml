@@ -119,7 +119,7 @@
       run_once: yes
 
     - name: Run DB installer
-      win_shell: '{{ uem_db_installer_name }} /s /V\"/qn /lie C:\InstallerLogs\DBInstall.log TARGETDIR=C:\AirWatch IS_SQLSERVER_AUTHENTICATION=1 IS_SQLSERVER_SERVER=MainAG IS_SQLSERVER_USERNAME=uem_db_acct IS_SQLSERVER_PASSWORD={{ database_password }} IS_SQLSERVER_DATABASE=uemdb\"'
+      win_shell: '{{ uem_db_installer_name }} /s /V"/qn /lie C:\InstallerLogs\DBInstall.log TARGETDIR=C:\AirWatch IS_SQLSERVER_AUTHENTICATION=1 IS_SQLSERVER_SERVER=MainAG IS_SQLSERVER_USERNAME=uem_db_acct IS_SQLSERVER_PASSWORD={{ database_password }} IS_SQLSERVER_DATABASE=uemdb"'
       args:
         chdir: C:\Installers\{{ uem_installer_name }}\DB
         executable: cmd
