@@ -405,7 +405,7 @@
 
     - name: Enable READ_COMMITTED_SNAPSHOT isolation
       win_dsc:
-        resource_name: SqlScript
+        resource_name: SqlScriptQuery
         ServerName: "{{ inventory_hostname }}"
         InstanceName: "{{ db_instance }}"
         #GetQuery:
