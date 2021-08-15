@@ -54,7 +54,7 @@
 
     - name: Unzip chromium driver
       unarchive:
-        src: /tmp/chromedriver.zip
+        remote_src: /tmp/chromedriver.zip
         dest: /usr/local/share/chromedriver
 
     - name: Create link to chromium driver
