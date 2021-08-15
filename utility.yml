@@ -52,6 +52,11 @@
         dest: /tmp/chromedriver.zip
         mode: u+rx
 
+    - name: Create directory to unzip chromium
+      file:
+        path: /usr/local/share/chromedriver
+        state: directory
+
     - name: Unzip chromium driver
       unarchive:
         src: /tmp/chromedriver.zip
