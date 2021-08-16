@@ -87,27 +87,9 @@
         pcs_password: "{{ linux_local_password }}"
       run_once: yes
 
-    - name: Create the UEM Console virtual IP resource
+    - name: Create the all-in-one virtual IP resource
       community.general.pacemaker_resource:
         name: VirtualIP-uem_console
-        type: ocf:heartbeat:IPaddr2
-        attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
-          cidr_netmask: "24"
-      run_once: yes
-
-    - name: Create the UEM Tunnel Relay virtual IP resource
-      community.general.pacemaker_resource:
-        name: VirtualIP-uagr
-        type: ocf:heartbeat:IPaddr2
-        attributes:
-          ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
-          cidr_netmask: "24"
-      run_once: yes
-
-    - name: Create the UEM Tunnel Endpoint virtual IP resource
-      community.general.pacemaker_resource:
-        name: VirtualIP-uage
         type: ocf:heartbeat:IPaddr2
         attributes:
           ip: "{{ network_subnet }}.{{ virtual_ips['all_in_one'] }}"
