@@ -57,13 +57,24 @@
       #win_dns_record:
         #name: 
 
-- hosts: localhost
-  connection: local
-  name: Get all-in-one public IP
+#- hosts: localhost
+  #connection: local
+  #name: Get all-in-one public IP
+  #vars_files:
+    #- "{{ playbook_dir }}/vault.yml"
+    #- "{{ playbook_dir }}/strings.yml"
+    #- "{{ playbook_dir }}/customizations.yml"
+  #tasks:
+# Use the utility machine since it already has the aws credentials
+- hosts: utility
+  name: Create public DNS records
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
   tasks:
     - name: Get access token
       uri:
@@ -110,24 +121,10 @@
 
     - name: Get existing public IPs
       set_fact:
-        all_in_one_ip: "{{ public_ips_response | json_query(filter_public_ip) }}"
+        all_in_one_ip: "{{ public_ips_response.json.results | json_query(filter_public_ip) }}"
       vars:
         filter_public_ip: "[? id=='{{ userid }}_all_in_one'].ip"
 
-    - debug:
-        msg: "{{ all_in_one_ip }}"
-
-# Use the utility machine since it already has the aws credentials
-- hosts: utility
-  name: Create public DNS records
-  vars_files:
-    - "{{ playbook_dir }}/vault.yml"
-    - "{{ playbook_dir }}/strings.yml"
-    - "{{ playbook_dir }}/customizations.yml"
-  vars:
-    ansible_user: root
-    ansible_password: "{{ linux_local_password }}"
-  tasks:
     - name: Ensure AWS config directory exists
       file:
         path: /root/.aws
