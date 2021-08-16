@@ -57,6 +57,66 @@
       #win_dns_record:
         #name: 
 
+- hosts: localhost
+  connection: local
+  name: Get all-in-one public IP
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Get access token
+      uri:
+        url: https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token={{ vmc_api_token }}
+        method: POST
+        validate_certs: no
+        headers:
+          Accept: application/json
+      register: access_token_response
+
+    - name: Get org ID
+      uri:
+        url: https://vmc.vmware.com/vmc/api/orgs
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: org_response
+
+    - name: Get SDDC ID
+      uri:
+        url: https://vmc.vmware.com/vmc/api/orgs/{{ org_response.json | json_query(filter_org_id) }}/sddcs
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: sddc_response
+      vars:
+        filter_org_id: "[? display_name=='{{ vmc_org_name }}'].id | [0]"
+
+    - set_fact:
+        nsx_public_url: "{{ sddc_response.json | json_query(filter_nsx_url) }}"
+      vars:
+        filter_nsx_url: "[? name=='{{ vmc_sddc_name }}'].resource_config.nsx_api_public_endpoint_url | [0]"
+
+    - name: Get Public IPs
+      uri:
+        url: "{{ nsx_public_url | regex_replace('sks-nsxt-manager', 'cloud-service') }}/api/v1/infra/public-ips"
+        method: GET
+        validate_certs: no
+        headers:
+          csp-auth-token: "{{ access_token_response.json.access_token }}"
+      register: public_ips_response
+
+    - name: Get existing public IPs
+      set_fact:
+        all_in_one_ip: "{{ public_ips_response | json_query(filter_public_ip) }}"
+      vars:
+        filter_public_ip: "[? id=='{{ userid }}_all_in_one'].ip"
+
+    - debug:
+        msg: "{{ all_in_one_ip }}"
+
 # Use the utility machine since it already has the aws credentials
 - hosts: utility
   name: Create public DNS records
