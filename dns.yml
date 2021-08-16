@@ -20,17 +20,17 @@
     ansible_port: 5985
   tasks:
     - win_dns_record:
-        name: "uemc.{{ userid }}"
+        name: "uemc"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "uds.{{ userid }}"
+        name: "uds"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "vdi.{{ userid }}"
+        name: "vdi"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
