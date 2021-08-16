@@ -141,7 +141,7 @@
         zone: "{{ domain_name }}"
         record: uagr.{{ public_domain_name }}
         type: A
-        value: "{{ public_ip_uagr }}"
+        value: "{{ all_in_one_ip }}"
 
     - name: UEM Device Services
       community.aws.route53:
@@ -149,7 +149,7 @@
         zone: "{{ domain_name }}"
         record: uds.{{ public_domain_name }}
         type: A
-        value: "{{ public_ip_uem }}"
+        value: "{{ all_in_one_ip }}"
 
     - name: Email Notification Service
       community.aws.route53:
@@ -157,7 +157,7 @@
         zone: "{{ domain_name }}"
         record: ens.{{ public_domain_name }}
         type: A
-        value: "{{ public_ip_uem }}"
+        value: "{{ all_in_one_ip }}"
 
     - name: Secure Email Gateway
       community.aws.route53:
@@ -165,4 +165,4 @@
         zone: "{{ domain_name }}"
         record: seg.{{ public_domain_name }}
         type: A
-        value: "{{ public_ip_uem }}"
+        value: "{{ all_in_one_ip }}"
