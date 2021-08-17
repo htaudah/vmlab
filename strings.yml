@@ -41,8 +41,6 @@ virtual_ips:
 # This environment will require three public IP addresses to be provided
 public_ips:
   - all_in_one
-#public_ip_uem: '3.10.245.54'
-#public_ip_uagr: '18.168.72.197'
 
 ### VMC on AWS ###
 vmc_org_name: VMC-PS-EMEA-Prod
@@ -140,6 +138,7 @@ certificates:
 internal_certificates:
   - vdi
   - uemc
+  - uds
 
 ### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared
