@@ -147,7 +147,7 @@
         else
         {
           $new_cert = New-SelfSignedCertificate -DnsName uemc.{{ domain_name }} -CertStoreLocation Cert:\LocalMachine\My\
-          echo "$new_cert:new cert created"
+          echo "$($new_cert):new cert created"
         }
       register: cert_result
       changed_when: "'cert already exists' in cert_result.stdout"
