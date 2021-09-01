@@ -4,4 +4,5 @@
 # Last updated on: Aug/03/2021
 # -------------------------------------------------------------------------------------------------
 #echo "${@: 2}" > /tmp/output
-ansible-playbook -i inventory.ini --vault-password-file /tmp/vault-pass --extra-vars "${@: 2}" "$1"
+ARG_ARRAY=${@: 2}
+ansible-playbook -i inventory.ini --vault-password-file /tmp/vault-pass --extra-vars ${ARG_ARRAY[@]} "$1"
