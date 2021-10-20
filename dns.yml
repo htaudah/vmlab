@@ -20,23 +20,23 @@
     ansible_port: 5985
   tasks:
     - win_dns_record:
-        name: "uemc"
+        name: "uemc.{{ domain_name }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "uds"
+        name: "uds.{{ domain_name }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - win_dns_record:
-        name: "vdi"
+        name: "vdi.{{ domain_name }}"
         type: "A"
         value: "{{ network_subnet }}.{{ virtual_ips['uem_console'] }}"
         zone: "{{ domain_name }}"
     - name: Create A records for non-Windows hosts
-      win_dns_record:
-        name: "{{ item }}"
+      community.windows.win_dns_record:
+        name: "{{ item }}.{{ domain_name }}"
         type: "A"
         value: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
         zone: "{{ domain_name }}"
