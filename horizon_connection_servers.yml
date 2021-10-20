@@ -22,7 +22,7 @@
         machine_ou: "{{ server_ou }}"
 
 - hosts: horizon_connection_servers
-  name: Join Connection Servers to domain
+  name: Install Connection Servers
   vars_files:
     - "{{ playbook_dir }}/vault.yml"
     - "{{ playbook_dir }}/strings.yml"

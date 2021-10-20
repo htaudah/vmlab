@@ -1,0 +1,48 @@
+# Playbook to deploy Horizon Enrollment servers
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Oct/20/2021
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: enrollment_servers
+  name: Join Enrollment Servers to domain
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: "{{ win_local_password }}"
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+  tasks:
+    - include_tasks: join_domain.yml
+      vars:
+        machine_ou: "{{ server_ou }}"
+
+- hosts: enrollment_servers
+  name: Install Enrollment Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator@{{ domain_name }}
+    ansible_password: "{{ domain_admin_password }}"
+    ansible_winrm_transport: credssp
+    ansible_port: 5985
+  tasks:
+    - name: Create folder for installers
+      win_file:
+        path: C:\Installers
+        state: directory
+
+    - name: Copy installers
+      win_copy:
+        src: \\{{ domain_name }}\Shares\domain\{{ item }}
+        dest: C:\Installers\{{ item }}
+        remote_src: yes
+      loop:
+        - horizon-8.2.exe
