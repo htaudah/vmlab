@@ -1,0 +1,32 @@
+# Playbook to install syslog server
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Nov/15/2021
+# -------------------------------------------------------------------------------------------------
+- hosts: syslog_servers
+  name: Install and configure the syslog server
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  vars:
+    ansible_user: root
+    ansible_password: "{{ linux_local_password }}"
+  tasks:
+    - name: Install syslog
+      dnf:
+        name: squid
+        state: present
+
+    - name: Open squid firewall port
+      firewalld:
+        port: 3128/tcp
+        permanent: yes
+        state: enabled
+        zone: public
+
+    - name: Start and enable the squid service
+      systemd:
+        name: squid
+        state: started
+        enabled: yes
+
