@@ -3,7 +3,7 @@
 # Written by: Hani Audah <ht.aramco@gmail.com>
 # Created on: May/25/2020
 # -------------------------------------------------------------------------------------------------
-userid: haudah
+userid: james
 orgname: Haramco
 template_win_2019: "{{ userid }}-windows-server-template"
 template_win_10: "{{ userid }}-windows-client-template"
@@ -116,7 +116,6 @@ iso_paths:
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
   vmware_tools: '[WorkloadDatastore] /haudah-temp/vmware-tools-11.2.5.iso'
-  uem_2011: '[WorkloadDatastore] /haudah-temp/20.11.0.5_Full_Install.zip'
   vcenter_7u2: '[WorkloadDatastore] /haudah-temp/VMware-VCSA-all-7.0.2-17920168.iso'
 
 ### PUBLIC CERTIFICATES ###
@@ -169,7 +168,8 @@ win_shared_folders:
     full: Administrator@{{ domain_name }},dbsvc@{{ domain_name }}
 
 # The name of the UEM installer zip is referenced several times
-uem_installer_name: '21.2.0.5_Full_Install'
+uem_installer_name: '21.11.0.3_Full_Install'
+ens_installer_name: 'VMware_ENSv2_22.01.exe'
 uem_db_installer_name: 'WorkspaceONE_UEM_DB_{{ uem_installer_name.split("_") | first }}_Setup.exe'
 uem_app_installer_name: 'WorkspaceONE_UEM_Application_{{ uem_installer_name.split("_") | first }}_Full_Install.exe'
 # Provide a list of URLs to have some files automatically populated from the web
