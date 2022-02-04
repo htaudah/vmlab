@@ -158,7 +158,6 @@
         method: DELETE
         headers:
           csp-auth-token: "{{ access_token_response.json.access_token }}"
-      when: not segment_exists
 
     - name: Delete resource pool
       community.vmware.vmware_resource_pool:
