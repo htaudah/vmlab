@@ -1,0 +1,56 @@
+# Playbook to deploy all Horizon UAG appliances
+# Written by: Hani Audah <ht.aramco@gmail.com>
+# Created on: Feb/05/2022
+# -------------------------------------------------------------------------------------------------
+- import_playbook: allocate_host_variables.yml
+
+- hosts: horizon_uag
+  connection: local
+  name: Create Infrastructure Servers
+  vars_files:
+    - "{{ playbook_dir }}/vault.yml"
+    - "{{ playbook_dir }}/strings.yml"
+    - "{{ playbook_dir }}/customizations.yml"
+  tasks:
+    - name: Create directory for OVA files
+      file:
+        path: /var/ova
+        state: directory
+
+    - name: Download UAG appliance OVA file
+      get_url:
+        url: 'https://{{ cloudfront_fqdn }}/{{ uag_appliance_name }}'
+        dest: /var/ova/{{ uag_appliance_name }}
+
+    - name: Deploy OVA appliances
+      community.vmware.vmware_deploy_ovf:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        resource_pool: "{{ resource_pool }}"
+        folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
+        name: "{{ userid }}-{{ inventory_hostname }}"
+        ovf: /var/ova/{{ uag_appliance_name }}
+        datastore: "{{ workload_datastore }}"
+        networks: "{'Internet':'{{ network_name }}', 'ManagementNetwork':'{{ network_name }}', 'BackendNetwork':'{{ network_name }}'}"
+        allow_duplicates: no
+        validate_certs: no
+        power_on: yes
+        # needed to force the non-user configurable properties (settingsJSON)
+        enable_hidden_properties: yes
+        inject_ovf_env: yes
+        properties:
+          settingsJSON: '{\"kerberosKeyTabSettingsList\":{ \"kerberosKeyTabSettings\": []}, \"kerberosRealmSettingsList\":{ \"kerberosRealmSettingsList\": []}, \"idPExternalMetadataSettingsList\":{ \"idPExternalMetadataSettingsList\": []}, \"customExecutableList\": { \"customExecutableList\": [ ]}, \"edgeServiceSettingsList\":{ \"edgeServiceSettingsList\": [{ \"identifier\": \"VIEW\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"administrator\",\"apiServerPassword\": \"{{ uem_api_password }}\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"{{ inventory_hostname }}.{{ domain_name }}\",\"airwatchAgentStartUpMode\": \"install\"}, { \"identifier\": \"CONTENT_GATEWAY\",\"airwatchComponentsInstalled\":\"CG\",\"enabled\": true,\"proxyDestinationUrl\": \"https://null\",\"apiServerUrl\": \"https://uds.{{ domain_name }}\",\"apiServerUsername\": \"administrator\",\"apiServerPassword\": \"Baltona31@\",\"organizationGroupCode\": \"{{ orgname }}\",\"airwatchServerHostname\": \"{{ hostvars[inventory_hostname] }}\",\"airwatchAgentStartUpMode\": \"install\",\"cgConfigurationId\": \"{{ cg_config_response.json[0].content_gateway_configuration_uuid }}\"}] }, \"systemSettings\":{\"locale\": \"en_US\",\"ssl30Enabled\": \"false\",\"tls10Enabled\": \"false\",\"tls11Enabled\": \"false\",\"tls12Enabled\": \"true\",\"tls13Enabled\": \"true\"}, \"authMethodSettingsList\":{ \"authMethodSettingsList\": [] }, \"serviceProviderMetadataList\": { \"items\": [ ] }, \"identityProviderMetaData\": {  } }'
+          rootPassword: "{{ linux_local_password }}"
+          adminPassword: "{{ linux_local_password }}"
+          ceipEnabled: "False"
+          defaultGateway: "{{ network_gateway }}"
+          DNS: "{{ groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | join(' ') }}"
+          dnsSearch: "{{ domain_name }}"
+          ip0: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+          ipMode0: STATICV4
+          netmask0: "{{ network_mask }}"
+          uagname: "{{ userid }}-{{ inventory_hostname }}"
+      delegate_to: localhost
+

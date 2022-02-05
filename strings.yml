@@ -171,8 +171,10 @@ win_shared_folders:
     full: Administrator@{{ domain_name }},dbsvc@{{ domain_name }}
 
 # The name of the UEM installer zip is referenced several times
+cloudfront_fqdn: 'd1drul0h659ga0.cloudfront.net'
 uem_installer_name: '21.11.0.3_Full_Install'
 ens_installer_name: 'VMware_ENSv2_22.01.exe'
+uag_appliance_name: 'euc-unified-access-gateway-21.11.2.0-19224741_OVF10.ova'
 horizon_installer_name: 'VMware-Horizon-Connection-Server-x86_64-8.4.0-19067837.exe'
 access_installer_name: 'Workspace-ONE-Access-Connector-Installer-21.08.0.1.exe'
 uem_db_installer_name: 'WorkspaceONE_UEM_DB_{{ uem_installer_name.split("_") | first }}_Setup.exe'
@@ -200,7 +202,7 @@ share_downloads:
     description: VC Redistributable 2013
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/rewrite_amd64.msi'
+  - url: 'https://{{ cloudfront_fqdn }}/rewrite_amd64.msi'
     description: URL Rewrite Module 2.1
     share: domain
     subfolder: UEM
@@ -208,18 +210,18 @@ share_downloads:
     description: .NET Core 3.1.8 Server Hosting
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ uem_installer_name }}.zip'
+  - url: 'https://{{ cloudfront_fqdn }}/{{ uem_installer_name }}.zip'
     description: UEM 2120 Full Installer
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/jre-8u221-windows-x64.exe'
+  - url: 'https://{{ cloudfront_fqdn }}/jre-8u221-windows-x64.exe'
     description: JRE 8u221 Installer
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ horizon_installer_name }}'
+  - url: 'https://{{ cloudfront_fqdn }}/{{ horizon_installer_name }}'
     description: Horizon Connection Server 8.4
     share: domain
-  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ access_installer_name }}'
+  - url: 'https://{{ cloudfront_fqdn }}/{{ access_installer_name }}'
     description: Access Connector 21.08.0.1
     share: domain
   - url: 'http://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi'
