@@ -96,6 +96,9 @@ databases:
     owner_password: "{{ database_password }}"
     read_committed: yes
     collation: Latin1_General_CS_AS
+  - name: horizondb
+    owner_username: horizon_db_acct
+    owner_password: "{{ database_password }}"
 builtin_databases:
   - name: msdb
     username: uem_db_acct

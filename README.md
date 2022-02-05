@@ -71,3 +71,14 @@ format:
 `ansible-playbook -i inventory.ini --ask-vault-pass playbook.yml`
 
 You will be prompted for the vault password you chose earlier.
+
+The correct order for running the playbooks is as follows:
+
+1. vmc
+2. vsphere
+3. create_linux_template
+4. create_windows_templates
+5. create_servers
+6. domain_controllers
+7. domain
+8. databases
