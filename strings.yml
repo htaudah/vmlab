@@ -173,6 +173,8 @@ win_shared_folders:
 # The name of the UEM installer zip is referenced several times
 uem_installer_name: '21.11.0.3_Full_Install'
 ens_installer_name: 'VMware_ENSv2_22.01.exe'
+horizon_installer_name: 'VMware-Horizon-Connection-Server-x86_64-8.4.0-19067837.exe'
+access_installer_name: 'Workspace-ONE-Access-Connector-Installer-21.08.0.1.exe'
 uem_db_installer_name: 'WorkspaceONE_UEM_DB_{{ uem_installer_name.split("_") | first }}_Setup.exe'
 uem_app_installer_name: 'WorkspaceONE_UEM_Application_{{ uem_installer_name.split("_") | first }}_Full_Install.exe'
 # Provide a list of URLs to have some files automatically populated from the web
@@ -214,11 +216,11 @@ share_downloads:
     description: JRE 8u221 Installer
     share: domain
     subfolder: UEM
-  - url: 'https://d1drul0h659ga0.cloudfront.net/horizon-8.2.exe'
-    description: Horizon Connection Server 8.2
+  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ horizon_installer_name }}'
+    description: Horizon Connection Server 8.4
     share: domain
-  - url: 'https://d1drul0h659ga0.cloudfront.net/access-connector-19.03.0.1.exe'
-    description: Access Connector 19.03.01
+  - url: 'https://d1drul0h659ga0.cloudfront.net/{{ access_installer_name }}'
+    description: Access Connector 21.08.0.1
     share: domain
   - url: 'http://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi'
     description: Chrome Enterprise
