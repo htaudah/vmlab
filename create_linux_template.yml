@@ -18,7 +18,7 @@
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
         folder: "{{ workload_folder }}"
-        name: "{{ template_centos_8 }}"
+        name: "{{ template_centos_9 }}"
         state: present
         guest_id: centos8_64Guest
         hardware:
@@ -52,7 +52,7 @@
             type: dhcp
             device_type: e1000e
         resource_pool: "{{ resource_pool }}"
-      register: create_centos_8_template
+      register: create_centos_9_template
 
     - name: Add USB 3.1 controller
       community.vmware.vmware_guest_controller:
@@ -60,7 +60,7 @@
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         datacenter: "{{ datacenter_name }}"
-        name: "{{ template_centos_8 }}"
+        name: "{{ template_centos_9 }}"
         controllers:
           - state: present
             type: usb3
@@ -70,7 +70,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        name: "{{ template_centos_8 }}"
+        name: "{{ template_centos_9 }}"
         state: poweredon
         wait_for_ip_address: yes
         # Wait 15 minutes for template to be prepared
@@ -81,7 +81,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        name: "{{ template_centos_8 }}"
+        name: "{{ template_centos_9 }}"
         state: shutdownguest
         # Wait 2 minutes for shutdown to complete
         state_change_timeout: 120
@@ -91,7 +91,7 @@
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
-        name: "{{ template_centos_8 }}"
+        name: "{{ template_centos_9 }}"
         state: present
         is_template: yes
         cdrom:
