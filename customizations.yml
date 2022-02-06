@@ -22,7 +22,7 @@ custom_win_10:
   runonce: net use administrator /active:yes
   orgname: "{{ orgname }}"
 
-custom_centos_8:
+custom_centos_9:
   hostname: "{{ computer_name }}"
   dns_servers: "{{ (groups['domain_controllers'] | map('extract', hostvars, 'host_address') | map('regex_replace', '(\\d+)', network_subnet + '.\\1') | list) + [fallback_dns_server] }}"
   timezone: "Asia/Riyadh"
