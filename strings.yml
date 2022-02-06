@@ -115,6 +115,7 @@ iso_paths:
   win_2019: '[WorkloadDatastore] /haudah-temp/en_windows_server_2019_enterprise_evaluation.iso'
   win_10: '[WorkloadDatastore] /haudah-temp/en_windows_10_20H2_enterprise_evaluation.iso'
   centos_8: '[WorkloadDatastore] /haudah-temp/CentOS-8.3.2011-x86_64-dvd1.iso'
+  centos_9: '[WorkloadDatastore] /haudah-temp/CentOS-Stream-9-latest-x86_64-dvd1.iso'
   bootstrap_centos: '[WorkloadDatastore] /haudah-temp/bootstrap_centos.iso'
   bootstrap_win_2019: '[WorkloadDatastore] /haudah-temp/bootstrap_win_2019.iso'
   bootstrap_win_10: '[WorkloadDatastore] /haudah-temp/bootstrap_win_10.iso'
