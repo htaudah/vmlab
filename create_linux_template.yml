@@ -20,7 +20,7 @@
         folder: "{{ workload_folder }}"
         name: "{{ template_centos_9 }}"
         state: present
-        guest_id: centos9_64Guest
+        guest_id: centos8_64Guest
         hardware:
           memory_mb: 8192
           num_cpus: 2
