@@ -11,7 +11,7 @@
     - "{{ playbook_dir }}/strings.yml"
     - "{{ playbook_dir }}/customizations.yml"
   tasks:
-    - name: Create Centos 8 Template
+    - name: Create Centos 9 Template
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -20,7 +20,7 @@
         folder: "{{ workload_folder }}"
         name: "{{ template_centos_9 }}"
         state: present
-        guest_id: centos8_64Guest
+        guest_id: centos9_64Guest
         hardware:
           memory_mb: 8192
           num_cpus: 2
