@@ -56,8 +56,8 @@
         folder: "{{ workload_folder }}"
         name: "{{ userid }}-{{ inventory_hostname }}"
         state: poweredon
-        template: "{{ template_centos_9 }}"
-        customization: "{{ custom_centos_9 }}"
+        template: "{{ template_centos_8 }}"
+        customization: "{{ custom_centos_8 }}"
         networks:
           - name: "{{ network_name }}"
             type: static
