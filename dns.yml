@@ -171,6 +171,15 @@
         value: "{{ all_in_one_ip }}"
         overwrite: yes
 
+    - name: External VDI
+      community.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: vdi.{{ public_domain_name }}
+        type: A
+        value: "{{ all_in_one_ip }}"
+        overwrite: yes
+
           #TODO: this should only run from master
     #- name: Django API
       #community.aws.route53:
