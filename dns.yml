@@ -142,6 +142,7 @@
         record: uagr.{{ public_domain_name }}
         type: A
         value: "{{ all_in_one_ip }}"
+        overwrite: yes
 
     - name: UEM Device Services
       community.aws.route53:
@@ -150,6 +151,7 @@
         record: uds.{{ public_domain_name }}
         type: A
         value: "{{ all_in_one_ip }}"
+        overwrite: yes
 
     - name: Email Notification Service
       community.aws.route53:
@@ -158,6 +160,7 @@
         record: ens.{{ public_domain_name }}
         type: A
         value: "{{ all_in_one_ip }}"
+        overwrite: yes
 
     - name: Secure Email Gateway
       community.aws.route53:
@@ -166,6 +169,7 @@
         record: seg.{{ public_domain_name }}
         type: A
         value: "{{ all_in_one_ip }}"
+        overwrite: yes
 
     - name: Django API
       community.aws.route53:
@@ -174,3 +178,4 @@
         record: builder
         type: A
         value: "{{ all_in_one_ip }}"
+        overwrite: yes
