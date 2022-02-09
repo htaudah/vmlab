@@ -73,3 +73,10 @@
       win_template:
         src: configurations/locked.properties
         dest: C:\Program Files\VMware\VMware View\Server\sslgateway\conf\locked.properties
+      register: created_config
+
+    - name: Restart Horizon Connection Server
+      win_service:
+        name: wsbroker
+        state: restarted
+      when: created_config.changed
