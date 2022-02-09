@@ -36,7 +36,7 @@
         zone: "{{ domain_name }}"
     - name: Create A records for non-Windows hosts
       community.windows.win_dns_record:
-        name: "{{ item }}.{{ domain_name }}"
+        name: "{{ item }}"
         type: "A"
         value: "{{ network_subnet }}.{{ hostvars[item]['host_address'] }}"
         zone: "{{ domain_name }}"
