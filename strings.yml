@@ -99,6 +99,7 @@ databases:
   - name: horizondb
     owner_username: horizon_db_acct
     owner_password: "{{ database_password }}"
+    read_committed: no
     collation: Latin1_General_CS_AS
 builtin_databases:
   - name: msdb
