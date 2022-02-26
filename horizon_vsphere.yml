@@ -222,6 +222,14 @@
         validate_certs: no
       loop: "{{ groups['nested_esxi'] }}"
 
+    - name: Assign vCenter license
+      community.vmware.vcenter_license:
+        hostname: "{{ hostvars['vcenter']['ansible_host'] }}"
+        username: administrator@vsphere.local
+        password: "{{ nested_vcenter_password }}"
+        license: "{{ vcenter_license }}"
+        state: present
+
     #- name: Enable vMotion for VMKernel adapters
       #community.vmware.vmware_vmkernel:
         #hostname: "{{ hostvars['vcenter']['ansible_host'] }}"

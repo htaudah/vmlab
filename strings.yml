@@ -138,11 +138,14 @@ certificates:
     destination_path: /var/lib/haproxy
   - subject: builder
     destination_path: /var/lib/haproxy
+  - subject: vdi
+    destination_path: /var/lib/haproxy
 # Intranet certificates to be generated and deployed to load balancers
 internal_certificates:
   - vdi
   - uemc
   - uds
+  - vcenter
 
 ### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared
@@ -175,6 +178,7 @@ cloudfront_fqdn: 'd1drul0h659ga0.cloudfront.net'
 uem_installer_name: '21.11.0.3_Full_Install'
 ens_installer_name: 'VMware_ENSv2_22.01.exe'
 uag_appliance_name: 'euc-unified-access-gateway-21.11.2.0-19224741_OVF10.ova'
+access_appliance_name: 'identity-manager-21.08.0.1-19010796_OVF10.ova'
 horizon_installer_name: 'VMware-Horizon-Connection-Server-x86_64-8.4.0-19067837.exe'
 access_installer_name: 'Workspace-ONE-Access-Connector-Installer-21.08.0.1.exe'
 uem_db_installer_name: 'WorkspaceONE_UEM_DB_{{ uem_installer_name.split("_") | first }}_Setup.exe'

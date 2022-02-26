@@ -20,8 +20,8 @@
 
     - name: Download Access appliance OVA file
       get_url:
-        url: 'https://d1drul0h659ga0.cloudfront.net/access-20.10.0.1-17586971.ova'
-        dest: /var/ova/access-20.10.0.1-17586971.ova
+        url: 'https://{{ cloudfront_fqdn }}/{{ access_appliance_name }}'
+        dest: /var/ova/{{ access_appliance_name }}.ova
       delegate_to: localhost
 
     - name: Deploy OVA appliances
@@ -33,7 +33,7 @@
         resource_pool: "{{ resource_pool }}"
         folder: "/{{ datacenter_name }}/vm/{{ workload_folder }}"
         name: "{{ userid }}-{{ inventory_hostname }}"
-        ovf: /var/ova/access-20.10.0.1-17586971.ova
+        ovf: /var/ova/{{ access_appliance_name }}.ova
         datastore: "{{ workload_datastore }}"
         networks: "{'Network 1':'{{ network_name }}'}"
         allow_duplicates: no
