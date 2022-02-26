@@ -86,11 +86,11 @@ horizon_rdsh_ou: 'ou=RDSH,{{ server_ou }}'
 ### DATABASES ###
 db_instance: 'HARAMCODB'
 databases:
-  - name: uemdb
+  - name: WorkspaceONEUEM
     owner_username: uem_db_acct
     owner_password: "{{ database_password }}"
     read_committed: no
-    collation: SQL_Latin1_General_CP1_Cl_AS
+    collation: SQL_Latin1_General_CP1_CI_AS
   - name: accessdb
     owner_username: access_db_acct
     owner_password: "{{ database_password }}"
