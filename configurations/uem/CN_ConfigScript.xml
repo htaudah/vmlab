@@ -10,7 +10,7 @@
   <!-- SQL Server Username -->
   <property name="IS_SQLSERVER_USERNAME" value="uem_db_acct" />
   <!-- SQL Server Database Name -->
-  <property name="IS_SQLSERVER_DATABASE" value="uemdb" />
+  <property name="IS_SQLSERVER_DATABASE" value="WorkspaceONEUEM" />
   <!-- SQL Server Password -->
   <property name="IS_SQLSERVER_PASSWORD" value="{{ database_password }}" />
   <!-- If 0 is selected for Windows Auth, this is the Windows Auth Username -->
