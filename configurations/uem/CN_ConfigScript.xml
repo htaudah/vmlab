@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <properties>
-  <property name="ADDLOCAL" value="Web_Console,AirWatch_Services,AirWatch_Agent_Builder,AirWatch_Content_Delivery,AirWatch_Device_Scheduler,GEM_Services,AirWatch_GEM_InventoryService,AirWatch_Integration_Service,AirWatch_Messaging_Service,AirWatch_Policy_Engine,AirWatch_SMS_Service,AirWatch_Website,Bulk_Import_Service,Common,Content_Pull_Service,Default_Website,Event_Change_Queue_Monitor,MEG_Queue_Service,Cisco_ISE_Integration,AirWatch_Directory_Sync_Service" />
+  <property name="ADDLOCAL" value="AirWatch_API_Website,Web_Console,AirWatch_Services,AirWatch_Agent_Builder,AirWatch_Content_Delivery,AirWatch_Device_Scheduler,GEM_Services,AirWatch_GEM_InventoryService,AirWatch_Integration_Service,AirWatch_Messaging_Service,AirWatch_Policy_Engine,AirWatch_SMS_Service,AirWatch_Website,Bulk_Import_Service,Common,Content_Pull_Service,Default_Website,Event_Change_Queue_Monitor,MEG_Queue_Service,Cisco_ISE_Integration,AirWatch_Directory_Sync_Service" />
   <!-- Installation Directory -->
   <property name="INSTALLDIR" value="C:\AirWatch\" />
   <!-- SQL Server Host Name -->

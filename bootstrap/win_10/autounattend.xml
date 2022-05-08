@@ -108,7 +108,7 @@
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
                     <Order>12</Order>
-                    <CommandLine>powershell.exe -Command &quot;Set-NetFirewallRule -Name WINRM-HTTP-In-TCP-PUBLIC -RemoteAddress 172.28.0.0/16&quot;</CommandLine>
+                    <CommandLine>powershell.exe -Command &quot;Set-NetFirewallRule -Name WINRM-HTTP-In-TCP -RemoteAddress 172.28.0.0/16&quot;</CommandLine>
                     <Description>Allow WinRM from Ansible subnet</Description>
                     <RequiresUserInput>false</RequiresUserInput>
                 </SynchronousCommand>
