@@ -148,6 +148,7 @@ internal_certificates:
   - uemc
   - uds
   - vcenter
+  - access
 
 ### FILE SHARES ###
 # Set path to the subfolder of C:\shares that will be created and shared
