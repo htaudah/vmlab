@@ -195,6 +195,7 @@
         SourceTransportServers: "{{ groups['mail_servers'] }}"
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure ECP virtual directory
       win_dsc:
@@ -205,6 +206,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure MAPI virtual directory
       win_dsc:
@@ -217,6 +219,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure OAB virtual directory
       win_dsc:
@@ -227,6 +230,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure Outlook Anywhere URL
       win_dsc:
@@ -242,6 +246,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure OWA virtual directory
       win_dsc:
@@ -257,6 +262,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Configure EWS virtual directory
       win_dsc:
@@ -267,6 +273,7 @@
         AllowServiceRestart: yes
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Create the DAG
       win_dsc:
@@ -290,6 +297,7 @@
         Identity: PrimaryDAG
         Credential_username: "Administrator@{{ domain_name }}"
         Credential_password: "{{ domain_admin_password }}"
+      run_once: yes
 
     - name: Add server to DAG
       win_dsc:
