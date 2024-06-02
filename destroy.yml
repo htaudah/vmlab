@@ -169,7 +169,7 @@
         resource_pool: "{{ resource_pool }}"
         state: absent
           
-    - name: Create folder
+    - name: Delete folder
       community.vmware.vcenter_folder:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
